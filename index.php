@@ -1,69 +1,62 @@
 <?php
-
 include 'constants.php';
 spl_autoload_register('classLoader');
 session_start();
 
 try{
-	$joinery = new Joinery("localhost", "root", "", "joinery");
-	
+	$joinery = new Joinery("localhost", "root", "", "Joinery");
 	$action = 'showMain';
-	if (isset($_GET['action'])){
+	if (isset($_GET['action'])) {
 		$action = $_GET['action'];
 	}
-  
-   $message = $joinery -> getMessage();
-	
+	$message = $joinery->getMessage();
 	if(!$message && $action == 'showLoginForm'){
-		$message = 'WprowadŸ nazwê i has³o u¿ytkownika';
+		$message = 'Wybierz stanowisko i wprowadÅº hasÅ‚o';
 	}
-	
+	if($action == 'showLoginForm' && $joinery->stand){
+		$joinery->setMessage('Najpierw proszÄ™ siÄ™ wylogowaÄ‡.');
+		header('Location:index.php?action=showMain');
+		return;
+	}
 	switch($action){
 		case 'login' :
-			//Obs³uga logowania
+			switch($joinery->login()){
+				case ACTION_OK :
+					$joinery->setMessage('Zalogowanie prawidÅ‚owe');
+					header('Location:index.php?action=showMain');
+					return;
+				case NO_LOGIN_REQUIRED :
+					$joinery->setMessage('Najpierw proszÄ™ siÄ™ wylogowaÄ‡.');
+					header('Location:index.php?action=showMain');
+					return;
+				case ACTION_FAILED :
+				case FORM_DATA_MISSING :
+					$joinery->setMessage('Logowanie na stanowisko nieudane');
+					break;
+				default:
+					$joinery->setMessage('BÅ‚Ä…d serwera. Zalogowanie nie jest obecnie moÅ¼liwe.');
+			}
+				header('Location:index.php?action=showLoginForm');
 			break;
 		case 'logout':
-			//Obs³uga wylogowania
-			break;
-		case 'addNewOrder':
-			//Dodawanie nowego zlecenia
-			break;
-		case 'modifyOrder':
-			//Modyfikacja zlecenia
-			break;
-		case 'deleteOrder':
-			//Usuwanie zlecenia
-			break;
-		case 'addNewCustomer':
-			//Dodawanie nowego klienta
-			break;
-		case 'modifyCustomer':
-						//Modyfikuj dane klienta
-			break;
-		case 'fillUpCutting':
-			//Uzupe³nij ciêcie
-			break;
-		case 'fillUpEdging':
-			//Uzupe³nij oklejanie
-			break;
-		case 'markOrderAsReady':
-			//
+			$joinery->logout();
+			header('Location:index.php?action=showMain');
 			break;
 		default:
 			include 'templates/mainTemplate.php';
 	}
-}	catch(Exception $e){
-	//echo 'B³¹d: ' . $e->getMessage();
-		exit('Portal chwilowo niedostêpny');
-	}
-
-
-function classLoader($className){
-  if(file_exists("classes/$className.php")){
-    require_once("classes/$className.php");
-  }else{
-	  throw new Exception("Brak pliku z definicj¹ klasy.");
-	}
+}
+catch(Exception $e){
+	//echo 'BÅ‚Ä…d: ' . $e->getMessage();
+	exit('Portal chwilowo niedostÄ™pny');
 }
 
+function classLoader($name){
+	if(file_exists("classes/$name.php")){
+		require_once("classes/$name.php");
+	}
+	else{
+		throw new Exception("Brak pliku z definicjÄ… klasy.");
+	}
+}
 ?>
