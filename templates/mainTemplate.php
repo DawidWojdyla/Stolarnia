@@ -1,4 +1,4 @@
-<?php if(!isset($portal)) die();?>
+<?php if(!isset($joinery)) die();?>
 <!DOCTYPE html>
 <html>
 		<head>
@@ -10,15 +10,14 @@
 		<div id="topDiv" class="scaffoldingDiv">
 			<div id="headerMainDiv">
 				<a href="index.php">Główna</a> |
-				<a href="index.php?action=showRegistrationForm">Rejestracja</a>
 			</div>
 			<div id="headerUserInfoDiv">
-				<?php if($portal->loggedUser): ?>
-					<div>Jesteś zalogowany jako: <?=$portal->loggedUser->name?></div>
-					<div><a href="index.php?action=logout">Wylogowanie</a></div>
+				<?php if($joinery->stand): ?>
+					<div>Twoje stanowisko: <?=$joinery->stand->name?></div>
+					<div><a href="index.php?action=logout">Wyloguj się</a></div>
 				<?php else: ?>
 					<div>Nie jesteś zalogowany.</div>
-					<div><a href="index.php?action=showLoginForm">Logowanie</a></div>
+					<div><a href="index.php?action=showLoginForm">Zaloguj się</a></div>
 				<?php endif ?>
 			</div>
 		</div>
@@ -33,8 +32,19 @@
 						case 'showLoginForm' :
 							include 'loginForm.php';
 							break;
-						case 'showRegistrationForm' :
-							$portal->showRegistrationForm();
+						case 'showOrderAddingForm' :
+							switch($joinery->showOrderAddingForm()):
+								case NO_PERMISSION:
+									$joinery->setMessage('Brak uprawnień.');
+									header('Location:index.php?action=showMain');
+									return;
+								case SERVER_ERROR:
+									$joinery->setMessage('Błąd serwera!');
+									header('Location:index.php?action=showMain');
+									return;
+								default:
+									break;
+							endswitch;
 							break;
 						case 'showMain':
 						default:
@@ -45,7 +55,7 @@
 			</div>
 		</div>
 		<div id="footerDiv" class="scaffoldingDiv">
-			<p>Stopka strony</p>
+			<p> &copy; 2019 Wszelkie prawa zastrzeżone.</p>
 		</div>
 	</body>
 </html>

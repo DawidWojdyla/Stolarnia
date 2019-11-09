@@ -59,8 +59,11 @@ class Joinery extends MyDB
 		  return ACTION_FAILED;
 		}
 		
-		 if(!password_verify($password, $result[1])){
-			return ACTION_FAILED;
+		 //if(!password_verify($password, $result[1])){
+			//return ACTION_FAILED;
+		 //}
+		 if($password != $result[1]){
+			 return ACTION_FAILED;
 		 }
 		 
 		$_SESSION['stand'] = new Stand($standId, $result[0]);
@@ -68,11 +71,23 @@ class Joinery extends MyDB
 		return ACTION_OK;
 	}
 	  
-	function logout()
-	{
+	function logout(){
 		$this->stand = null;
 		if (isset($_SESSION['stand']))
 		unset($_SESSION['stand']);
+	}
+	
+	function addNewOrder(){
+		if ($this->stand->id != 4)  return NO_PERMISSION;
+		$orders = new Orders ($this->dbo);
+		return $orders -> addNewOrder();
+	}
+	
+	function showOrderAddingForm(){
+		if(!$this->dbo) return SERVER_ERROR;
+		if ($this->stand->id != 4)  return NO_PERMISSION;
+		$orders = new Orders ($this->dbo);
+		return $orders->showOrderAddingForm();
 	}
   
 }

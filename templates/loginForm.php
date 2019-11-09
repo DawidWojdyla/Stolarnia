@@ -5,7 +5,7 @@
 			<tr>
 				<td>Stanowisko:</td>
 				<td> 
-					<select name="stand">
+					<select name="standId">
 						<option value="1">Piła 1</option>
 						<option value="2">Piła 2</option>
 						<option value="3">Okleiniarka</option>

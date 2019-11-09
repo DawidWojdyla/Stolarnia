@@ -4,7 +4,7 @@ spl_autoload_register('classLoader');
 session_start();
 
 try{
-	$joinery = new Joinery("localhost", "root", "", "Joinery");
+	$joinery = new Joinery("localhost", "root", "", "joinery");
 	$action = 'showMain';
 	if (isset($_GET['action'])) {
 		$action = $_GET['action'];
@@ -31,12 +31,37 @@ try{
 					return;
 				case ACTION_FAILED :
 				case FORM_DATA_MISSING :
-					$joinery->setMessage('Logowanie na stanowisko nieudane');
+					$joinery->setMessage('Logowanie nie powiodło się.');
 					break;
 				default:
 					$joinery->setMessage('Błąd serwera. Zalogowanie nie jest obecnie możliwe.');
 			}
 				header('Location:index.php?action=showLoginForm');
+			break;
+		case 'addNewOrder':
+			switch ($joinery -> addNewOrder()):
+				case ACTION_OK:
+					$joinery->setMessage('Dodano nowe zlecenie.');
+					//$joinery->hideMessageAfterTime(3000);
+					break;
+				case FORM_DATA_MISSING:
+					$joinery->setMessage('Proszę wypełnić poprawnie wymagane pola formularza.');
+					break;
+				case ACTION_FAILED:
+					$joinery->setMessage('Obecnie dodanie zlecenia nie jest możliwe.');
+					//$joinery->hideMessageAfterTime(3000);
+					break;
+				case NO_PERMISSION:
+					$joinery->setMessage('Brak uprawnień do dodania nowego zlecenia.');
+					//$joinery->hideMessageAfterTime(3000);
+					header('Location:index.php?action=showMain');
+					return;
+				case SERVER_ERROR:
+				default:
+					$joinery->setMessage('Błąd serwera!');
+					//$joinery->hideMessageAfterTime(3000);
+			endswitch;
+			header('Location:index.php?action=showOrderAddingForm');
 			break;
 		case 'logout':
 			$joinery->logout();

@@ -3,19 +3,21 @@ class Order
 {
 	private $id;
 	private $customerId;
-	private $userId;
+	private $workerId;
 	private $sawNumber;
 	private $admissionDate;
 	private $orderCompletionDate;
+	private $cuttingStateId;
 	private $comments;
   
-	function __construct($id, $customerId, $userId, $sawNumber, $admissionDate, $orderCompletionDate, $comments = ""){
+	function __construct($id, $customerId, $workerId, $sawNumber, $admissionDate, $orderCompletionDate, $cuttingStateId, $comments = ""){
 		$this->id 									= $id;
 		$this->customerId 					= $customerId;
-		$this->userId 							= $userId;
+		$this->userId 							= $workerId;
 		$this->sawNumber 					= $sawNumber;
 		$this->admissionDate 			= $admissionDate;
 		$this->orderCompletionDate 	= $orderCompletionDate;
+		$this->cuttingStateId 				= $cuttingStateId;
 		$this->comments 					= $comments;
 	}
 	
@@ -27,8 +29,8 @@ class Order
 		$this->customerId = $customerId;
 	}
 	
-	function setUserId($userId){
-		$this->userId = $userId;
+	function setWorkerId($workerId){
+		$this->workerId = $workerId;
 	}
 	
 	function setSawNumber($sawNumber){
@@ -37,6 +39,10 @@ class Order
 	
 	function setIAdmissionDate($admissionDate){
 		$this->admissionDate = $admissionDate;
+	}
+	
+	function setCuttingStateId($cuttingStateId){
+		$this->cuttingStateId = $cuttingStateId;
 	}
 	
 	function setOrderCompletionDate($orderCompletionDate){
@@ -55,8 +61,8 @@ class Order
 		return $this->customerId;
 	}
 	
-	function getUserId(){
-		return $this->userId;
+	function getWorkerId(){
+		return $this->workerId;
 	}
 	
 	function getSawNumber(){
@@ -69,6 +75,10 @@ class Order
 	
 	function getOrderCompletionDate(){
 		return $this->orderCompletionDate;
+	}
+	
+	function getCuttingStateId(){
+		return $this->cuttingStateId;
 	}
 	
 	function getComments(){
