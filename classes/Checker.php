@@ -2,12 +2,9 @@
 class Checker
 {
 	function checkDocumentNumber(){
-		//$_SESSION ['documentType'] = filter_input (INPUT_POST, 'documentType');
-		$_SESSION ['documentType'] = $_POST['documentType'];
+		$_SESSION ['documentType'] = filter_input (INPUT_POST, 'documentType');
 		$_SESSION ['documentBranch'] = filter_input (INPUT_POST, 'documentBranch');
 		$_SESSION['documentNumber'] = filter_input(INPUT_POST, 'documentNumber');
-		
-		//sleep(5);
 		
 		if ($_POST['documentType'] == '4') {
 			return true;
@@ -33,7 +30,7 @@ class Checker
 			}
 			return true;
 		}
-		if (int($_POST['customerId']) <1){
+		if ((int)($_POST['customerId']) <1){
 			return false;
 		}
 		return true;

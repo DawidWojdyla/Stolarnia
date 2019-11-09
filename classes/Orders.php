@@ -169,7 +169,7 @@ class Orders
 		$edgeBandStickerSymbols = $this -> returnEdgeBandStickerSymbols();
 		$edgeBandTypes = $this -> returnEdgeBandTypes();
 		
-		//include 'scripts/orderAddingFormScripts.php';
+		include 'scripts/orderAddingFormScripts.php';
 		include 'templates/orderAddingForm.php';
 	}
 }

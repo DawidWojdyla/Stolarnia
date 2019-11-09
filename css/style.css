@@ -1,116 +1,20 @@
-.scaffoldingDiv{
-  border   : 1px solid black;
-  margin   : 0 auto;
-  overflow : hidden;
+body{
+	background-color:#cdcdcd;
+}
+.error{
+	width: 100%;
+	text-align: center;
+}
+.icon-bar{
+	background-color: white;
 }
 
-.message{
-  font-size        : 16pt;
-  background-color : #f0f0f0;
-  text-align       : center;
-  width            : 450px;
-  margin           : 20px auto 0;
-  padding          : 5px;
-  border-radius    : 10px;
-  position         : relative;
+.documentNumber{
+	width: 55px;
 }
-
-.forms{
-  margin : 0 auto;
-  width  : 350px;
+.inputHeight{
+	height: 25px;
 }
-
-.colmerged{
-  padding     : 10px 0 10px 0;
-  text-align  : right;
-}
-
-.textMiddle{
-  text-align : center;
-}
-
-.textLeft{
-  text-align : left;
-}
-
-.textRight{
-  text-align : right;
-}
-
-.col1st{
-  text-align : right;
-}
-
-.col2st{
-  text-align : left;
-}
-
-.tableRowTitle{
-  font-weight : bold;
-}
-
-#topDiv{
-  text-align : center;
-  width      : 780px;
-  min-height : 55px;
-}
-
-#headerMainDiv{
-  width      : 575px;
-  float      : left;
-  text-align : center;
-  padding-top: 5px;
-}
-
-#headerUserInfoDiv{
-  width    : 200px;
-  float    : right;
-  min-height : 55px;
-  border-left: 1px solid black;
-}
-
-#centerDiv{
-  width     : 780px;
-}
-
-#mainContentDiv{
-  width     : 100%;
-  min-height: 350px;
-}
-
-#innerContentDiv{
-  width      : 200px;
-  height     : 100px;
-  margin     : 0 auto;
-  text-align : center;
-  font-size  : 20pt;
-  position   : relative;
-  top        : 115px;
-}
-
-#footerDiv{
-  width    : 780px;
-  height   : 50px;
-  text-align:center;
-  clear     : both;
-}
-
-.tableRowTitle{
-  font-weight : bold;
-}
-
-#loginFormWrapper{
-  width   : 60%;
-  margin  : 5% auto 0;
-}
-
-#loginFormWrapper table{
-  text-align  : right;
-  margin      : 0 auto;
-}
-
-#innerContent{
-  width:200px;
-  height:100px;
-  margin:150px auto 0;
+.fullWidth{
+	width: 100%;
 }
