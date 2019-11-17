@@ -2,15 +2,11 @@
 class Checker
 {
 	function checkDocumentNumber(){
-		$_SESSION ['documentType'] = filter_input (INPUT_POST, 'documentType');
-		$_SESSION ['documentBranch'] = filter_input (INPUT_POST, 'documentBranch');
-		$_SESSION['documentNumber'] = filter_input(INPUT_POST, 'documentNumber');
-		
 		if ($_POST['documentType'] == '4') {
 			return true;
 		}
 		else if (is_numeric($_POST['documentNumber']) && (int)($_POST['documentNumber']) < 999999 && (int)($_POST['documentNumber']) > 0){
-			$_SESSION['documentNumber'] = str_pad($_SESSION['documentNumber'], 6, "0", STR_PAD_LEFT);
+			$_POST['documentNumber'] = str_pad($_POST['documentNumber'], 6, "0", STR_PAD_LEFT);
 			return true;
 		}
 		$_SESSION ['documentNumberError'] = "Wprowadź poprawny numer dokumentu!";

@@ -16,6 +16,10 @@
 		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 		<![endif]-->
+				 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 		
 		<link rel="stylesheet" type="text/css" href="css/style.css">
 	</head>
@@ -65,7 +69,6 @@
 			</div>
 		</nav>
 		<div class="container">
-			<div id="centerDiv">
 				<div id="mainContentDiv">
 						<?php if($message): ?>
 							<div class="message"><?=$message;?></div>
@@ -89,21 +92,29 @@
 										break;
 								endswitch;
 								break;
+							case 'showOrderList' :
+								switch($joinery->showOrderListForShop()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
 							case 'showMain':
 							default:
 							include 'templates/innerContentDiv.php';
 						endswitch;
 						?>
 				</div>
-			</div>
 			<div id="footerDiv">
 				<p> &copy; 2019 Wszelkie prawa zastrzeżone.</p>
 			</div>
 		</div>
-		
-		 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
-		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 	</body>
 </html>

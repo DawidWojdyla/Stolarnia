@@ -1,9 +1,22 @@
 body{
 	background-color:#cdcdcd;
 }
+
+input, select, textarea{
+	border-radius: 3px;
+}
+.mainContentDiv{
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
 .error{
 	width: 100%;
 	text-align: center;
+}
+
+.pointer{
+	cursor: pointer;
 }
 .icon-bar{
 	background-color: white;
@@ -13,8 +26,47 @@ body{
 	width: 55px;
 }
 .inputHeight{
-	height: 25px;
+	height: 26px;
+}
+.szt{
+	width: 60px;
 }
 .fullWidth{
 	width: 100%;
+}
+.inline{
+	display: inline;
+}
+
+.inline-block{
+	display: inline-block;
+}
+.block{
+	display: block;
+}
+.margin-auto:{
+	margin:auto;
+}
+.addingTab{
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 600px;
+	table-layout: fixed;
+}
+.addingTab td{
+	padding:2px;
+}
+
+.addingTab td:first-child{
+	max-width: 300px;
+	min-width: 90px;
+}
+.addingTab td:second-child{
+	min-width: 300px;
+}
+.positionTable{
+	min-width:  318px;
+}
+.topPadding{
+	padding-top: 20px;
 }

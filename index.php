@@ -72,8 +72,8 @@ try{
 	}
 }
 catch(Exception $e){
-	//echo 'Błąd: ' . $e->getMessage();
-	exit('Portal chwilowo niedostępny');
+	echo 'Błąd: ' . $e->getMessage();
+	//exit('Portal chwilowo niedostępny');
 }
 
 function classLoader($name){

@@ -89,6 +89,13 @@ class Joinery extends MyDB
 		$orders = new Orders ($this->dbo);
 		return $orders->showOrderAddingForm();
 	}
+	
+	function showOrderListForShop(){
+		if(!$this->dbo) return SERVER_ERROR;
+		if ($this->stand->id != 4)  return NO_PERMISSION;
+		$orders = new Orders ($this->dbo);
+		return $orders->showOrderListForShop();
+	}
   
 }
 ?>
