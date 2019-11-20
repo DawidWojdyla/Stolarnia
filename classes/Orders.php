@@ -3,12 +3,22 @@ class Orders
 {
 	private $dbo = null;
 	
-	function __construct($dbo)
-	{
+	function __construct($dbo){
 		$this->dbo = $dbo;
 	}
 	
-	function addNewOrderToTheBase(){
+	function checkIfDocumentNumberExistsInTheDatabase($documentNumber, $year){
+		$query = $this->dbo->prepare("SELECT `id` FROM `orders` WHERE `document_number`=:documentNumber AND YEAR(`admission_date`)=:year");
+		$query -> bindValue (':documentNumber', $documentNumber, PDO::PARAM_STR);
+		$query -> bindValue (':year', $year, PDO::PARAM_STR);
+		$query -> execute();
+		if ($query -> rowCount()){
+			return true;
+		}
+		return false;
+	}
+	
+	function addNewOrderToTheDatabase(){
 		if( !$this->dbo){ return SERVER_ERROR;}
 		
 		if(!$this->dbo->beginTransaction()){
@@ -16,6 +26,9 @@ class Orders
 		}
 		if($_POST['documentType'] != '4'){
 			$documentNumberString = $_POST['documentType'].$_POST['documentNumber'].$_POST['documentBranch'];
+			if($this->checkIfDocumentNumberExistsInTheDatabase($documentNumberString, substr($_POST['admissionDate'], 0, 4))){
+				return DOCUMENT_NUMBER_ALREADY_EXISTS;
+			}
 		}
 		else{
 			$documentNumberString = NULL;
@@ -152,12 +165,14 @@ class Orders
 		//PŁYTY - CIĘCIA - KLEJENIA
 		$_SESSION['positions'] = $_POST['positions'];
 		
+		//$_SESSION['edgeBandingAmount'] = 0;
+		
 		foreach($_POST['positions'] as $position){
 			foreach($position as $key => $value){
 				switch($key){
-					case 'boardSignsId':
+					case 'boardSignId':
 					case 'boardSymbolId':
-					case 'boardStructuresId':
+					case 'boardStructureId':
 					case 'boardThicknessId':
 						if($value=='' || (int)$value < 1){
 							$isAllOk = false;
@@ -170,6 +185,7 @@ class Orders
 						}
 						break;
 					case 'edgeBandTypesId':
+						//$_SESSION['edgeBandingAmount']++;
 					case 'edgeBandsStickersId':
 					case 'edgeBandingBoardSymbolsId':
 						foreach($value as $subValue):
@@ -191,7 +207,7 @@ class Orders
 	
 		if (!$isAllOk){ return FORM_DATA_MISSING;}
 		
-		return $this->addNewOrderToTheBase();
+		return $this->addNewOrderToTheDatabase();
 	}
 	
 	function returnCustomers(){
@@ -285,6 +301,9 @@ class Orders
 	
 	function showOrderListForShop(){
 		//funkcja odpowiedzialna za wyświetlenie listy zleceń
+		
+		include 'scripts/orderListForShopScripts.php';
+		include 'templates/orderListForShop.php';
 	}
 }
 ?>

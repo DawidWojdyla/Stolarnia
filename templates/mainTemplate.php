@@ -113,7 +113,7 @@
 						?>
 				</div>
 			<div id="footerDiv">
-				<p> &copy; 2019 Wszelkie prawa zastrzeżone.</p>
+				<!-- <p> &copy; 2019 Wszelkie prawa zastrzeżone.</p> -->
 			</div>
 		</div>
 	</body>

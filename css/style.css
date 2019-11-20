@@ -29,7 +29,7 @@ input, select, textarea{
 	height: 26px;
 }
 .szt{
-	width: 60px;
+	width: 58px;
 }
 .fullWidth{
 	width: 100%;
@@ -58,15 +58,21 @@ input, select, textarea{
 }
 
 .addingTab td:first-child{
-	max-width: 300px;
+	max-width: 280px;
 	min-width: 90px;
 }
 .addingTab td:second-child{
 	min-width: 300px;
 }
 .positionTable{
-	min-width:  318px;
+	min-width:  325px;
 }
 .topPadding{
 	padding-top: 20px;
+}
+.positionTable td{
+	width: 90px;
+}
+.edgeBandComment{
+	width: 240px;
 }

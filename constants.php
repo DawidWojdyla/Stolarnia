@@ -8,4 +8,5 @@ define('NO_PERMISSION', 6);
 define('USER_NAME_ALREADY_EXISTS', 7);
 define('LOGIN_REQUIRED', 8);
 define('NO_LOGIN_REQUIRED', 9);
+define('DOCUMENT_NUMBER_ALREADY_EXISTS', 10);
 ?>

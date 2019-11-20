@@ -51,6 +51,10 @@ try{
 					$joinery->setMessage('Obecnie dodanie zlecenia nie jest możliwe.');
 					//$joinery->hideMessageAfterTime(3000);
 					break;
+				case DOCUMENT_NUMBER_ALREADY_EXISTS:
+					$joinery->setMessage('Dokument o takim numerze już istnieje w bazie.');
+					//$joinery->hideMessageAfterTime(3000);
+					break;
 				case NO_PERMISSION:
 					$joinery->setMessage('Brak uprawnień do dodania nowego zlecenia.');
 					//$joinery->hideMessageAfterTime(3000);
