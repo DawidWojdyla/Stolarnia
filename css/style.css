@@ -5,14 +5,31 @@ body{
 input, select, textarea{
 	border-radius: 3px;
 }
+
 .mainContentDiv{
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
+	
+}
+.message{
+	text-align: center;
+	font-size: 16px;
+	position: absolute;
+	top: 30px;
+	left: 50%;
+	transform: translateX(-50%);
+	padding: 5px;
+	background-color: #cae8ca;
+	border: 2px solid #4CAF50;
+	max-width: 600px;
+	margin: auto;
 }
 .error{
 	width: 100%;
 	text-align: center;
+	font-size: 15px;
+	color: red;
 }
 
 .pointer{
@@ -52,9 +69,14 @@ input, select, textarea{
 	margin-right: auto;
 	max-width: 600px;
 	table-layout: fixed;
+	margin-top : 20px;
 }
+.addingTable tr:forst-child td{
+	margin-top: 10px;
+}
+
 .addingTab td{
-	padding:2px;
+	padding: 2px;
 }
 
 .addingTab td:first-child{

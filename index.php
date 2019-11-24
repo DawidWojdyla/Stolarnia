@@ -9,7 +9,10 @@ try{
 	if (isset($_GET['action'])) {
 		$action = $_GET['action'];
 	}
+	
 	$message = $joinery->getMessage();
+	$delay = $joinery -> getDelay();
+	
 	if(!$message && $action == 'showLoginForm'){
 		$message = 'Wybierz stanowisko i wprowadź hasło';
 	}
@@ -18,23 +21,28 @@ try{
 		header('Location:index.php?action=showMain');
 		return;
 	}
+	
 	switch($action){
 		case 'login' :
 			switch($joinery->login()){
 				case ACTION_OK :
 					$joinery->setMessage('Zalogowanie prawidłowe');
+					$joinery->hideMessageAfterTime(3000);
 					header('Location:index.php?action=showMain');
 					return;
 				case NO_LOGIN_REQUIRED :
 					$joinery->setMessage('Najpierw proszę się wylogować.');
+					$joinery->hideMessageAfterTime(3000);
 					header('Location:index.php?action=showMain');
 					return;
 				case ACTION_FAILED :
 				case FORM_DATA_MISSING :
 					$joinery->setMessage('Logowanie nie powiodło się.');
+					$joinery->hideMessageAfterTime(3000);
 					break;
 				default:
 					$joinery->setMessage('Błąd serwera. Zalogowanie nie jest obecnie możliwe.');
+					$joinery->hideMessageAfterTime(3000);
 			}
 				header('Location:index.php?action=showLoginForm');
 			break;
@@ -42,28 +50,28 @@ try{
 			switch ($joinery -> addNewOrder()):
 				case ACTION_OK:
 					$joinery->setMessage('Dodano nowe zlecenie.');
-					//$joinery->hideMessageAfterTime(3000);
+					$joinery->hideMessageAfterTime(3000);
 					break;
 				case FORM_DATA_MISSING:
 					$joinery->setMessage('Proszę wypełnić poprawnie wymagane pola formularza.');
+					$joinery->hideMessageAfterTime(3000);
 					break;
 				case ACTION_FAILED:
 					$joinery->setMessage('Obecnie dodanie zlecenia nie jest możliwe.');
-					//$joinery->hideMessageAfterTime(3000);
+					$joinery->hideMessageAfterTime(3000);
 					break;
 				case DOCUMENT_NUMBER_ALREADY_EXISTS:
 					$joinery->setMessage('Dokument o takim numerze już istnieje w bazie.');
-					//$joinery->hideMessageAfterTime(3000);
 					break;
 				case NO_PERMISSION:
 					$joinery->setMessage('Brak uprawnień do dodania nowego zlecenia.');
-					//$joinery->hideMessageAfterTime(3000);
+					$joinery->hideMessageAfterTime(3000);
 					header('Location:index.php?action=showMain');
 					return;
 				case SERVER_ERROR:
 				default:
 					$joinery->setMessage('Błąd serwera!');
-					//$joinery->hideMessageAfterTime(3000);
+					$joinery->hideMessageAfterTime(3000);
 			endswitch;
 			header('Location:index.php?action=showOrderAddingForm');
 			break;

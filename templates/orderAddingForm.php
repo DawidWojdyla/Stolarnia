@@ -209,6 +209,8 @@
 			<?PHP endforeach; ?>
 		<script>
 			edgeBandingLastId = <?=$edgeBandingNumber?>;
+			checkIfDocumentNumberIsRequired();
+			checkIfOrderCommentIsRequired();
 		</script>
 		<?PHP unset($_SESSION['positions']); endif;?>
 		<tr id="boardsInputs">
@@ -218,7 +220,7 @@
 		</tr>
 		<tr>
 			<td colspan="2">
-				<button class="btn btn-default btn-block" type="button" onclick="sendOrderAddingForm();">Dodaj zamówienie</buton>
+				<button class="btn btn-default btn-block" type="button" onclick="sendOrderAddingForm();">Dodaj zlecenie</buton>
 				<button id="sendingButton" type="submit" style="display:none;">Dodaj zlecenie</buton>
 			</td>
 		</tr>

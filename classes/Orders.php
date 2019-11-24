@@ -282,6 +282,14 @@ class Orders
 		return $boardsAmount;
 	}
 	
+	function returnOrdersOfPeriod(){
+		$orders = array();
+		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, `states`.`name` as state FROM `orders` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `states` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`state_id`=`states`.`id` AND (`orders`.`order_completion_date` BETWEEN '{$_SESSION['dateFrom']}' AND '{$_SESSION['dateTo']}') ORDER BY `order_completion_date`")){
+			$orders = $result->fetchAll(PDO::FETCH_OBJ);
+		}
+		return $orders;
+	}
+	
 	function showOrderAddingForm(){
 		
 		$customers = $this -> returnCustomers();
@@ -299,8 +307,26 @@ class Orders
 		include 'templates/orderAddingForm.php';
 	}
 	
+	function setOrderListPeriod(){
+		$today = date('Y-m-d');
+		$threeDaysAgo = date('Y-m-d', strtotime($today. '-3 days'));
+		$dayAfterTomorrow = date('Y-m-d', strtotime($today. '+2 days'));
+		$_SESSION['dateFrom'] = $threeDaysAgo;
+		$_SESSION['dateTo'] = $dayAfterTomorrow;
+		
+		if(isset($_POST['dateFrom']) && $_POST['dateFrom'] != '' && isset($_POST['dateTo']) && $_POST['dateTo'] != ''){
+			$checker = new Checker();
+			if ($checker->checkOrderListPeriodDates()){
+				$_SESSION['dateFrom'] = filter_input(INPUT_POST, 'dateFrom');
+				$_SESSION['dateTo'] = filter_input(INPUT_POST, 'dateTo');
+			}
+		}
+	}
+	
 	function showOrderListForShop(){
 		//funkcja odpowiedzialna za wyświetlenie listy zleceń
+		$this->setOrderListPeriod();
+		$orders = $this->returnOrdersOfPeriod();
 		
 		include 'scripts/orderListForShopScripts.php';
 		include 'templates/orderListForShop.php';

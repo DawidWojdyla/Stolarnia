@@ -32,6 +32,21 @@ class Joinery extends MyDB
 		}
 	}
 	
+	function hideMessageAfterTime($delay){
+		$_SESSION['delay'] = $delay;
+	}
+	
+	function getDelay(){
+		if(isset($_SESSION['delay'])){
+			$delay = $_SESSION['delay'];
+			unset($_SESSION['delay']);
+			return $delay;
+		}
+		else{
+			return null;
+		}
+	}
+	
 	function login(){
 		if( !$this->dbo) return SERVER_ERROR;
 		if ($this->stand) return NO_LOGIN_REQUIRED;

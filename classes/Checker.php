@@ -71,6 +71,20 @@ class Checker
 		}
 		return true;			
 	}
+	
+	function checkOrderListPeriodDates(){
+		if ($_POST['dateFrom'] > $_SESSION['dateTo']){
+			$_SESSION['orderListPeriodError'] = "Należy podać zakres dat w kolejności od wcześniejszej do późniejszej";
+			return false;
+		}
+		$dateDifference = (strtotime($_POST['dateFrom'] ) - strtotime($_SESSION['dateTo'])) / (60*60*24);
+		
+		if($dateDifference > 30){
+			$_SESSION['orderListPeriodError'] = "Zakres dat nie może być dłuższy niż 30 dni";
+			return false;
+		}
+		return true;
+	}
 }
 
 ?>

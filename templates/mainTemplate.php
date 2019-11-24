@@ -42,7 +42,7 @@
 								<li><a href="index.php?action=showOrderAddingForm"><span class="glyphicon glyphicon-plus"></span> Dodaj</a></li>
 								<li><a href="#"><span class="glyphicon glyphicon-search"></span> Szukaj</a></li>
 								<li><a href="#"><span class="glyphicon glyphicon-pencil"></span> Edytuj</a></li>
-								<li><a href="#"><span class="glyphicon glyphicon-th-list"></span> Lista</a></li>
+								<li><a href="index.php?action=showOrderListForShop"><span class="glyphicon glyphicon-th-list"></span> Lista</a></li>
 							</ul>
 						</li>
 						<li class="dropdown">
@@ -70,9 +70,15 @@
 		</nav>
 		<div class="container">
 				<div id="mainContentDiv">
-						<?php if($message): ?>
-							<div class="message"><?=$message;?></div>
-						<?php endif; ?>
+				
+					<?php if($message): ?>
+					<div id="mess" class="message">
+						<?=$message?><?php endif; ?>
+					</div>
+					<?php if($delay): ?>
+					<script> setTimeout(function(){ $('#mess').fadeOut();}, <?=$delay?>); </script>
+					<?php endif; ?>
+					
 						<?php
 						switch($action):
 							case 'showLoginForm' :
@@ -92,7 +98,7 @@
 										break;
 								endswitch;
 								break;
-							case 'showOrderList' :
+							case 'showOrderListForShop' :
 								switch($joinery->showOrderListForShop()):
 									case NO_PERMISSION:
 										$joinery->setMessage('Brak uprawnień.');
