@@ -75,6 +75,35 @@ try{
 			endswitch;
 			header('Location:index.php?action=showOrderAddingForm');
 			break;
+		case 'addNewCustomer':
+			switch ($joinery -> addNewCustomer()):
+				case ACTION_OK:
+					$joinery->setMessage('Dodano nowego klienta.');
+					$joinery->hideMessageAfterTime(3000);
+					break;
+				case FORM_DATA_MISSING:
+					$joinery->setMessage('Proszę wypełnić poprawnie wymagane pola formularza.');
+					$joinery->hideMessageAfterTime(3000);
+					break;
+				case ACTION_FAILED:
+					$joinery->setMessage('Obecnie dodanie klienta nie jest możliwe.');
+					$joinery->hideMessageAfterTime(3000);
+					break;
+				case CUSTOMER_NUMBER_ALREADY_EXISTS:
+					$joinery->setMessage('Klient o takim numerze telefonu już istnieje w bazie.');
+					break;
+				case NO_PERMISSION:
+					$joinery->setMessage('Brak uprawnień do dodania nowego klienta.');
+					$joinery->hideMessageAfterTime(3000);
+					header('Location:index.php?action=showMain');
+					return;
+				case SERVER_ERROR:
+				default:
+					$joinery->setMessage('Błąd serwera!');
+					$joinery->hideMessageAfterTime(3000);
+			endswitch;
+			header('Location:index.php?action=showCustomerAddingForm');
+			break;
 		case 'logout':
 			$joinery->logout();
 			header('Location:index.php?action=showMain');

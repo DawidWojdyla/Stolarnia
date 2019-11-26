@@ -210,13 +210,13 @@ class Orders
 		return $this->addNewOrderToTheDatabase();
 	}
 	
-	function returnCustomers(){
+	/*function returnCustomers(){
 		$customers = array();
-		if($result = $this->dbo->query("SELECT `id`, `name`, `surname`, `phone` FROM customers ORDER BY `surname`")){
+		if($result = $this->dbo->query("SELECT `id`, `name`, `surname`, `phone` FROM customers WHERE `id` <> 1 ORDER BY `surname`")){
 			$customers = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $customers;
-	}
+	}*/
 	
 	function returnSellers(){
 		$sellers = array();
@@ -292,7 +292,9 @@ class Orders
 	
 	function showOrderAddingForm(){
 		
-		$customers = $this -> returnCustomers();
+		$customers = new Customers($this->dbo);
+		
+		$customerList = $customers -> returnCustomerList();
 		$sellers = $this -> returnSellers();
 		
 		$boardsSigns = $this -> returnBoardsSigns();

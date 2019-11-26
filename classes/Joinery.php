@@ -111,6 +111,26 @@ class Joinery extends MyDB
 		$orders = new Orders ($this->dbo);
 		return $orders->showOrderListForShop();
 	}
+	
+	function showCustomerList(){
+		if(!$this->dbo) { return SERVER_ERROR; }
+		if ($this->stand->id != 4) { return NO_PERMISSION; }
+		$customers = new Customers ($this->dbo);
+		return $customers->showCustomerList();
+	}
+	
+	function showCustomerAddingForm(){
+		if(!$this->dbo) return SERVER_ERROR;
+		if ($this->stand->id != 4)  return NO_PERMISSION;
+		$customers = new Customers ($this->dbo);
+		return $customers->showCustomerAddingForm();
+	}
+	
+	function addNewCustomer(){
+		if ($this->stand->id != 4)  return NO_PERMISSION;
+		$customers = new Customers ($this->dbo);
+		return $customers -> addNewCustomer();
+	}
   
 }
 ?>

@@ -44,7 +44,8 @@
 			<td>Wybierz klienta:</td>
 			<td>
 				<select id='customerIdSelect' class="inputHeight" name="customerId" required onchange="checkIfOrderCommentIsRequired();">
-					<?PHP foreach ($customers as $customer):?>
+					<option value='1'>Inny (dane w uwagach)</option>
+					<?PHP foreach ($customerList as $customer):?>
 					<option  value="<?=$customer->id?>" 
 						<?PHP if (isset($_SESSION['customerId']) && $_SESSION['customerId'] == $customer->id):?>
 						selected
@@ -61,7 +62,6 @@
 			<td>Numer piły:</td>
 			<td>
 				<select class="inputHeight" name="sawNumber" required>
-					<option value=""></option>
 					<option value="1"
 						<?PHP if (isset($_SESSION['sawNumber']) && $_SESSION['sawNumber'] == "1"):?>
 						selected
