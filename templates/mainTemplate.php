@@ -35,26 +35,19 @@
 				</div>
 				<div class="collapse navbar-collapse" id="myNavbar">
 					<ul class="nav navbar-nav">
-					<?php if($joinery->stand): ?>
-						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-dashboard"></span> Zlecenia <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="index.php?action=showOrderAddingForm"><span class="glyphicon glyphicon-plus"></span> Dodaj</a></li>
-								<li><a href="#"><span class="glyphicon glyphicon-search"></span> Szukaj</a></li>
-								<li><a href="#"><span class="glyphicon glyphicon-pencil"></span> Edytuj</a></li>
-								<li><a href="index.php?action=showOrderListForShop"><span class="glyphicon glyphicon-th-list"></span> Lista</a></li>
-							</ul>
-						</li>
-						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span> Klienci <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="index.php?action=showCustomerAddingForm"><span class="glyphicon glyphicon-plus"></span> Dodaj</a></li>
-								<li><a href="#"><span class="glyphicon glyphicon-search"></span> Szukaj</a></li>
-								<li><a href="#"><span class="glyphicon glyphicon-pencil"></span> Edytuj</a></li>
-								<li><a href="index.php?action=showCustomerList"><span class="glyphicon glyphicon-th-list"></span> Lista</a></li>
-							</ul>
-						</li>
-						<?php endif; ?>
+				<?PHP 
+						if($joinery->stand):
+							switch($_SESSION['stand']->id): 
+								case '1':
+								case '2': include 'templates/sawMenu.php';
+									break;
+								case '3': include 'templates/edgeBandingMenu.php';
+									break;
+								case '4': include 'templates/shopMenu.php';
+									break;
+							endswitch; ?>
+				<?PHP 
+						endif; ?>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<?php if($joinery->stand): ?>
@@ -118,6 +111,35 @@
 										$joinery->setMessage('Brak uprawnień.');
 										header('Location:index.php?action=showMain');
 										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
+							case 'showOrderListForSaw' :
+								switch($joinery->showOrderListForSaw()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
+							case 'showOrderCuttingForm' :
+								switch($joinery->showOrderCuttingForm()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case FORM_DATA_MISSING:
 									case SERVER_ERROR:
 										$joinery->setMessage('Błąd serwera!');
 										header('Location:index.php?action=showMain');

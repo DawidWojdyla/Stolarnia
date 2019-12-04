@@ -53,7 +53,7 @@ class Joinery extends MyDB
 		 
 		if (!isset($_POST["standId"]) || !isset($_POST["password"])) return FORM_DATA_MISSING;
 		
-		$standId = filter_input(INPUT_POST, 'standId');
+		$standId = (intval)(filter_input(INPUT_POST, 'standId'));
 		$password = filter_input(INPUT_POST, 'password');
 		
 		$passwordLength = mb_strlen($password, 'utf8');
@@ -114,22 +114,58 @@ class Joinery extends MyDB
 	
 	function showCustomerList(){
 		if(!$this->dbo) { return SERVER_ERROR; }
-		if ($this->stand->id != 4) { return NO_PERMISSION; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
 		$customers = new Customers ($this->dbo);
 		return $customers->showCustomerList();
 	}
 	
 	function showCustomerAddingForm(){
 		if(!$this->dbo) return SERVER_ERROR;
-		if ($this->stand->id != 4)  return NO_PERMISSION;
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
 		$customers = new Customers ($this->dbo);
 		return $customers->showCustomerAddingForm();
 	}
 	
 	function addNewCustomer(){
-		if ($this->stand->id != 4)  return NO_PERMISSION;
+		if ($this->stand->id != 4){  return NO_PERMISSION; }
 		$customers = new Customers ($this->dbo);
 		return $customers -> addNewCustomer();
+	}
+	
+	function setTheBoardCutting(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 1 && $this->stand->id != 2){ return NO_PERMISSION; }
+		$saw = new Saw ($this->dbo, $this->stand->id);
+		return $saw->setTheBoardCutting();
+		
+	}
+	
+	function setTheBoardComment(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 1 && $this->stand->id != 2){ return NO_PERMISSION; }
+		$saw = new Saw ($this->dbo, $this->stand->id);
+		return $saw->setTheBoardComment();
+	}
+	
+	function resetTheBoardCutting(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 1 && $this->stand->id != 2){ return NO_PERMISSION; }
+		$saw = new Saw ($this->dbo, $this->stand->id);
+		return $saw->resetTheBoardCutting();
+	}
+	
+	function showOrderListForSaw(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 1 && $this->stand->id != 2){ return NO_PERMISSION; }
+		$saw = new Saw ($this->dbo, $this->stand->id);
+		return $saw->showOrderList();
+	}
+	
+	function showOrderCuttingForm(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 1 && $this->stand->id != 2){ return NO_PERMISSION; }
+		$saw = new Saw ($this->dbo, $this->stand->id);
+		return $saw->showOrderCuttingForm();
 	}
   
 }

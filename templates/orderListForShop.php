@@ -10,8 +10,9 @@
 	<tr>
 		<th>nr dokumentu</th><th>klient</th><th>piła</th><th>data realizacji</th><th>stan</th>
 	</tr>
-<?PHP foreach($orders as $order):?>
-	<tr>
+	<?PHP foreach($orderLists as $orderList): ?> 
+		<?PHP foreach($orderList as $order):?>
+	<tr class="<?PHP switch($order->state):?><?PHP case 'niepocięte':?>danger<?PHP break; ?><?PHP case 'pocięte':?>info<?PHP break; ?><?PHP case 'gotowe':?>success<?PHP break; ?><?PHP endswitch;?>">
 		<td>
 			<?PHP if ($order->document_number): ?>
 			<?=$order->document_number?>
@@ -36,5 +37,6 @@
 			<?=$order->state?>
 		</td>
 	</tr>
-<?PHP endforeach; ?>	
+		<?PHP endforeach; ?>
+	<?PHP endforeach; ?>
 </table>
