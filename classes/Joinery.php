@@ -105,12 +105,6 @@ class Joinery extends MyDB
 		return $orders->showOrderAddingForm();
 	}
 	
-	function showOrderListForShop(){
-		if(!$this->dbo) return SERVER_ERROR;
-		if ($this->stand->id != 4)  return NO_PERMISSION;
-		$orders = new Orders ($this->dbo);
-		return $orders->showOrderListForShop();
-	}
 	
 	function showCustomerList(){
 		if(!$this->dbo) { return SERVER_ERROR; }
@@ -136,7 +130,7 @@ class Joinery extends MyDB
 		if(!$this->dbo){ return SERVER_ERROR; }
 		if ($this->stand->id != 1 && $this->stand->id != 2){ return NO_PERMISSION; }
 		$saw = new Saw ($this->dbo, $this->stand->id);
-		return $saw->setTheBoardCutting();
+		return $saw -> setTheBoardCutting();
 		
 	}
 	
@@ -144,7 +138,7 @@ class Joinery extends MyDB
 		if(!$this->dbo){ return SERVER_ERROR; }
 		if ($this->stand->id != 1 && $this->stand->id != 2){ return NO_PERMISSION; }
 		$saw = new Saw ($this->dbo, $this->stand->id);
-		return $saw->setTheBoardComment();
+		return $saw -> setTheBoardComment();
 	}
 	
 	function resetTheBoardCutting(){
@@ -154,18 +148,70 @@ class Joinery extends MyDB
 		return $saw->resetTheBoardCutting();
 	}
 	
-	function showOrderListForSaw(){
-		if(!$this->dbo){ return SERVER_ERROR; }
-		if ($this->stand->id != 1 && $this->stand->id != 2){ return NO_PERMISSION; }
-		$saw = new Saw ($this->dbo, $this->stand->id);
-		return $saw->showOrderList();
-	}
-	
-	function showOrderCuttingForm(){
-		if(!$this->dbo){ return SERVER_ERROR; }
-		if ($this->stand->id != 1 && $this->stand->id != 2){ return NO_PERMISSION; }
+		function showOrderCuttingForm(){
+		if(!$this->dbo) return SERVER_ERROR;
+		if ($this->stand->id != 1 && $this->stand->id != 2 ) { return NO_PERMISSION; }
 		$saw = new Saw ($this->dbo, $this->stand->id);
 		return $saw->showOrderCuttingForm();
+	}
+	
+	function showOrderList(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		
+		switch ($this->stand->id){
+			case 1: 
+			case 2:
+				$saw = new Saw ($this->dbo, $this->stand->id);
+				return $saw -> showOrderList();
+			case 3: 
+				$edgeBandingMachine = new EdgeBandingMachine($this->dbo);
+				return $edgeBandingMachine -> showOrderList();
+			case 4: 
+				$orders = new Orders ($this->dbo);
+				return $orders->showOrderList();
+			Default: 
+			return NO_PERMISSION;
+		}
+	}
+	
+	function showOrderSearchingForm(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		
+		switch ($this->stand->id){
+			case 1:
+			case 2:
+				$saw = new Saw($this->dbo, $this->stand->id);
+				return $saw->showOrderSearchingForm(); 
+			case 3:
+				$edgeBandingMachine = new  EdgeBandingMachine($this->dbo, $this->stand->id);
+				$edgeBandingMachine -> showOrderSearchingForm();
+				break;
+			case 4:
+				$orders = new Orders($this->dbo);
+				return $orders->showOrderSearchingForm();
+			default: 
+				return NO_PERMISSION;
+		}
+	}
+	
+	function showSearchResult(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		
+		switch ($this->stand->id){
+			case 1:
+			case 2:
+				$saw = new Saw($this->dbo, $this->stand->id);
+				return $saw->showSearchResult(); 
+			case 3:
+				$edgeBandingMachine = new  EdgeBandingMachine($this->dbo, $this->stand->id);
+				$edgeBandingMachine -> showSearchResult();
+				break;
+			case 4:
+				$orders = new Orders($this->dbo);
+				return $orders->showSearchResult();
+			default: 
+				return NO_PERMISSION;
+		}
 	}
   
 }

@@ -1,4 +1,5 @@
-<h3 class="text-center">Realizacja zlecenia</h3>
+<?php if(!isset($this)) die(); ?>
+<h3 class="text-center"><?=$orderTitle?></h3>
 <form action="index.php?action=cutTheOrder" name="orderCuttingForm" id="orderCuttingForm" method="post" autocomplete="off">
 <table class="table">
 	<th>płyta</th><th><div>ilość</div><div>[szt.]</div></th><th><div>cięcie</div><div>[mb]</div></th><th>status</th>

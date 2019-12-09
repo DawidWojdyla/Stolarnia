@@ -1,3 +1,4 @@
+<?php if(!isset($this)) die(); ?>
 <h3 class="text-center">Dodawanie nowego zlecenia</h3>
 <form action="index.php?action=addNewOrder" name="orderAddingForm" id="orderAddingForm" method="post" autocomplete="off">
 	<table class="table table-condensed addingTab">

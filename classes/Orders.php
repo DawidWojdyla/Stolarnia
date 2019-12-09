@@ -350,7 +350,7 @@ class Orders
 		}
 	}
 	
-	function showOrderListForShop(){
+	function showOrderList(){
 		$orderLists = array();
 		//funkcja odpowiedzialna za wyświetlenie listy zleceń
 		$this->setOrderListPeriod();
@@ -360,6 +360,12 @@ class Orders
 		
 		include 'scripts/orderListForShopScripts.php';
 		include 'templates/orderListForShop.php';
+	}
+	
+		function showOrderSearching(){
+		
+		include 'scripts/orderSerchingForShopScripts.php';
+		include 'templates/orderSearchingFormForShop.php';
 	}
 }
 ?>

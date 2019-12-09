@@ -1,7 +1,8 @@
+<?php if(!isset($this)) die(); ?>
 <?PHP if(isset($_SESSION['orderListPeriodError'])): ?>
 <div class="text-center inputHeight alert-danger" style="max-width: 300px; margin: 5px auto;"><?=$_SESSION['orderListPeriodError']?></div>
 <?PHP unset($_SESSION['orderListPeriodError']); endif; ?>
-<form class="text-center" id='orderListDatesForm' method="post" action="index.php?action=showOrderListForShop">
+<form class="text-center" id='orderListDatesForm' method="post" action="index.php?action=showOrderList">
 	Termin realizacji od <input class="inputHeight" type="date" id="dateFrom" name="dateFrom" <?PHP if(isset($_SESSION['dateFrom'])):?> value="<?=$_SESSION['dateFrom']?>"<?PHP endif; ?> required/> do <input class="inputHeight" type="date" id="dateTo" name="dateTo" <?PHP if(isset($_SESSION['dateTo'])):?> value="<?=$_SESSION['dateTo']?>"<?PHP endif; ?> required/>
 	<div class="btn btn-default btn-block inputHeight" style=" display: inline; max-width: 250px;" type="button" onclick="sendDatesOfOrderList();">Pokaż</div>
 </form>

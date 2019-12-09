@@ -63,7 +63,6 @@
 		</nav>
 		<div class="container">
 				<div id="mainContentDiv">
-				
 					<?php if($message): ?>
 					<div id="mess" class="message">
 						<?=$message?><?php endif; ?>
@@ -105,41 +104,66 @@
 										break;
 								endswitch;
 								break;
-							case 'showOrderListForShop' :
-								switch($joinery->showOrderListForShop()):
-									case NO_PERMISSION:
-										$joinery->setMessage('Brak uprawnień.');
-										header('Location:index.php?action=showMain');
-										return;
-									case SERVER_ERROR:
-										$joinery->setMessage('Błąd serwera!');
-										header('Location:index.php?action=showMain');
-										return;
-									default:
-										break;
-								endswitch;
-								break;
-							case 'showOrderListForSaw' :
-								switch($joinery->showOrderListForSaw()):
-									case NO_PERMISSION:
-										$joinery->setMessage('Brak uprawnień.');
-										header('Location:index.php?action=showMain');
-										return;
-									case SERVER_ERROR:
-										$joinery->setMessage('Błąd serwera!');
-										header('Location:index.php?action=showMain');
-										return;
-									default:
-										break;
-								endswitch;
-								break;
 							case 'showOrderCuttingForm' :
 								switch($joinery->showOrderCuttingForm()):
 									case NO_PERMISSION:
 										$joinery->setMessage('Brak uprawnień.');
 										header('Location:index.php?action=showMain');
 										return;
-									case FORM_DATA_MISSING:
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
+							case 'showOrderList' :
+								switch($joinery->showOrderList()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
+							case 'showOrderSearchingForm' :
+								switch($joinery->showOrderSearchingForm()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
+							case 'findOrderByDocumentNumber':
+								switch($joinery->showOrderSearchingForm()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								switch($joinery->showSearchResult()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
 									case SERVER_ERROR:
 										$joinery->setMessage('Błąd serwera!');
 										header('Location:index.php?action=showMain');

@@ -1,3 +1,4 @@
+<?php if(!isset($this)) die(); ?>
 <h3 class="text-center">Klienci</h3>
 <table class='table'>
 	<tr>

@@ -5,8 +5,8 @@ class Saw
 	private $sawNumber 	= null;
 	
 	function __construct($dbo, $sawNumber){
-		$this->dbo = $dbo;
-		$this->sawNumber = $sawNumber;
+		$this -> dbo = $dbo;
+		$this -> sawNumber = $sawNumber;
 	}
 	
 	function setTheBoardCuttingState($boardId, $stateId){
@@ -192,7 +192,19 @@ class Saw
 			return SERVER_ERROR;
 		}
 		return ACTION_OK;
+	}
 	
+	function findOrderByDocumentNumber($documentNumber){
+		$query = $this -> dbo -> prepare ("SELECT `orders`.`id` as orderId, `customers`.`id` as customerId,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `document_number`=:documentNumber");
+		$query -> bindValue(':documentNumber', $documentNumber, PDO::PARAM_STR);
+		if(!$query->execute()){
+			return null;
+		}
+		
+		if(!$result = $query->fetch(PDO::FETCH_OBJ)){
+		  return null; 
+		}
+		return $result;
 	}
 	
 	function returnSawWorkers(){
@@ -201,6 +213,13 @@ class Saw
 			$sawWorkers = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $sawWorkers;
+	}
+	function showTheOrder($orderId, $orderTitle){
+		$boards = $this -> returnOrderDetails($orderId);
+		$sawWorkers = $this -> returnSawWorkers();
+		
+		include 'scripts/orderCuttingFormScripts.php';
+		include 'templates/orderCuttingForm.php';
 	}
 	
 	function showOrderList(){
@@ -216,12 +235,41 @@ class Saw
 			return FORM_DATA_MISSING;
 		}
 		$orderId = filter_input(INPUT_POST, 'orderId');
-		
-		$boards = $this -> returnOrderDetails($orderId);
-		$sawWorkers = $this -> returnSawWorkers();
-		
-		include 'scripts/orderCuttingFormScripts.php';
-		include 'templates/orderCuttingForm.php';
+		$orderTitle = filter_input(INPUT_POST, 'orderName');
+		$this -> showTheOrder($orderId, $orderTitle);
+	
 	}
+	
+	function showOrderSearchingForm(){
+		$documentType = filter_input (INPUT_POST, 'documentType');
+		$documentNumber = filter_input (INPUT_POST, 'documentNumber');
+		$documentBranch = filter_input (INPUT_POST, 'documentBranch');
+	
+		include 'scripts/orderSeachringFormForSawScripts.php';
+		include 'templates/orderSeachringFormForSaw.php';
+	}
+	
+	function showSearchResult(){
+		if (!isset($_POST['documentType']) || $_POST['documentType'] =='' || !isset($_POST['documentNumber']) || $_POST['documentNumber'] == "" || !isset($_POST['documentBranch']) || $_POST['documentBranch'] == "" ){
+			return FORM_DATA_MISSING;
+		}
+		
+		$_POST['documentNumber'] = str_pad($_POST['documentNumber'], 6, "0", STR_PAD_LEFT);
+		$document = $_POST['documentType'] . $_POST['documentNumber'] . $_POST['documentBranch'];
+		if($order = $this->findOrderByDocumentNumber($document)){
+			
+			$orderTitle = ($order -> customerId != 1) ? $order->customerName . ' ' . $order->customerSurname : $order->orderComment;
+			$this -> showTheOrder($order->orderId, $orderTitle);
+			//$boards = $this -> returnOrderDetails($order->orderId);
+			//$sawWorkers = $this -> returnSawWorkers();
+		//	include 'scripts/orderCuttingFormScripts.php';
+			//include 'templates/orderCuttingForm.php';
+		}
+		else{
+			include 'templates/noResults.php';
+		}
+	
+	}
+	
 }
 ?>

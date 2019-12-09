@@ -1,3 +1,4 @@
+<?php if(!isset($this)) die(); ?>
 <h3 class="text-center">Dodawanie nowego klienta</h3>
 <form action="index.php?action=addNewCustomer" name="customerAddingForm" id="customerAddingForm" method="post" autocomplete="off">
 	<table class="table table-condensed addingTab">
