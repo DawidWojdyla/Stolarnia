@@ -64,7 +64,7 @@ function resetTheBoardCutting(id){
 	ajaxRequest.always(function(){
 		showMessage(message);
 		setTimeout(function(){
-			closeModal('cutting-modal');}, 1500);
+			closeModal('cutting-modal');}, 1000);
 	});
 }
 
@@ -74,7 +74,7 @@ function sendCuttingComment(id){
 	if(cuttingComment == document.getElementById('c'+id).innerHTML){
 		message = "Uwagi pozostają bez zmian";
 		showMessage(message);
-		setTimeout(function(){closeModal('cutting-modal');}, 1500);
+		setTimeout(function(){closeModal('cutting-modal');}, 1000);
 	}
 	else{
 		var values = $('#addingBoardCommentForm').serialize();
@@ -110,7 +110,7 @@ function sendCuttingComment(id){
 		ajaxRequest.always(function(){
 			showMessage(message);
 			setTimeout(function(){
-				closeModal('cutting-modal');}, 1500);
+				closeModal('cutting-modal');}, 1000);
 		});
 	}
 }
@@ -139,7 +139,6 @@ function sendBoardCuttingForm(id){
 					break;
 				case 'ACTION_FAILED': 
 					message = "Nie udało się zmienić statusu płyty";
-					  //alert('tutaj');
 					break;
 				case 'FORM_DATA_MISSING': 
 					message = "Nie udało się zmienić statusu płyty";

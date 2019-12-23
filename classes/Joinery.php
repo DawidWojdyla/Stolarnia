@@ -134,6 +134,35 @@ class Joinery extends MyDB
 		
 	}
 	
+	function setEdgeBanding(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 3){ return NO_PERMISSION; }
+		$ebMachine = new EdgeBandingMachine($this->dbo);
+		return $ebMachine -> setEdgeBanding();
+		
+	}
+	
+	function resetEdgeBanding(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 3){ return NO_PERMISSION; }
+		$ebMachine = new EdgeBandingMachine($this->dbo);
+		return $ebMachine -> resetEdgeBanding();
+	}
+	
+	function updateEdgeBandingMachineMetters(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 3){ return NO_PERMISSION; }
+		$ebMachine = new EdgeBandingMachine ($this->dbo);
+		return $ebMachine -> updateEdgeBandingMachineMetters();
+	}
+	
+	function updateEdgeBandingComment(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 3){ return NO_PERMISSION; }
+		$ebMachine = new EdgeBandingMachine ($this->dbo);
+		return $ebMachine -> updateEdgeBandingComment();
+	}
+	
 	function setTheBoardComment(){
 		if(!$this->dbo){ return SERVER_ERROR; }
 		if ($this->stand->id != 1 && $this->stand->id != 2){ return NO_PERMISSION; }
@@ -155,6 +184,13 @@ class Joinery extends MyDB
 		return $saw->showOrderCuttingForm();
 	}
 	
+	function showOrderEdgeBandingForm(){
+		if(!$this->dbo) return SERVER_ERROR;
+		if ($this->stand->id != 3 ) { return NO_PERMISSION; }
+		$edgeBandingMachine = new EdgeBandingMachine ($this->dbo);
+		return $edgeBandingMachine->showOrderEdgeBandingForm();
+	}
+	
 	function showOrderList(){
 		if(!$this->dbo){ return SERVER_ERROR; }
 		
@@ -164,8 +200,8 @@ class Joinery extends MyDB
 				$saw = new Saw ($this->dbo, $this->stand->id);
 				return $saw -> showOrderList();
 			case 3: 
-				$edgeBandingMachine = new EdgeBandingMachine($this->dbo);
-				return $edgeBandingMachine -> showOrderList();
+				$eBMachine = new EdgeBandingMachine($this->dbo);
+				return $eBMachine -> showOrderList();
 			case 4: 
 				$orders = new Orders ($this->dbo);
 				return $orders->showOrderList();

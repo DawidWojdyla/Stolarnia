@@ -122,8 +122,62 @@ try{
 					print_r('SERVER_ERROR');
 			endswitch;
 			break;
+		case 'setEdgeBanding':
+			switch ($joinery -> setEdgeBanding()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateEdgeBandingMachineMetters':
+			switch ($joinery -> updateEdgeBandingMachineMetters()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
 		case 'setTheBoardComment':
 			switch ($joinery -> setTheBoardComment()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateEdgeBandingComment':
+			switch ($joinery -> updateEdgeBandingComment()):
 				case ACTION_OK:
 					print_r('ACTION_OK');
 					break;
@@ -153,6 +207,26 @@ try{
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
+					break;
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'resetEdgeBanding':
+			switch ($joinery -> resetEdgeBanding()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+					break;
 				case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');

@@ -132,3 +132,18 @@ input, select, textarea{
 	vertical-align: middle;
 }
 
+.ebtable td:first-child{
+	min-width: 74px;
+}
+
+.boardTitle{
+
+}
+
+.boardTitle:hover{
+	color: black;
+}
+
+.edgeBandingModalTable{
+	margin-bottom: 5px;
+}

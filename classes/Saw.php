@@ -9,12 +9,26 @@ class Saw
 		$this -> sawNumber = $sawNumber;
 	}
 	
-	function setTheBoardCuttingState($boardId, $stateId){
+	function setTheBoardCuttingCompletionDate($boardId){
 		if( !$this->dbo){
 			return SERVER_ERROR;
 		}
-		$query = $this -> dbo -> prepare ("UPDATE `orders_boards` SET `cutting_state_id`=:stateId WHERE `orders_boards`.`id`=:boardId");
-		$query -> bindValue (':stateId', $stateId, PDO::PARAM_INT);
+		
+		$query = $this -> dbo -> prepare ("UPDATE `orders_boards` SET `cutting_completion_date`=NOW() WHERE `orders_boards`.`id`=:boardId");
+		$query -> bindValue (':boardId', $boardId, PDO::PARAM_INT);
+		
+		if (!$query -> execute()){ 
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;	
+	}
+	
+	function resetTheBoardCuttingCompletionDate($boardId){
+		if( !$this->dbo){
+			return SERVER_ERROR;
+		}
+		
+		$query = $this -> dbo -> prepare ("UPDATE `orders_boards` SET `cutting_completion_date`=NULL WHERE `orders_boards`.`id`=:boardId");
 		$query -> bindValue (':boardId', $boardId, PDO::PARAM_INT);
 		
 		if (!$query -> execute()){ 
@@ -75,20 +89,8 @@ class Saw
 		if( !$this->dbo){
 			return SERVER_ERROR;
 		}
-		$query = "DELETE FROM `cutting_comments` WHERE `orders_boards_id`={$boardId}";
-		if (!$this->dbo->exec($query)){ 
-			return ACTION_FAILED;
-		}
-		return ACTION_OK;
-	}
-	
-	function setTheBoardCuttingCompletionDate($boardId){
-		if( !$this->dbo){
-			return SERVER_ERROR;
-		}
-		$query = $this -> dbo -> prepare ("INSERT INTO `cutting_completion_dates` VALUES (:boardId, now())");
+		$query = $this -> dbo -> prepare ("DELETE FROM `cutting_comments` WHERE `orders_boards_id`=:boardId");
 		$query -> bindValue (':boardId', $boardId, PDO::PARAM_INT);
-		
 		if (!$query -> execute()){ 
 			return ACTION_FAILED;
 		}
@@ -97,7 +99,7 @@ class Saw
 	
 	function returnOutstandingOrdersOfTheSaw(){
 		$orders = array();
-		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_state_id`='0') ORDER BY `order_completion_date`")){
+		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL) ORDER BY `order_completion_date`")){
 			$orders = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $orders;
@@ -105,7 +107,7 @@ class Saw
 	
 	function returnOrderDetails($orderId){
 		$orders = array();
-		if($result = $this->dbo->query("SELECT `orders_boards`.`id` as boardId, `boards_signs`.`sign`, `boards_symbols`.`symbol`, `boards_thickness`.`thickness`, `boards_structures`.`structure`, `orders_boards`.`amount`, `orders_boards`.`cutting_metters`, `orders_boards`.`cutting_state_id` as stateId, `cutting_comments`.`comment` as cuttingComment FROM `orders_boards` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=`orders_boards`.`id`, `boards_signs`, `boards_symbols`, `boards_thickness`, `boards_structures` WHERE `orders_boards`.`order_id`={$orderId} AND `orders_boards`.`board_sign_id`=`boards_signs`.`id` AND `orders_boards`.`board_symbol_id`=`boards_symbols`.`id` AND `orders_boards`.`board_thickness_id`=`boards_thickness`.`id` AND `orders_boards`.`board_structure_id`=`boards_structures`.`id`")){
+		if($result = $this->dbo->query("SELECT `orders_boards`.`id` as boardId, `boards_signs`.`sign`, `boards_symbols`.`symbol`, `boards_thickness`.`thickness`, `boards_structures`.`structure`, `orders_boards`.`amount`, `orders_boards`.`cutting_metters`, `orders_boards`.`cutting_completion_date`,`cutting_comments`.`comment` as cuttingComment FROM `orders_boards` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=`orders_boards`.`id`, `boards_signs`, `boards_symbols`, `boards_thickness`, `boards_structures` WHERE `orders_boards`.`order_id`={$orderId} AND `orders_boards`.`board_sign_id`=`boards_signs`.`id` AND `orders_boards`.`board_symbol_id`=`boards_symbols`.`id` AND `orders_boards`.`board_thickness_id`=`boards_thickness`.`id` AND `orders_boards`.`board_structure_id`=`boards_structures`.`id`")){
 			$boards = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $boards;
@@ -140,12 +142,12 @@ class Saw
 			return SERVER_ERROR;
 		}
 		
-		if($this->setTheBoardCuttingState($_POST['boardId'], 0) != ACTION_OK){
+		if($this->resetTheBoardCuttingCompletionDate($_POST['boardId']) != ACTION_OK){
 			return ACTION_FAILED;
 		}
 		
 		if($this->deleteTheBoardCuttingComment($_POST['boardId']) != ACTION_OK){
-			return ACTION_FAILED;
+			return NO_PERMISSION;
 		}
 		
 		if($this->deleteTheBoardCuttingWorkers($_POST['boardId']) != ACTION_OK){
@@ -173,7 +175,7 @@ class Saw
 		if(!$this->dbo->beginTransaction()){
 			return SERVER_ERROR;
 		}
-		if($this -> setTheBoardCuttingState($boardId, 1) != ACTION_OK){
+		if($this -> setTheBoardCuttingCompletionDate($boardId) != ACTION_OK){
 			return ACTION_FAILED;
 		}
 		if($this -> setTheBoardCuttingWorkers($boardId, $_POST['sawWorkers']) != ACTION_OK){
@@ -214,6 +216,7 @@ class Saw
 		}
 		return $sawWorkers;
 	}
+	
 	function showTheOrder($orderId, $orderTitle){
 		$boards = $this -> returnOrderDetails($orderId);
 		$sawWorkers = $this -> returnSawWorkers();
@@ -257,13 +260,8 @@ class Saw
 		$_POST['documentNumber'] = str_pad($_POST['documentNumber'], 6, "0", STR_PAD_LEFT);
 		$document = $_POST['documentType'] . $_POST['documentNumber'] . $_POST['documentBranch'];
 		if($order = $this->findOrderByDocumentNumber($document)){
-			
 			$orderTitle = ($order -> customerId != 1) ? $order->customerName . ' ' . $order->customerSurname : $order->orderComment;
 			$this -> showTheOrder($order->orderId, $orderTitle);
-			//$boards = $this -> returnOrderDetails($order->orderId);
-			//$sawWorkers = $this -> returnSawWorkers();
-		//	include 'scripts/orderCuttingFormScripts.php';
-			//include 'templates/orderCuttingForm.php';
 		}
 		else{
 			include 'templates/noResults.php';

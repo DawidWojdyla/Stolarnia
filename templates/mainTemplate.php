@@ -118,6 +118,20 @@
 										break;
 								endswitch;
 								break;
+							case 'showOrderEdgeBandingForm' :
+								switch($joinery->showOrderEdgeBandingForm()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
 							case 'showOrderList' :
 								switch($joinery->showOrderList()):
 									case NO_PERMISSION:
