@@ -15,13 +15,13 @@
 		<?PHP unset($_SESSION ['customerSurnameError']); endif; ?>
 		</tr>
 		<tr>
-			<td>Nazwisko (nazwa firmy):</td>
+			<td>*Nazwisko (nazwa firmy):</td>
 			<td>
 				<input id='customerSurname' minlength="2" class="inputHeight" type="text" name="customerSurname" required <?PHP if (isset($_SESSION['customerSurname'])): ?>value="<?=$_SESSION['customerSurname']?>"<?PHP unset ($_SESSION['customerSurname']); endif; ?>/>
 			</td>
 		</tr>
 		<tr>
-			<td>Telefon (format xxx-xxx-xxx):</td>
+			<td>*Telefon (format xxx-xxx-xxx):</td>
 			<td>
 				<input id='customerPhone' class="inputHeight" type="tel" name="customerPhone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" required <?PHP if (isset($_SESSION['customerPhone'])): ?>value="<?=$_SESSION['customerPhone']?>"<?PHP unset ($_SESSION['customerPhone']); endif; ?>/>
 			</td>
@@ -38,6 +38,11 @@
 			<td colspan="2">
 				<div class="btn btn-default btn-block" type="button" onclick="sendCustomerAddingForm();">Dodaj klienta</div>
 				<button id="sendingButton" type="submit" style="display:none;">Dodaj zlecenie</buton>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+			* - pola obowiązkowe
 			</td>
 		</tr>
 	</table>

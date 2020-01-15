@@ -8,18 +8,12 @@
 	<tr class="orderLink" id='<?=$order->orderId?>' onclick="carryOutTheOrder('<?=$order->orderId?>');">
 		<td id="name<?=$order->orderId?>">
 			<?PHP if($order->customer_id != 1): ?>
-			<?=$order->customerName?> <?=$order->customerSurname?>
+			<?=$order->customerName?> <?=$order->customerSurname?><div id="phone<?=$order->orderId?>" style="display: none;"><?=$order->phone?></div>
 			<?PHP else: ?>
 			<?=$order->orderComment?>
 			<?PHP endif;?>
 		</td>
-		<td id="document<?=$order->orderId?>">
-			<?PHP if ($order->document_number): ?>
-			<?=$order->document_number?>
-			<?PHP else: ?>
-			Brak
-			<?PHP endif; ?>
-		</td>
+		<td id="document<?=$order->orderId?>"><?PHP if ($order->document_number): ?><?=$order->document_number?><?PHP else: ?>Brak<?PHP endif; ?></td>
 	</tr>
 <?PHP endforeach; ?>	
 </table>

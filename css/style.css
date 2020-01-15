@@ -147,3 +147,9 @@ input, select, textarea{
 .edgeBandingModalTable{
 	margin-bottom: 5px;
 }
+
+#sms{
+	cursor: pointer;
+	font-size: 16px;
+	text-align: center;
+}

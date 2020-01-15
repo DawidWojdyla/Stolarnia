@@ -1,4 +1,6 @@
 <script>
+var isEdgeBanding = false;
+var itemsToDo = 0;
 
 function showCuttingModal(boardId){
 	if(document.getElementById('s'+boardId).innerHTML != 'pocięta'){ 
@@ -43,6 +45,7 @@ function resetTheBoardCutting(id){
 				message = "Zresetowano cięcie płyty";
 				document.getElementById('s'+id).innerHTML = "niepocięta";
 				document.getElementById('c'+id).innerHTML = "";
+				itemsToDo++;
 				break;
 			case 'FORM_DATA_MISSING': 
 			case 'ACTION_FAILED': 
@@ -136,6 +139,7 @@ function sendBoardCuttingForm(id){
 					message = "Zmieniono status płyty";
 					document.getElementById('s'+id).innerHTML = "pocięta";
 					document.getElementById('c'+id).innerHTML = cuttingComment;
+					itemsToDo--;
 					break;
 				case 'ACTION_FAILED': 
 					message = "Nie udało się zmienić statusu płyty";
@@ -162,5 +166,17 @@ function sendBoardCuttingForm(id){
 			closeModal('cutting-modal');}, 1500);
 		});
 	}
+}
+
+function sendSMS(){
+	if(itemsToDo > 0 ){
+		document.getElementById('cutting-modal-body').innerHTML = "<h5>Nie wszystkie pozycje są oznaczone jako pocięte.</br>Czy mimo wszystko chcesz wysłać SMSa?</h5><div class='btn btn-default btn-block' onclick='javascript:location.href=\"sms:+48<?=$phone?>?body=ITS%20Rzeszów.%20Państwa%20zamówienie%20zostało%20zrealizowane.%20Zapraszamy%20po%20odbiór%20od%20poniedziałku%20do%20piątku%20w%20godzinach%207-17.%20Pozdrawiamy.\"' data-dismiss='modal'>Tak</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div>";
+		$('#cutting-modal').modal('show');
+	}
+	else{
+		location.href = "sms:+48<?=$phone?>?body=ITS%20Rzeszów.%20Państwa%20zamówienie%20zostało%20zrealizowane.%20Zapraszamy%20po%20odbiór%20od%20poniedziałku%20do%20piątku%20w%20godzinach%207-17.%20Pozdrawiamy.";
+		location.href="index.php?action=showOrderList";
+	}
+	
 }
 </script>

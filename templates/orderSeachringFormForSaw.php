@@ -1,9 +1,9 @@
 <?php if(!isset($this)) die(); ?>
 <h3 class="text-center">Znajdź zlecenie: </h3>
 <form action="index.php?action=findOrderByDocumentNumber" name="orderSearchingForm" id="orderSearchingForm" method="post" autocomplete="off">
-	<table class="table table-condensed addingTab">
+	<table class="table table-condensed">
 		<tr>
-			<td>Numer dokumentu:</td>
+			<td>Nr dokumentu:</td>
 			<td>
 				<div style="min-width: 160px;" class="fullWidth">
 					<select id='documentTypeSelect' class="inputHeight" name="documentType">
