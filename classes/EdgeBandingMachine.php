@@ -211,7 +211,7 @@ class EdgeBandingMachine
 	}
 	
 	function updateEdgeBandingMachineMetters(){
-		if(!isset($_POST['edgeBandingId']) || $_POST['edgeBandingId'] == '' || ((int)($_POST['edgeBandingId'])) < 1 || !isset($_POST['edgeBandingMachineMetters']) || $_POST['edgeBandingMachineMetters'] == '' || (float)($_POST['edgeBandingMachineMetters']) < 0.01){
+		if(!isset($_POST['edgeBandingId']) || $_POST['edgeBandingId'] == '' || ((int)($_POST['edgeBandingId'])) < 1 || !isset($_POST['edgeBandingMachineMetters']) || $_POST['edgeBandingMachineMetters'] == '' || (float)($_POST['edgeBandingMachineMetters']) < 0.00){
 			return FORM_DATA_MISSING;
 		}
 		
@@ -219,7 +219,7 @@ class EdgeBandingMachine
 	}
 	
 	function setEdgeBanding(){
-		if(!isset($_POST['edgeBandingId']) || $_POST['edgeBandingId'] == '' || ((int)($_POST['edgeBandingId'])) < 1 || !isset($_POST['edgeBandingMachineMetters']) || $_POST['edgeBandingMachineMetters'] == '' || (float)($_POST['edgeBandingMachineMetters']) < 0.01 || !isset($_POST['workers'])){
+		if(!isset($_POST['edgeBandingId']) || $_POST['edgeBandingId'] == '' || ((int)($_POST['edgeBandingId'])) < 1 || !isset($_POST['edgeBandingMachineMetters']) || $_POST['edgeBandingMachineMetters'] == '' || (float)($_POST['edgeBandingMachineMetters']) < 0.00 || !isset($_POST['workers'])){
 			return FORM_DATA_MISSING;
 		}
 		$edgeBandingId = filter_input(INPUT_POST, 'edgeBandingId');

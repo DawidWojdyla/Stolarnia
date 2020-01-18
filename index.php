@@ -5,7 +5,7 @@ session_start();
 
 try{
 	$joinery = new Joinery("localhost", "root", "", "joinery");
-	$action = 'showMain';
+	$action = 'showLoginForm';
 	if (isset($_GET['action'])) {
 		$action = $_GET['action'];
 	}
@@ -234,7 +234,7 @@ try{
 			break;
 		case 'logout':
 			$joinery->logout();
-			header('Location:index.php?action=showMain');
+			header('Location:index.php?action=showLoginForm');
 			break;
 		default:
 			include 'templates/mainTemplate.php';

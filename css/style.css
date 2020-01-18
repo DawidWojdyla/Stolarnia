@@ -131,17 +131,35 @@ input, select, textarea{
 	display: inline-block;
 	vertical-align: middle;
 }
+.ebtable {
+	margin-bottom: 2px;
+	font-size: 15px;
+}
 
 .ebtable td:first-child{
 	min-width: 74px;
 }
-
-.boardTitle{
-
+.ebtable tr:first-child {
+	
+}
+.ebtable{
+}
+.ebtable tbody > tr > th{
+	font-size: 13px;
+	border-top: none;
+	padding: 1.5px;
+	border-bottom: 2px solid black;
+}
+.cutFormTable{
+	font-size: 15px;
+	border-collapse:separate;
+	border-spacing:0 5px; 
 }
 
-.boardTitle:hover{
-	color: black;
+.boardTitle{
+	margin: 2px auto;
+	font-size: 20px;
+	padding: 10px;
 }
 
 .edgeBandingModalTable{

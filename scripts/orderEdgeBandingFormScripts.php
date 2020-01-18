@@ -1,23 +1,43 @@
 <script>
 
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover({sanitize: false, html : true});   
+});
+
 function showBoardDetails(id){
 	if(document.getElementById('table'+id).style.display == 'none'){
+		$('#info'+id).fadeIn("fast");
 		$('#table'+id).fadeIn("fast");
-	//document.getElementById('table'+id).style.display = "table";
 	}
 	else{
-		//document.getElementById('table'+id).style.display = "none";
+		$('#info'+id).fadeOut("fast");
 		$('#table'+id).fadeOut("fast");
 	}
 }
 
+function showMoreInfo(id){
+	var info = document.getElementsByClassName(id);
+	for (var i = 0; i < info.length; i++) {
+		if(info[i].style.display == 'none'){
+			info[i].style.display = "table-row";
+		}
+		else{
+			info[i].style.display = 'none';
+		}
+	}
+}
+
+function showAddingddEdgeBandingForm(edgeBandingId){
+		document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Dodaj oklejanie</h4><form id='edgeBandingForm' method='post'><input type='hidden' name='edgeBandingId' value="+edgeBandingId+"><table class='table table-condensed edgeBandingModalTable'><tr><td colspan='2'>Maszyna [mb]:<div><input class='text-right' type='number' min='0.01' max='10000' step='0.01' id='newM"+edgeBandingId+"' name='edgeBandingMachineMetters' required/></div></td></tr><tr><td colspan='2'>Pracownicy:<div><select class='inputHeight' id='workers' name='workers[]' multiple required><?PHP foreach ($workers as $worker): ?><option value='<?=$worker->id?>'><?=$worker->name?></option><?PHP endforeach; ?></select></div></td></tr><tr><td colspan='2'><div>Uwagi (opcjonalnie)</div><div><textarea id='newC"+edgeBandingId+"' name='edgeBandingComment' rows='3' cols='25' maxlength='250' form='edgeBandingForm'>"+document.getElementById('c'+edgeBandingId).innerHTML+"</textarea></div></td></tr><tr><td colspan='2'><div class='btn btn-default btn-block' onclick='sendEdgeBandingForm("+edgeBandingId+");'>Zapisz</div><button id='sendingButton' type='submit' style='display:none;'></button><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div></td></tr></table></form>";
+}
+
 function showEdgeBandingModal(edgeBandingId){
 	if(document.getElementById('m'+edgeBandingId).innerHTML == '0'){ 
+		document.getElementById('edgeBandingModalBody').innerHTML ="<div class='btn btn-default btn-block' onclick='showAddingddEdgeBandingForm("+edgeBandingId+");'>Dodaj oklejanie</div><div class='btn btn-default btn-block' onclick='updateEdgeBandingComment("+edgeBandingId+");'>Dodaj/edytuj uwagi</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div>";
 	
-		document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Dodaj oklejanie</h4><form id='edgeBandingForm' method='post'><input type='hidden' name='edgeBandingId' value="+edgeBandingId+"><table class='table table-condensed edgeBandingModalTable'><tr><td colspan='2'>Maszyna -> metry:<div><input class='text-right' type='number' min='0.1' max='10000' step='0.01' id='newM"+edgeBandingId+"' name='edgeBandingMachineMetters' required/></div></td></tr><tr><td colspan='2'>Pracownicy:<div><select class='inputHeight' id='workers' name='workers[]' multiple required><?PHP foreach ($workers as $worker): ?><option value='<?=$worker->id?>'><?=$worker->name?></option><?PHP endforeach; ?></select></div></td></tr><tr><td colspan='2'><div>Uwagi (opcjonalnie)</div><div><textarea id='newC"+edgeBandingId+"' name='edgeBandingComment' rows='3' cols='25' maxlength='250' form='edgeBandingForm'></textarea></div></td></tr><tr><td colspan='2'><div class='btn btn-default btn-block' onclick='sendEdgeBandingForm("+edgeBandingId+");'>Zapisz</div><button id='sendingButton' type='submit' style='display:none;'></button><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div></td></tr></table></form>";
 	}
 	else{
-		document.getElementById('edgeBandingModalBody').innerHTML ="<div class='btn btn-default btn-block' onclick='showResetEdgeBandingForm("+edgeBandingId+");'>Resetuj oklejanie</div><div class='btn btn-default btn-block' onclick='updateMachineMetters("+edgeBandingId+");'>Edytuj metry</div><div class='btn btn-default btn-block' onclick='updateEdgeBandingComment("+edgeBandingId+");'>Dodaj/edytuj uwagi</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div>"
+		document.getElementById('edgeBandingModalBody').innerHTML ="<div class='btn btn-default btn-block' onclick='showResetEdgeBandingForm("+edgeBandingId+");'>Resetuj oklejanie</div><div class='btn btn-default btn-block' onclick='updateMachineMetters("+edgeBandingId+");'>Edytuj metry</div><div class='btn btn-default btn-block' onclick='updateEdgeBandingComment("+edgeBandingId+");'>Dodaj/edytuj uwagi</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div>";
 	}
 	$('#edgeBandingModal').modal('show');
 }
@@ -27,7 +47,7 @@ function showResetEdgeBandingForm(id){
 }
 
 function updateMachineMetters(id){
-	document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Maszyna -> metry oklejania:</h4><form id='updatingMachineMettersForm'><input type='hidden' name='edgeBandingId' value="+id+"><div><input type='number' class='text-right' min='0.1' max='10000' step='0.01' id='newM"+id+"' name='edgeBandingMachineMetters' value='"+document.getElementById('m'+id).innerHTML+"'/></div></form></br><div class='btn btn-default btn-block' onclick='sendEdgeBandingMachineMetters("+id+");'>Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div>";
+	document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Maszyna [mb]</h4><form id='updatingMachineMettersForm'><input type='hidden' name='edgeBandingId' value="+id+"><div><input type='number' class='text-right' min='0.01' max='10000' step='0.01' id='newM"+id+"' name='edgeBandingMachineMetters' value='"+document.getElementById('m'+id).innerHTML+"' required/></div></form></br><div class='btn btn-default btn-block' onclick='sendEdgeBandingMachineMetters("+id+");'>Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div>";
 }
 
 function updateEdgeBandingComment(id){
@@ -56,6 +76,7 @@ function resetEdgeBanding(id){
 		switch(response){
 			case 'ACTION_OK': 
 				document.getElementById('m'+id).innerHTML = '0';
+				document.getElementById('c'+id).innerHTML = '';
 				message = "Zresetowano oklejanie";
 				break;
 			case 'FORM_DATA_MISSING': 
