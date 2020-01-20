@@ -44,8 +44,8 @@
 		<tr>
 			<td>Wybierz klienta:</td>
 			<td>
-				<select id='customerIdSelect' class="inputHeight" name="customerId" required onchange="checkIfOrderCommentIsRequired();">
-					<option value='1'>Inny (dane w uwagach)</option>
+				<select id='customerIdSelect' class="inputHeight" name="customerId" required onchange="checkIfCustomerDataRequired();">
+					<option value='1'>Inny (dane poniżej)</option>
 					<?PHP foreach ($customerList as $customer):?>
 					<option  value="<?=$customer->id?>" 
 						<?PHP if (isset($_SESSION['customerId']) && $_SESSION['customerId'] == $customer->id):?>
@@ -54,6 +54,19 @@
 						><?=$customer->surname?> <?=$customer->name?> (<?=$customer->phone?>)</option>
 					<?PHP endforeach; ?>
 				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>Nazwa klienta:</td>
+			<td><input minlength="2"  id='customerName' class="inputHeight" type="text" name="customerName" maxlength="25" <?PHP if (isset($_SESSION['customerName'])): ?>value="<?=$_SESSION['customerName']?>"<?PHP unset ($_SESSION['customerName']); endif; ?>/></td>
+		</tr>
+		<?PHP if(isset($_SESSION['customerPhoneError'])):?>
+		<tr class="danger"><td colspan="2"><div class="error"><div><?=$_SESSION['customerPhoneError']?></div></div></td></tr>
+		<?PHP unset($_SESSION['customerPhoneError']); endif; ?>
+		<tr>
+			<td>Numer tel. (9 cyfr):</td>
+			<td>
+				<input class="inputHeight" type="tel" id='customerPhone' name="customerPhone" pattern="[1-9]{1}[0-9]{8}" minlength="9" maxlength="9" required <?PHP if (isset($_SESSION['customerPhone'])): ?>value="<?=$_SESSION['customerPhone']?>"<?PHP unset ($_SESSION['customerPhone']); endif; ?>/>
 			</td>
 		</tr>
 		<?PHP if(isset($_SESSION['sawNumberError'])):?>
@@ -121,7 +134,7 @@
 				Uwagi:
 			</td>
 			<td>
-				<textarea id="orderCommentTextarea" name="orderComment" rows="3" cols="25" maxlength="250" form="orderAddingForm" required><?PHP if (isset($_SESSION['orderComment'])): ?><?=$_SESSION['orderComment']?><?PHP unset ($_SESSION['orderComment']);?><?PHP endif; ?></textarea>
+				<textarea id="orderCommentTextarea" name="orderComment" rows="3" cols="25" maxlength="250" form="orderAddingForm"><?PHP if (isset($_SESSION['orderComment'])): ?><?=$_SESSION['orderComment']?><?PHP unset ($_SESSION['orderComment']);?><?PHP endif; ?></textarea>
 			</td>
 		</tr>
 		<?PHP if (isset($_SESSION['positions'])): $edgeBandingNumber = 0; $positionNumber = 0;?>

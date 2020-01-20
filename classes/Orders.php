@@ -49,6 +49,16 @@ class Orders
 			return SERVER_ERROR;
 		}
 		
+		if($_POST['customerId'] == '1'){
+			$customerName = filter_input(INPUT_POST, 'customerName');
+			$query  = $this->dbo -> prepare ("INSERT INTO `customers_temp` VALUES (@orderId, :customerName, :customerPhone)");
+			$query -> bindValue (':customerName',$customerName, PDO::PARAM_STR);
+			$query -> bindValue (':customerPhone', $_POST['customerPhone'], PDO::PARAM_STR);
+			if (!$query -> execute()){
+				return SERVER_ERROR;
+			}
+		}
+		
 		if($_POST['orderComment'] != ''){
 			$query  = $this->dbo -> prepare ("INSERT INTO `orders_comments` VALUES (@orderId, :comment)");
 			$query -> bindValue (':comment', $_POST['orderComment'], PDO::PARAM_STR);
@@ -109,6 +119,8 @@ class Orders
 		unset($_SESSION['documentBranch']);
 		unset($_SESSION['documentNumber']);
 		unset($_SESSION['customerId']);
+		unset($_SESSION['customerPhone']);
+		unset($_SESSION['customerName']);
 		unset($_SESSION['sellerId']);
 		unset($_SESSION['sawNumber']);
 		unset($_SESSION['admissionDate']);
@@ -133,7 +145,9 @@ class Orders
 		
 
 		//NUMER KLIENTA
-		$isAllOk = $checker->checkCustomerId();
+		$isAllOk = $checker->checkCustomerData();
+		$_SESSION['customerPhone'] = filter_input(INPUT_POST, 'customerPhone');
+		$_SESSION['customerName'] = filter_input(INPUT_POST, 'customerName');
 		
 		//SPRZEDAWCA
 		if ($_POST['sellerId'] == '' || (int)$_POST['sellerId'] < 1){
@@ -165,7 +179,6 @@ class Orders
 		//PŁYTY - CIĘCIA - KLEJENIA
 		$_SESSION['positions'] = $_POST['positions'];
 		
-		//$_SESSION['edgeBandingAmount'] = 0;
 		
 		foreach($_POST['positions'] as $position){
 			foreach($position as $key => $value){
@@ -284,7 +297,7 @@ class Orders
 	
 	function returnNotCutOrdersOfPeriod($dateFrom, $dateTo){
 		$orders = array();
-		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'niepocięte' as state FROM `orders` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL) ORDER BY `order_completion_date`")){
+		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'niepocięte' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL) ORDER BY `order_completion_date`")){
 			$orders = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $orders;
@@ -292,7 +305,7 @@ class Orders
 	
 	function returnCutButNotCompletedOrdersOfPeriod($dateFrom, $dateTo){
 		$orders = array();
-		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'pocięte' as state FROM `orders` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` WHERE `orders_boards`.`cutting_completion_date` IS NULL) AND `orders`.`id` IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `edge_banding`.`edge_banding_metters_machine`='0') ORDER BY `order_completion_date`")){
+		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'pocięte' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` WHERE `orders_boards`.`cutting_completion_date` IS NULL) AND `orders`.`id` IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `edge_banding`.`edge_banding_metters_machine`='0') ORDER BY `order_completion_date`")){
 			$orders = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $orders;
@@ -300,7 +313,7 @@ class Orders
 	
 	function returnCompletedOrdersOfPeriod($dateFrom, $dateTo){
 		$orders = array();
-		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'gotowe' as state FROM `orders` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `cutting_completion_date` IS NULL OR `edge_banding`.`edge_banding_metters_machine`='0') ORDER BY `order_completion_date`")){
+		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'gotowe' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `cutting_completion_date` IS NULL OR `edge_banding`.`edge_banding_metters_machine`='0') ORDER BY `order_completion_date`")){
 			$orders = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $orders;
@@ -336,10 +349,12 @@ class Orders
 	
 	function setOrderListPeriod(){
 		$today = date('Y-m-d');
-		$threeDaysAgo = date('Y-m-d', strtotime($today. '-3 days'));
-		$dayAfterTomorrow = date('Y-m-d', strtotime($today. '+2 days'));
-		$_SESSION['dateFrom'] = $threeDaysAgo;
-		$_SESSION['dateTo'] = $dayAfterTomorrow;
+		//$threeDaysAgo = date('Y-m-d', strtotime($today. '-3 days'));
+		//$dayAfterTomorrow = date('Y-m-d', strtotime($today. '+2 days'));
+		$fiveDaysAgo = date('Y-m-d', strtotime($today. '-3 days'));
+		$inFiveDays = date('Y-m-d', strtotime($today. '+2 days'));
+		$_SESSION['dateFrom'] = $fiveDaysAgo;
+		$_SESSION['dateTo'] = $inFiveDays;
 		
 		if(isset($_POST['dateFrom']) && $_POST['dateFrom'] != '' && isset($_POST['dateTo']) && $_POST['dateTo'] != ''){
 			$checker = new Checker();

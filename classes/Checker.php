@@ -13,17 +13,22 @@ class Checker
 		return false;
 	}
 	
-	function checkCustomerId(){
+	function checkCustomerData(){
 		if (!isset($_POST['customerId']) || $_POST['customerId'] == ''){
 			$_SESSION['customerIdError'] = "Musisz wybrać klienta!";
 			return false;
 		}
 		$_SESSION['customerId'] = $_POST['customerId'];
 		if ($_POST['customerId'] == '1'){
-			if (!isset($_POST['orderComment']) || $_POST['orderComment'] == ''){
-				$_SESSION['orderCommentError'] = "W komentarzu podaj dane klienta";
+			if (!isset($_POST['customerPhone']) || $_POST['customerPhone'] == ''){
+				$_SESSION['customerPhoneError'] = "Podaj numer telefonu klienta";
 				return false;
 			}
+			if(!preg_match("/^[1-9]{1}[0-9]{8}$/", $_POST['customerPhone'])){
+				$_SESSION['customerPhoneError'] = 'Format numeru telefonu jest nieprawidłowy.';
+				return false;
+			}
+			//$_POST['customerName'] = filter_input(INPUT_POST, 'customerName');
 			return true;
 		}
 		if ((int)($_POST['customerId']) <1){

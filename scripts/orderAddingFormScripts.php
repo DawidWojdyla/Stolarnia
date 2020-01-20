@@ -12,12 +12,17 @@ function checkIfDocumentNumberIsRequired(){
 	}
 }
 
-function checkIfOrderCommentIsRequired(){
+function checkIfCustomerDataRequired(){
 		if (document.getElementById('customerIdSelect').value == '1'){
-		document.getElementById('orderCommentTextarea').required = true;
+		document.getElementById('customerPhone').disabled = false;
+		document.getElementById('customerName').disabled = false;
+
 	}
 	else{
-		document.getElementById('orderCommentTextarea').required = false;
+		//document.getElementById('customerPhone').value = "";
+		//document.getElementById('customerName').value = "";
+		document.getElementById('customerPhone').disabled = true;
+		document.getElementById('customerName').disabled = true;
 	}
 }
 

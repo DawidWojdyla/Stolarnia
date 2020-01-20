@@ -25,7 +25,7 @@
 			<?PHP if($order->customer_id != 1): ?>
 			<?=$order->customerName?> <?=$order->customerSurname?> (<?=$order->customerPhone?>)
 			<?PHP else: ?>
-			<?=$order->orderComment?>
+			<?=$order->customerTempName?> (<?=$order->customerTempPhone?>)
 			<?PHP endif;?>
 		</td>
 		<td>

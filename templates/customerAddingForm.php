@@ -1,5 +1,5 @@
 <?php if(!isset($this)) die(); ?>
-<h3 class="text-center">Dodawanie nowego klienta</h3>
+<h3 class="text-center">Nowy klient</h3>
 <form action="index.php?action=addNewCustomer" name="customerAddingForm" id="customerAddingForm" method="post" autocomplete="off">
 	<table class="table table-condensed addingTab">
 		<?PHP if (isset($_SESSION ['customerNameError'])):?>
@@ -21,9 +21,9 @@
 			</td>
 		</tr>
 		<tr>
-			<td>*Telefon (format xxx-xxx-xxx):</td>
+			<td>*Numer tel. (9 cyfr):</td>
 			<td>
-				<input id='customerPhone' class="inputHeight" type="tel" name="customerPhone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" required <?PHP if (isset($_SESSION['customerPhone'])): ?>value="<?=$_SESSION['customerPhone']?>"<?PHP unset ($_SESSION['customerPhone']); endif; ?>/>
+				<input id='customerPhone' class="inputHeight" type="tel" name="customerPhone" pattern="[1-9]{1}[0-9]{8}" minlength="9" maxlength="9" required <?PHP if (isset($_SESSION['customerPhone'])): ?>value="<?=$_SESSION['customerPhone']?>"<?PHP unset ($_SESSION['customerPhone']); endif; ?>/>
 			</td>
 		</tr>
 		<tr>
@@ -36,8 +36,7 @@
 		</tr>
 		<tr>
 			<td colspan="2">
-				<div class="btn btn-default btn-block" type="button" onclick="sendCustomerAddingForm();">Dodaj klienta</div>
-				<button id="sendingButton" type="submit" style="display:none;">Dodaj zlecenie</buton>
+				<button class="btn btn-default btn-block" type="submit"><span class="glyphicon glyphicon-plus"></span> Dodaj klienta</div>
 			</td>
 		</tr>
 		<tr>

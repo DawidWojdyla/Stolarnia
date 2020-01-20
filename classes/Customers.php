@@ -84,7 +84,7 @@ class Customers
 			return FORM_DATA_MISSING;
 		}
 
-		if(!preg_match("/^[0-9]{3}-[0-9]{3}-[0-9]{3}$/", $customerPhone)){
+		if(!preg_match("/^[1-9]{1}[0-9]{8}$/", $customerPhone)){
 			$_SESSION['customerPhoneError'] = 'Format numeru telefonu jest nieprawid³owy.';
 			return FORM_DATA_MISSING;
 		}
