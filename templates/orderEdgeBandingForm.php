@@ -1,8 +1,8 @@
 <?php if(!isset($this)) die(); ?>
-<h3 class="text-center"><?=$orderTitle?></h3>
+<div class="orderTitle"><div><?=$documentNumber?></div><div><?=$customerName?></div></div>
 	<?PHP foreach($boards as $board): ?>
 	<div class='btn btn-default btn-block boardTitle'' id='board<?=$board['boardId']?>' onclick="showBoardDetails('<?=$board['boardId']?>')"><?=$board['boardName']?></div>
-	<div class="text-right" id="info<?=$board['boardId']?>" style="display:none;"><span class="glyphicon glyphicon-info-sign pointer" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="left" title="Informacje o cięciu" data-content="<table><tr><td>ilość:</td><td colspan='3'><?=($board['boardAmount']+0)?> szt.</td></tr><tr><td>cięcie:</td><td  colspan='3'><?=($board['boardCuttingMetters']+0)?> mb</td></tr><tr><td>pilarze:</td><td colspan='3'><?PHP foreach($board['cuttingWorkers'] as $worker): ?><?=$worker?><?PHP endforeach; ?></td></tr><?PHP if($board['boardCuttingComment']): ?><tr><td>uwagi:</td><td colspan='3'><?=$board['boardCuttingComment']?><?PHP endif; ?></td></tr></table>"></span></div>
+	<div class="text-right" id="info<?=$board['boardId']?>" style="display:none;"><span class="glyphicon glyphicon-scissors pointer" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="left" data-content="<table class='table table-condensed'><tr><th style='border-top:none;' colspan='4' class='text-center'><span style='font-size: 20px;' class='glyphicon glyphicon-scissors'></span></th></tr><tr><td><span class='glyphicon glyphicon-tasks'></span></td><td colspan='3'><?=($board['boardAmount']+0)?> arkusze / <?=($board['boardCuttingMetters']+0)?> mb cięcia</td></tr><tr><td style='height: 100%; vertical-align: middle;'><span class='glyphicon glyphicon-user'></span></td><td colspan='3'><?PHP foreach($board['cuttingWorkers'] as $worker): ?><div><?=$worker?></div><?PHP endforeach; ?></td></tr><tr><td><span class='glyphicon glyphicon-calendar'></span></td><td colspan='3'><?=($board['boardCuttingDate'])?> (<?=($board['boardCuttingTime'])?>)</td></tr><?PHP if($board['boardCuttingComment']): ?><tr><td><span class='glyphicon glyphicon-edit'></span></td><td colspan='3'><?=$board['boardCuttingComment']?><?PHP endif; ?></td></tr></table>"></span></div>
 	<table style="display:none;" id="table<?=$board['boardId']?>" class="table table-condensed ebtable">
 	<th>obrzeże</th><th>naklejki</th><th><div>wz</div><div>[mb]</div></th><th><div>maszyna</div><div>[mb]</div></th>
 	<?PHP foreach($board['edgeBanding'] as $edgeBanding): ?>
@@ -23,7 +23,7 @@
 	<?PHP endforeach; ?>
 	<?PHP if($phone != ""): ?>
 	</br>
-	<div id='sms' class='btn btn-default btn-block' onclick="location.href='sms:+48<?=$phone?>?body=ITS%20Rzeszów.%20Państwa%20zamówienie%20zostało%20zrealizowane.%20Zapraszamy%20po%20odbiór%20od%20poniedziałku%20do%20piątku%20w%20godzinach%207-17.%20Pozdrawiamy.';location.href='index.php?action=showOrderList';">Wyślij SMS</div>
+	<div id='sms' class='btn btn-default btn-block' onclick="sendSMS();"><span class="glyphicon glyphicon-earphone"></span> Wyślij SMS</div>
 	<?PHP endif; ?>
 	
 <div class="modal fade" id="edgeBandingModal" role="dialog">

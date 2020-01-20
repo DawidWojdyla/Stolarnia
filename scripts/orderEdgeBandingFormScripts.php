@@ -4,6 +4,12 @@ $(document).ready(function(){
     $('[data-toggle="popover"]').popover({sanitize: false, html : true});   
 });
 
+function sendSMS(){
+	location.href = 'sms:+48<?=$phone?>?body=ITS%20Rzeszów.%20Państwa%20zamówienie%20zostało%20zrealizowane.%20Zapraszamy%20po%20odbiór%20od%20poniedziałku%20do%20piątku%20w%20godzinach%207-17.%20Pozdrawiamy.';
+	document.getElementById('edgeBandingModalBody').innerHTML = "<div class='btn btn-default btn-block' onclick='window.location.href=\"index.php?action=showOrderList\"'><span class=\"glyphicon glyphicon-list-alt\"></span> Lista zleceń</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-menu-left\"> Powrót</div>";
+	$('#edgeBandingModal').modal('show');
+}
+
 function showBoardDetails(id){
 	if(document.getElementById('table'+id).style.display == 'none'){
 		$('#info'+id).fadeIn("fast");
@@ -33,11 +39,11 @@ function showAddingddEdgeBandingForm(edgeBandingId){
 
 function showEdgeBandingModal(edgeBandingId){
 	if(document.getElementById('m'+edgeBandingId).innerHTML == '0'){ 
-		document.getElementById('edgeBandingModalBody').innerHTML ="<div class='btn btn-default btn-block' onclick='showAddingddEdgeBandingForm("+edgeBandingId+");'>Dodaj oklejanie</div><div class='btn btn-default btn-block' onclick='updateEdgeBandingComment("+edgeBandingId+");'>Dodaj/edytuj uwagi</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div>";
+		document.getElementById('edgeBandingModalBody').innerHTML ="<div class='btn btn-default btn-block' onclick='showAddingddEdgeBandingForm("+edgeBandingId+");'><span class=\"glyphicon glyphicon-plus\"></span> Dodaj oklejanie</div><div class='btn btn-default btn-block' onclick='updateEdgeBandingComment("+edgeBandingId+");'><span class=\"glyphicon glyphicon-edit\"></span> Dodaj/edytuj uwagi</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class='glyphicon glyphicon-remove'></span> Anuluj</div>";
 	
 	}
 	else{
-		document.getElementById('edgeBandingModalBody').innerHTML ="<div class='btn btn-default btn-block' onclick='showResetEdgeBandingForm("+edgeBandingId+");'>Resetuj oklejanie</div><div class='btn btn-default btn-block' onclick='updateMachineMetters("+edgeBandingId+");'>Edytuj metry</div><div class='btn btn-default btn-block' onclick='updateEdgeBandingComment("+edgeBandingId+");'>Dodaj/edytuj uwagi</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div>";
+		document.getElementById('edgeBandingModalBody').innerHTML ="<div class='btn btn-default btn-block' onclick='showResetEdgeBandingForm("+edgeBandingId+");'>Resetuj oklejanie</div><div class='btn btn-default btn-block' onclick='updateMachineMetters("+edgeBandingId+");'>Edytuj metry</div><div class='btn btn-default btn-block' onclick='updateEdgeBandingComment("+edgeBandingId+");'>Dodaj/edytuj uwagi</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class='glyphicon glyphicon-remove'></span>Anuluj</div>";
 	}
 	$('#edgeBandingModal').modal('show');
 }

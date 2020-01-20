@@ -157,7 +157,7 @@ input, select, textarea{
 }
 
 .boardTitle{
-	margin: 2px auto;
+	margin-top: 8px;
 	font-size: 20px;
 	padding: 10px;
 }
@@ -170,4 +170,9 @@ input, select, textarea{
 	cursor: pointer;
 	font-size: 16px;
 	text-align: center;
+}
+.orderTitle{
+	text-align: center;
+	font-size: 26px;
+	padding: 5px;
 }
