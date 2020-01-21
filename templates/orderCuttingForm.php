@@ -11,7 +11,12 @@
 		<tr style="display:none;"><td id="c<?=$board->boardId?>"><?=$board->cuttingComment?></td></tr>
 	<?PHP endforeach; ?>
 	</table>
-	<div class='btn btn-default btn-block' id="sms" style="display: none;" onclick="sendSMS();">Wyślij sms</div>
+	<div class='btn btn-default btn-block' id="sms" style="display: none;" onclick="sendSMS();"><span class="glyphicon glyphicon-earphone"></span> Wyślij sms</div>
+	<script>
+		if(itemsToDo < 1 && !isEdgeBanding){
+			document.getElementById('sms').style.display = 'block';
+		}
+	</script>
 <div class="modal fade" id="cutting-modal" role="dialog">
 	<div class="modal-dialog">
 		<div class="modal-content">

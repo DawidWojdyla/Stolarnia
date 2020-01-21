@@ -31,7 +31,7 @@
 				</div>
 			</td>
 		</tr>
-		<tr><td colspan='2'><button class="btn btn-default btn-block" type="submit">Znajdź</button></td></tr>
+		<tr><td colspan='2'><button class="btn btn-default btn-block" type="submit"><span class="glyphicon glyphicon-search"></span> Znajdź</button></td></tr>
 	</table>
 </form>
 	

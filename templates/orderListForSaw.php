@@ -10,7 +10,7 @@
 			<?PHP if($order->customer_id != 1): ?>
 			<?=$order->customerName?> <?=$order->customerSurname?><div id="phone<?=$order->orderId?>" style="display: none;"><?=$order->phone?></div>
 			<?PHP else: ?>
-			<?=$order->orderComment?>
+			<?=$order->customerTempName?> <div id="phone<?=$order->orderId?>" style="display: none;"><?=$order->customerTempPhone?></div>
 			<?PHP endif;?>
 		</td>
 		<td id="document<?=$order->orderId?>"><?PHP if ($order->document_number): ?><?=$order->document_number?><?PHP else: ?>Brak<?PHP endif; ?></td>

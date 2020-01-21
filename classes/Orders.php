@@ -351,8 +351,8 @@ class Orders
 		$today = date('Y-m-d');
 		//$threeDaysAgo = date('Y-m-d', strtotime($today. '-3 days'));
 		//$dayAfterTomorrow = date('Y-m-d', strtotime($today. '+2 days'));
-		$fiveDaysAgo = date('Y-m-d', strtotime($today. '-3 days'));
-		$inFiveDays = date('Y-m-d', strtotime($today. '+2 days'));
+		$fiveDaysAgo = date('Y-m-d', strtotime($today. '-5 days'));
+		$inFiveDays = date('Y-m-d', strtotime($today. '+5 days'));
 		$_SESSION['dateFrom'] = $fiveDaysAgo;
 		$_SESSION['dateTo'] = $inFiveDays;
 		

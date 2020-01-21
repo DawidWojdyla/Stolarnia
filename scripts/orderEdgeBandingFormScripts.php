@@ -34,7 +34,7 @@ function showMoreInfo(id){
 }
 
 function showAddingddEdgeBandingForm(edgeBandingId){
-		document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Dodaj oklejanie</h4><form id='edgeBandingForm' method='post'><input type='hidden' name='edgeBandingId' value="+edgeBandingId+"><table class='table table-condensed edgeBandingModalTable'><tr><td colspan='2'>Maszyna [mb]:<div><input class='text-right' type='number' min='0.01' max='10000' step='0.01' id='newM"+edgeBandingId+"' name='edgeBandingMachineMetters' required/></div></td></tr><tr><td colspan='2'>Pracownicy:<div><select class='inputHeight' id='workers' name='workers[]' multiple required><?PHP foreach ($workers as $worker): ?><option value='<?=$worker->id?>'><?=$worker->name?></option><?PHP endforeach; ?></select></div></td></tr><tr><td colspan='2'><div>Uwagi (opcjonalnie)</div><div><textarea id='newC"+edgeBandingId+"' name='edgeBandingComment' rows='3' cols='25' maxlength='250' form='edgeBandingForm'>"+document.getElementById('c'+edgeBandingId).innerHTML+"</textarea></div></td></tr><tr><td colspan='2'><div class='btn btn-default btn-block' onclick='sendEdgeBandingForm("+edgeBandingId+");'>Zapisz</div><button id='sendingButton' type='submit' style='display:none;'></button><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div></td></tr></table></form>";
+		document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Dodaj oklejanie</h4><form id='edgeBandingForm' method='post'><input type='hidden' name='edgeBandingId' value="+edgeBandingId+"><table class='table table-condensed edgeBandingModalTable'><tr><td colspan='2'>Maszyna [mb]:<div><input class='text-right' type='number' min='0.01' max='10000' step='0.01' id='newM"+edgeBandingId+"' name='edgeBandingMachineMetters' required/></div></td></tr><tr><td colspan='2'>Pracownicy:<div><select class='inputHeight' id='workers' name='workers[]' multiple required><?PHP foreach ($workers as $worker): ?><option value='<?=$worker->id?>'><?=$worker->name?></option><?PHP endforeach; ?></select></div></td></tr><tr><td colspan='2'><div>Uwagi (opcjonalnie)</div><div><textarea id='newC"+edgeBandingId+"' name='edgeBandingComment' rows='3' cols='25' maxlength='250' form='edgeBandingForm'>"+document.getElementById('c'+edgeBandingId).innerHTML+"</textarea></div></td></tr><tr><td colspan='2'><div class='btn btn-default btn-block' onclick='sendEdgeBandingForm("+edgeBandingId+");'><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><button id='sendingButton' type='submit' style='display:none;'></button><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class='glyphicon glyphicon-remove'></span> Anuluj</div></td></tr></table></form>";
 }
 
 function showEdgeBandingModal(edgeBandingId){
@@ -43,21 +43,21 @@ function showEdgeBandingModal(edgeBandingId){
 	
 	}
 	else{
-		document.getElementById('edgeBandingModalBody').innerHTML ="<div class='btn btn-default btn-block' onclick='showResetEdgeBandingForm("+edgeBandingId+");'>Resetuj oklejanie</div><div class='btn btn-default btn-block' onclick='updateMachineMetters("+edgeBandingId+");'>Edytuj metry</div><div class='btn btn-default btn-block' onclick='updateEdgeBandingComment("+edgeBandingId+");'>Dodaj/edytuj uwagi</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class='glyphicon glyphicon-remove'></span>Anuluj</div>";
+		document.getElementById('edgeBandingModalBody').innerHTML ="<div class='btn btn-default btn-block' onclick='showResetEdgeBandingForm("+edgeBandingId+");'><span class=\"glyphicon glyphicon-erase\"></span> Resetuj oklejanie</div><div class='btn btn-default btn-block' onclick='updateMachineMetters("+edgeBandingId+");'><span class=\"glyphicon glyphicon-pencil\"></span> Edytuj metry</div><div class='btn btn-default btn-block' onclick='updateEdgeBandingComment("+edgeBandingId+");'><span class=\"glyphicon glyphicon-edit\"></span> Dodaj/edytuj uwagi</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class='glyphicon glyphicon-remove'></span> Anuluj</div>";
 	}
 	$('#edgeBandingModal').modal('show');
 }
 
 function showResetEdgeBandingForm(id){
-	document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Czy napewno chcesz zresetować wybrane oklejanie?</h4><form id='resetEdgeBandingForm'><input type='hidden' name='edgeBandingId' value="+id+"></form><div class='btn btn-default btn-block' onclick='resetEdgeBanding("+id+");'>Tak</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div>";
+	document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Czy napewno chcesz zresetować wybrane oklejanie?</h4><form id='resetEdgeBandingForm'><input type='hidden' name='edgeBandingId' value="+id+"></form><div class='btn btn-default btn-block' onclick='resetEdgeBanding("+id+");'><span class=\"glyphicon glyphicon-ok\"></span> Tak</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class='glyphicon glyphicon-remove'></span> Anuluj</div>";
 }
 
 function updateMachineMetters(id){
-	document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Maszyna [mb]</h4><form id='updatingMachineMettersForm'><input type='hidden' name='edgeBandingId' value="+id+"><div><input type='number' class='text-right' min='0.01' max='10000' step='0.01' id='newM"+id+"' name='edgeBandingMachineMetters' value='"+document.getElementById('m'+id).innerHTML+"' required/></div></form></br><div class='btn btn-default btn-block' onclick='sendEdgeBandingMachineMetters("+id+");'>Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div>";
+	document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Maszyna [mb]</h4><form id='updatingMachineMettersForm'><input type='hidden' name='edgeBandingId' value="+id+"><div><input type='number' class='text-right' min='0.01' max='10000' step='0.01' id='newM"+id+"' name='edgeBandingMachineMetters' value='"+document.getElementById('m'+id).innerHTML+"' required/></div></form></br><div class='btn btn-default btn-block' onclick='sendEdgeBandingMachineMetters("+id+");'><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class='glyphicon glyphicon-remove'></span> Anuluj</div>";
 }
 
 function updateEdgeBandingComment(id){
-	document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Uwagi:</h4><form id='updatingEdgeBandingCommentForm'><input type='hidden' name='edgeBandingId' value="+id+"><div><textarea id='newC"+id+"' name='edgeBandingComment' form='updatingEdgeBandingCommentForm' rows='3' cols='25' maxlength='250'>"+document.getElementById('c'+id).innerHTML+"</textarea></div></form></br><div class='btn btn-default btn-block' onclick='sendEdgeBandingComment("+id+");'>Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'>Anuluj</div>";
+	document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Uwagi:</h4><form id='updatingEdgeBandingCommentForm'><input type='hidden' name='edgeBandingId' value="+id+"><div><textarea id='newC"+id+"' name='edgeBandingComment' form='updatingEdgeBandingCommentForm' rows='3' cols='25' maxlength='250'>"+document.getElementById('c'+id).innerHTML+"</textarea></div></form></br><div class='btn btn-default btn-block' onclick='sendEdgeBandingComment("+id+");'><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class='glyphicon glyphicon-remove'></span> Anuluj</div>";
 }
 
 function showMessage(message){
@@ -83,23 +83,23 @@ function resetEdgeBanding(id){
 			case 'ACTION_OK': 
 				document.getElementById('m'+id).innerHTML = '0';
 				document.getElementById('c'+id).innerHTML = '';
-				message = "Zresetowano oklejanie";
+				message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zresetowano oklejanie";
 				break;
 			case 'FORM_DATA_MISSING': 
 			case 'ACTION_FAILED': 
-				message = "Nie udało się zresetować oklejania";
+				message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zresetować oklejania";
 				break;
 			case 'NO_PERMISSION': 
 				message = "Brak uprawnień";
 				break;
 			default:
-				message = "Obecnie zresetowanie oklejania jest niemożliwe";
+				message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zresetowanie oklejania jest niemożliwe";
 				break;
 		}
 		});
 		
 	ajaxRequest.fail(function (){
-		message = "Nie udało się zapisać zmian";
+		message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
 	 });
 	 
 	ajaxRequest.always(function(){
@@ -128,24 +128,24 @@ function sendEdgeBandingMachineMetters(id){
 		ajaxRequest.done(function (response){
 			switch(response){
 				case 'ACTION_OK': 
-					message = "Zapisano zmiany";
+					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
 					document.getElementById('m'+id).innerHTML = parseFloat(machineMetters).toFixed(2);
 					break;
 				case 'FORM_DATA_MISSING': 
 				case 'ACTION_FAILED': 
-					message = "Nie udało się zapisać zmian";
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
 					break;
 				case 'NO_PERMISSION': 
 					message = "Brak uprawnień";
 					break;
 				default:
-					message = "Obecnie zapisanie zmian jest niemożliwe";
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zapisanie zmian jest niemożliwe";
 					break;
 			}
 		});
 		
 		ajaxRequest.fail(function (){
-		  message = "Nie udało się zapisać zmian";
+		  message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
 		 });
 		 
 		ajaxRequest.always(function(){
@@ -175,24 +175,24 @@ function sendEdgeBandingComment(id){
 		ajaxRequest.done(function (response){
 			switch(response){
 				case 'ACTION_OK': 
-					message = "Zapisano zmiany";
+					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
 					document.getElementById('c'+id).innerHTML = edgeBandingComment;
 					break;
 				case 'FORM_DATA_MISSING': 
 				case 'ACTION_FAILED': 
-					message = "Nie udało się zapisać zmian";
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
 					break;
 				case 'NO_PERMISSION': 
 					message = "Brak uprawnień";
 					break;
 				default:
-					message = "Obecnie zapisanie zmian jest niemożliwe";
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zapisanie zmian jest niemożliwe";
 					break;
 			}
 		});
 		
 		ajaxRequest.fail(function (){
-		  message = "Nie udało się zapisać zmian";
+		  message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
 		 });
 		 
 		ajaxRequest.always(function(){
@@ -222,27 +222,27 @@ function sendEdgeBandingForm(id){
 		ajaxRequest.done(function (response){
 			switch(response){
 				case 'ACTION_OK': 
-					message = "Zapisano oklejanie";
+					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano oklejanie";
 					document.getElementById('m'+id).innerHTML = machineMetters;
 					document.getElementById('c'+id).innerHTML = edgeBandingComment;
 					break;
 				case 'ACTION_FAILED': 
-					message = "Nie udało się zapisać oklejania";
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać oklejania";
 					break;
 				case 'FORM_DATA_MISSING': 
-					message = "Nie udało się zapisać oklejania";
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać oklejania";
 					break;
 				case 'NO_PERMISSION': 
 					message = "Brak uprawnień";
 					break;
 				default:
-					message = "Obecnie zapisanie zmian jest niemożliwe";
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zapisanie zmian jest niemożliwe";
 					break;
 			}
 		});
 		
 		ajaxRequest.fail(function (){
-		  message = "Nie udało się zapisać zmian";
+		  message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
 		 });
 		 
 		ajaxRequest.always(function(){

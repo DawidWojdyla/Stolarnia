@@ -111,7 +111,7 @@ class EdgeBandingMachine
 	
 	function returnOutstandingOrders(){
 		$orders = array();
-		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`id` NOT IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL AND `orders_boards`.`board_sign_id` <> '1') AND `orders`.`id` IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `edge_banding`.`edge_banding_metters_machine`=0) ORDER BY `order_completion_date`")){
+		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone`, `orders`.`order_completion_date`, `orders`.`saw_number`, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`id` NOT IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL AND `orders_boards`.`board_sign_id` <> '1') AND `orders`.`id` IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `edge_banding`.`edge_banding_metters_machine`=0) ORDER BY `order_completion_date`")){
 			$orders = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $orders;
@@ -161,7 +161,9 @@ class EdgeBandingMachine
 							$tempArray[$boardId]['boardAmount'] = $boards[$i] -> amount; ' szt.' . '  cięcie -> ' . ($boards[$i] -> cutting_metters + 0) . ' m';
 							$tempArray[$boardId]['boardCuttingComment'] = $boards[$i] -> cuttingComment;
 							$tempArray[$boardId]['boardCuttingMetters'] = ($boards[$i] -> cutting_metters + 0);
-							$tempArray[$boardId]['boardCuttingDate'] = ($boards[$i] -> cutting_completion_date);
+							$dateTime = new DateTime($boards[$i] -> cutting_completion_date);
+							$tempArray[$boardId]['boardCuttingDate'] = $dateTime -> format("d-m-Y");
+							$tempArray[$boardId]['boardCuttingTime'] = $dateTime -> format("H:i:s");
 						}
 						if($key == 'edgeBandingId' || $key == 'stickerSymbol'  || $key == 'edgeBandType' || $key == 'edgeBandSymbol'  || $key == 'wzMetters'  || $key == 'machineMetters'  || $key == 'edgeBandingDate'  || $key == 'edgeBandComment' || $key == 'edgeBandingComment'){
 							$tempArray [$boardId]['edgeBanding'][$j][$key] = $value;
@@ -304,6 +306,7 @@ class EdgeBandingMachine
 		//$this->setOrderListPeriod();
 		$orderList = $this->returnOutstandingOrders();
 		
+		
 		include 'scripts/orderListForEBMachineScripts.php';
 		include 'templates/orderListForEBMachine.php';
 	}
@@ -342,8 +345,8 @@ class EdgeBandingMachine
 		}
 		$documentNumber = filter_input(INPUT_POST, 'documentNumber');
 		
-		include 'scripts/orderSeachringFormForSawScripts.php';
-		include 'templates/orderSeachringFormForSaw.php';
+		include 'scripts/orderSeachringFormForEBMachineScripts.php';
+		include 'templates/orderSeachringFormForEBMachine.php';
 	}
 }
 ?>
