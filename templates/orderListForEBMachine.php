@@ -1,15 +1,16 @@
 <?php if(!isset($this)) die(); ?>
 <h3 class="text-center">Lista zleceń</h3>
-<table class="table table-condensed cutFormTable">
+
 <?PHP $orderCompletionDate = '0'; ?>
+<table>
 <?PHP foreach($orderList as $order):?>
 <?PHP if($orderCompletionDate != $order -> order_completion_date):
 				$orderCompletionDate = $order -> order_completion_date; ?>
-	<tr class='btn btn-default btn-block' style='display: table-row;' onclick="showOrders('<?=$orderCompletionDate?>');">
-		<td class='text-center' colspan="3"><?=$order->order_completion_date?></td>
-	</tr>
+</table>
+	<div class='btn btn-default btn-block orderListButton' onclick="showOrders('<?=$orderCompletionDate?>');"><?=$order->order_completion_date?></div>
+	<table id="<?=$orderCompletionDate?>" style="display: none;" class="table edgeBandingOrderListTable">
 <?PHP endif; ?>
-	<tr class="orderLink <?=$orderCompletionDate?>" id='<?=$order->orderId?>' style="display:none;" onclick="carryOutTheOrder('<?=$order->orderId?>');">
+	<tr class="orderLink <?=$orderCompletionDate?>" id='<?=$order->orderId?>' onclick="carryOutTheOrder('<?=$order->orderId?>');">
 	<?PHP if($order->customer_id != 1): ?>
 		<td id="phone<?=$order->orderId?>" style="display:none;"><?=$order->phone?></td>
 		<td id="name<?=$order->orderId?>"><?=$order->customerName?> <?=$order->customerSurname?>

@@ -156,6 +156,14 @@ input, select, textarea{
 	border-spacing:0 5px; 
 }
 
+.edgeBandingOrderListTable{
+	font-size: 16px;
+	margin-bottom: 0px;
+}
+.edgeBandingOrderListTable tr:first-child > td, .edgeBandingOrderListTable tr:first-child > th{
+	border-top:none;
+}
+
 .boardTitle{
 	margin-top: 8px;
 	font-size: 20px;
@@ -175,4 +183,13 @@ input, select, textarea{
 	text-align: center;
 	font-size: 26px;
 	padding: 5px;
+}
+
+.orderListButton{
+	font-size: 20px;
+}
+
+.btn-block{
+		padding: 10px;
+		margin: 10px auto;
 }

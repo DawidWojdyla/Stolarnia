@@ -1,6 +1,6 @@
 <?php if(!isset($this)) die(); ?>
 <h3 class="text-center">Lista zleceń</h3>
-<table class='table'>
+<table class='table edgeBandingOrderListTable'>
 	<tr>
 		<th>klient</th><th>nr dokumentu</th>
 	</tr>
