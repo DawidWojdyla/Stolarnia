@@ -75,7 +75,7 @@
 		<tr>
 			<td>Numer piły:</td>
 			<td>
-				<select class="inputHeight" name="sawNumber" required>
+				<select class="inputHeight" id="sawSelect" onchange="setPotentialOrderCompletionDate(); checkBoardsAmount();" name="sawNumber" required>
 					<option value="1"
 						<?PHP if (isset($_SESSION['sawNumber']) && $_SESSION['sawNumber'] == "1"):?>
 						selected
@@ -108,8 +108,11 @@
 				Data realizacji zamówienia:
 			</td>
 			<td>
-				<input class="inputHeight" type="date" name="orderCompletionDate" required value="<?PHP if (isset($_SESSION['orderCompletionDate'])): ?><?=$_SESSION['orderCompletionDate']?><?PHP unset ($_SESSION['orderCompletionDate']);?><?PHP else:?><?=date('Y-m-d')?><?PHP endif; ?>">
+				<input class="inputHeight" id="orderCompletionDate" type="date" name="orderCompletionDate" onchange="checkBoardsAmount();" required value="<?PHP if (isset($_SESSION['orderCompletionDate'])): ?><?=$_SESSION['orderCompletionDate']?><?PHP unset ($_SESSION['orderCompletionDate']);?><?PHP else:?><?=$potentialOrderCompletionDates[1]?><?PHP endif; ?>">
 			</td>
+		</tr>
+		<tr>
+			<td>Ilość płyt na ten dzień:</td><td><div id='boardsAmount'></div></td>
 		</tr>
 		<?PHP if(isset($_SESSION['sellerIdError'])):?>
 		<tr class="danger"><td colspan="2"><div class="error"><?=$_SESSION['sellerIdError']?></div></td></tr>
@@ -223,8 +226,6 @@
 			<?PHP endforeach; ?>
 		<script>
 			edgeBandingLastId = <?=$edgeBandingNumber?>;
-			checkIfDocumentNumberIsRequired();
-			checkIfOrderCommentIsRequired();
 		</script>
 		<?PHP unset($_SESSION['positions']); endif;?>
 		<tr id="boardsInputs">

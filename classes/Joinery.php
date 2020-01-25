@@ -87,6 +87,9 @@ class Joinery extends MyDB
 	}
 	  
 	function logout(){
+		if($this->stand == 4 && isset($_SESSION['sawLimits'])){
+			unset($_SESSION['sawLimits']);
+		}
 		$this->stand = null;
 		if (isset($_SESSION['stand']))
 		unset($_SESSION['stand']);
@@ -248,6 +251,13 @@ class Joinery extends MyDB
 			default: 
 				return NO_PERMISSION;
 		}
+	}
+	
+	function returnBoardsAmountOfPeriod(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){  return NO_PERMISSION; }
+		$orders = new Orders($this->dbo);
+		return $orders->returnBoardsAmountOfPeriod();
 	}
   
 }

@@ -3,6 +3,43 @@ var lastPositionId = 0;
 var positionsAmount = 0;
 var edgeBandingLastId = 0;
 
+$(function(){
+	checkIfDocumentNumberIsRequired();
+	checkIfCustomerDataRequired();
+	checkBoardsAmount();
+});
+
+function setPotentialOrderCompletionDate(){
+	if(document.getElementById('sawSelect').value == '2'){
+		document.getElementById('orderCompletionDate').value = '<?=$potentialOrderCompletionDates[2]?>';
+	}
+	else{
+		document.getElementById('orderCompletionDate').value = '<?=$potentialOrderCompletionDates[1]?>';
+	}
+}
+
+function checkBoardsAmount(){
+	var sawSelect = document.getElementById('sawSelect').value;
+	var orderCompletionDate = document.getElementById('orderCompletionDate').value;
+	
+	var ajaxRequest = $.ajax({
+			url: "index.php?action=returnBoardsAmountOfPeriod",
+			type: "post",
+			data: {
+				sawNumber: sawSelect,
+				date: orderCompletionDate
+			}
+		});
+		
+		ajaxRequest.done(function (response){
+			document.getElementById('boardsAmount').innerHTML = response;
+		});
+		
+		ajaxRequest.fail(function (){
+			document.getElementById('boardsAmount').innerHTML = "Nie można pobrać";
+		});
+}
+
 function checkIfDocumentNumberIsRequired(){
 	if (document.getElementById('documentTypeSelect').value == '4'){
 		document.getElementById('documentNumberInput').required = false;

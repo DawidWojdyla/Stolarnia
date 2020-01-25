@@ -238,6 +238,12 @@ class Orders
 		}
 		return $sellers;
 	}
+	function returnSawLimit($sawNumber){
+		if($result = $this->dbo->query("SELECT `board_limit` FROM board_limit_per_one_day WHERE `saw_number`={$sawNumber}")){
+			$limit = $result->fetch(PDO::FETCH_NUM);
+		}
+		return $limit[0];
+	}
 	
 	function returnBoardsSigns(){
 		$boardsSigns = array();
@@ -287,12 +293,19 @@ class Orders
 		return $edgeBandTypes;
 	}
 	
-	function returnBoardsAmoutForDay($sawNumber, $date){
-		$boardsAmount = null;
-		if($result = $this->dbo->query("SELECT SUM(`amount`) FROM orders_boards WHERE `order_id` IN (SELECT `id` FROM `orders` WHERE `order_completion_date`='{$date}' AND `saw_number`={$sawNumber})")){
-			$boardsAmount = $result->fetch();
+	function returnBoardsAmoutPerDay($sawNumber, $date){
+		$boardsAmount = 0;
+		if($result = $this -> dbo -> query("SELECT COALESCE (SUM(`amount`), 0) FROM orders_boards WHERE `order_id` IN (SELECT `id` FROM `orders` WHERE `order_completion_date`='{$date}' AND `saw_number`={$sawNumber})")){
+			$boardsAmount = $result -> fetch(PDO::FETCH_NUM);
 		}
-		return $boardsAmount;
+		return ($boardsAmount[0]+0);
+	}
+	
+	function returnLastOrderCompletionDate($sawNumber){
+		if($result = $this->dbo->query("SELECT `order_completion_date` FROM orders WHERE id= (SELECT `id` FROM `orders` WHERE `saw_number`={$sawNumber} ORDER BY `id` DESC LIMIT 1)")){
+			$lastOrderCompletionDate = $result -> fetch(PDO::FETCH_NUM);
+		}
+		return $lastOrderCompletionDate[0];
 	}
 	
 	function returnNotCutOrdersOfPeriod($dateFrom, $dateTo){
@@ -328,12 +341,35 @@ class Orders
 		return $orders;
 	}*/
 	
+	function returnPotentialOrderCompletionDate($sawNumber){
+		$date = $this -> returnLastOrderCompletionDate($sawNumber);
+		$boardsAmountOfTheDay = $this -> returnBoardsAmoutPerDay($sawNumber, $date);
+		
+		if($boardsAmountOfTheDay >= $_SESSION['sawLimits'][$sawNumber]){
+			// zwróć datę następnego dnia jeśli jest roboczy
+			$checker = new Checker();
+			do{
+				$date = date('Y-m-d', strtotime($date. ' +1 day'));
+			}while(!$checker -> isThatDateWorkingDay($date));
+		}
+		return $date;
+	}
+	
 	function showOrderAddingForm(){
 		
 		$customers = new Customers($this->dbo);
 		
 		$customerList = $customers -> returnCustomerList();
 		$sellers = $this -> returnSellers();
+		if(!isset($_SESSION['sawLimits'])){
+			$_SESSION['sawLimits'][1] = $this -> returnSawLimit(1);
+			$_SESSION['sawLimits'][2] = $this -> returnSawLimit(2);
+		}
+		
+		$potentialOrderCompletionDates[1] = $this -> returnPotentialOrderCompletionDate(1);
+		$potentialOrderCompletionDates[2] = $this -> returnPotentialOrderCompletionDate(2);
+		
+		//$boardsAmount = $this -> returnBoardsAmoutPerDay(1, $potentialOrderCompletionDates[1]);
 		
 		$boardsSigns = $this -> returnBoardsSigns();
 		$boardsStructures = $this -> returnBoardsStructures();
@@ -342,6 +378,7 @@ class Orders
 		
 		$edgeBandStickerSymbols = $this -> returnEdgeBandStickerSymbols();
 		$edgeBandTypes = $this -> returnEdgeBandTypes();
+		//$lastOrderCompletionDate = $this -> returnLastOrderCompletionDate();
 		
 		include 'scripts/orderAddingFormScripts.php';
 		include 'templates/orderAddingForm.php';
@@ -377,10 +414,22 @@ class Orders
 		include 'templates/orderListForShop.php';
 	}
 	
-		function showOrderSearching(){
+	function showOrderSearching(){
 		
 		include 'scripts/orderSerchingForShopScripts.php';
 		include 'templates/orderSearchingFormForShop.php';
+	}
+	
+	function returnBoardsAmountOfPeriod(){
+		if (!isset($_POST['sawNumber']) || $_POST['sawNumber'] =='' || !isset($_POST['date']) || $_POST['date'] == ''){
+			return 'Brak danych';
+		}
+		//$date = date('Y-m-d',  strtotime($_POST['date']));
+		$boardsAmount = $this -> returnBoardsAmoutPerDay($_POST['sawNumber'], $_POST['date']);
+		//return $boardsAmount;
+		return $boardsAmount;
+		//return $this -> returnBoardsAmoutPerDay(1, '2020-01-25');
+		//return $_POST['date'];
 	}
 }
 ?>

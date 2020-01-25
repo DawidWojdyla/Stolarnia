@@ -104,6 +104,9 @@ try{
 			endswitch;
 			header('Location:index.php?action=showCustomerAddingForm');
 			break;
+		case 'returnBoardsAmountOfPeriod':
+			 print_r($joinery -> returnBoardsAmountOfPeriod());
+			break;	
 		case 'setTheBoardCutting':
 			switch ($joinery -> setTheBoardCutting()):
 				case ACTION_OK:
