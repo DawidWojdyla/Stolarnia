@@ -103,12 +103,15 @@ input, select, textarea{
 }
 
 .orderLink{
+	font-size: 16px;
 	cursor: pointer;
-	opacity: 0.8;
 }
 
 .orderLink:hover{
-	opacity: 1;
+}
+.orderLink > td{
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 .modal{
   text-align: center;
@@ -147,13 +150,20 @@ input, select, textarea{
 .ebtable tbody > tr > th{
 	font-size: 13px;
 	border-top: none;
-	padding: 1.5px;
+	padding: 1px;
 	border-bottom: 2px solid black;
 }
+.ebtable tbody > tr > td{
+	padding: 15px 5px;
+}
+
 .cutFormTable{
-	font-size: 15px;
+	font-size: 16px;
 	border-collapse:separate;
 	border-spacing:0 5px; 
+}
+.cutFormTable th{
+	font-size: 14px;
 }
 
 .edgeBandingOrderListTable{
@@ -192,4 +202,8 @@ input, select, textarea{
 .btn-block{
 		padding: 10px;
 		margin: 10px auto;
+}
+
+.ebtr > td{
+	padding: 10px 3px;
 }

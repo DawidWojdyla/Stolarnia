@@ -75,7 +75,7 @@
 		<tr>
 			<td>Numer piły:</td>
 			<td>
-				<select class="inputHeight" id="sawSelect" onchange="setPotentialOrderCompletionDate(); checkBoardsAmount();" name="sawNumber" required>
+				<select class="inputHeight" id="sawSelect" onchange="setPotentialOrderCompletionDate(); checkAmounts();" name="sawNumber" required>
 					<option value="1"
 						<?PHP if (isset($_SESSION['sawNumber']) && $_SESSION['sawNumber'] == "1"):?>
 						selected
@@ -112,7 +112,13 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Ilość płyt na ten dzień:</td><td><div id='boardsAmount'></div></td>
+			<td>Ilość płyt tego dnia:</td><td><div id='boardsAmount' style="font-style: italic; font-weight:bold;"></div></td>
+		</tr>
+		<tr>
+			<td>Cięcie:</td><td><div id='cuttingMetters' style="font-style: italic; font-weight:bold;"></div></td>
+		</tr>
+		<tr>
+			<td>Oklejanie:</td><td><div id='edgeBandingMetters'  style="font-style: italic; font-weight:bold;"></div></td>
 		</tr>
 		<?PHP if(isset($_SESSION['sellerIdError'])):?>
 		<tr class="danger"><td colspan="2"><div class="error"><?=$_SESSION['sellerIdError']?></div></td></tr>

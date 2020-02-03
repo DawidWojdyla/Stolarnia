@@ -101,8 +101,8 @@ class Checker
 			return false;
 		}
 	 
-		#lista swiat stalych
-		$holiday=array('01-01', '01-06','05-01','05-03','08-15','11-01','11-11','12-25','12-26');
+		#lista swiat stalych + dodatkowo wigilia (dla ITS)
+		$holiday=array('01-01', '01-06', '05-01', '05-03', '08-15', '11-01', '11-11', '12-24', '12-25', '12-26');
 	 
 		#dodanie listy swiat ruchomych
 		#wialkanoc

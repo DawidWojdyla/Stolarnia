@@ -106,7 +106,7 @@ class Saw
 	}
 	
 	function returnOrderDetails($orderId){
-		$orders = array();
+		$boards = array();
 		if($result = $this->dbo->query("SELECT `orders_boards`.`id` as boardId, `boards_signs`.`sign`, `boards_symbols`.`symbol`, `boards_thickness`.`thickness`, `boards_structures`.`structure`, `orders_boards`.`amount`, `orders_boards`.`cutting_metters`, `orders_boards`.`cutting_completion_date`,`cutting_comments`.`comment` as cuttingComment, `edge_banding`.`id` as edgeBandingId FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=`orders_boards`.`id`, `boards_signs`, `boards_symbols`, `boards_thickness`, `boards_structures` WHERE `orders_boards`.`order_id`={$orderId} AND `orders_boards`.`board_sign_id`=`boards_signs`.`id` AND `orders_boards`.`board_symbol_id`=`boards_symbols`.`id` AND `orders_boards`.`board_thickness_id`=`boards_thickness`.`id` AND `orders_boards`.`board_structure_id`=`boards_structures`.`id` GROUP BY boardId")){
 			$boards = $result->fetchAll(PDO::FETCH_OBJ);
 		}
@@ -197,7 +197,7 @@ class Saw
 	}
 	
 	function findOrderByDocumentNumber($documentNumber){
-		$query = $this -> dbo -> prepare ("SELECT `orders`.`id` as orderId, `customers`.`id` as customerId,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as phone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `document_number`=:documentNumber");
+		$query = $this -> dbo -> prepare ("SELECT `orders`.`id` as orderId, `customers`.`id` as customerId,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as phone,`customers_temp`.`name` as tempCustomerName, `customers_temp`.`phone` as tempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `document_number`=:documentNumber");
 		$query -> bindValue(':documentNumber', $documentNumber, PDO::PARAM_STR);
 		if(!$query->execute()){
 			return null;
@@ -224,6 +224,29 @@ class Saw
 		include 'scripts/orderCuttingFormScripts.php';
 		include 'templates/orderCuttingForm.php';
 	}*/
+	
+	function showLastCutBoards($positionsAmount){
+		$positionsAmount = intval($positionsAmount);
+		$orders = array();
+		if($query = $this -> dbo -> prepare ("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname,  `customers`.`phone`, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NOT NULL) ORDER BY `order_completion_date` DESC LIMIT :positionsAmount")){
+			$query -> bindValue (':positionsAmount', $positionsAmount, PDO::PARAM_INT);
+			if ($query -> execute()){ 
+				$orders = $query -> fetchAll(PDO::FETCH_OBJ);
+			}
+		}
+		return $orders;
+	}
+	
+	function showLastMadeOrders(){
+		//$this->setOrderListPeriod();
+		
+		$positionsAmount = 30;
+		
+		$orderList = $this -> showLastCutBoards($positionsAmount);
+		
+		include 'scripts/lastMadeOrdersForSawScript.php';
+		include 'templates/lastMadeOrdersForSaw.php';
+	}
 	
 	function showOrderList(){
 		//$this->setOrderListPeriod();
@@ -265,10 +288,16 @@ class Saw
 		
 		$_POST['documentNumber'] = str_pad($_POST['documentNumber'], 6, "0", STR_PAD_LEFT);
 		$document = $_POST['documentType'] . $_POST['documentNumber'] . $_POST['documentBranch'];
-		if($order = $this->findOrderByDocumentNumber($document)){
-			$orderTitle = ($order -> customerId != 1) ? $order->customerName . ' ' . $order->customerSurname : $order->orderComment;
-			//$this -> showTheOrder($order->orderId, $orderTitle);
-			$phone = $order->phone;
+		if($order = $this -> findOrderByDocumentNumber($document)){
+			if($order -> customerId != 1){
+				$orderTitle = $order->customerName . ' ' . $order->customerSurname;
+				//$this -> showTheOrder($order->orderId, $orderTitle);
+				$phone = $order->phone;
+			}
+			else{
+				$orderTitle = $order -> tempCustomerName;
+				$phone = $order -> tempPhone;
+			}
 			$boards = $this -> returnOrderDetails($order->orderId);
 			$sawWorkers = $this -> returnSawWorkers();
 		

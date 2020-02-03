@@ -90,6 +90,20 @@
 										break;
 								endswitch;
 								break;
+							case 'showLastMadeOrders' :
+								switch($joinery->showLastMadeOrders()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
 							case 'showCustomerAddingForm' :
 								switch($joinery->showCustomerAddingForm()):
 									case NO_PERMISSION:
@@ -160,7 +174,47 @@
 										break;
 								endswitch;
 								break;
+							case 'showOrderDetails' :
+								switch($joinery->showOrderDetails()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
 							case 'findOrderByDocumentNumber':
+								switch($joinery->showOrderSearchingForm()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								switch($joinery->showSearchResult()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
+							case 'findTheOrder':
 								switch($joinery->showOrderSearchingForm()):
 									case NO_PERMISSION:
 										$joinery->setMessage('Brak uprawnień.');

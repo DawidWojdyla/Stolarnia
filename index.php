@@ -28,7 +28,19 @@ try{
 				case ACTION_OK :
 					$joinery->setMessage('Zalogowanie prawidłowe');
 					$joinery->hideMessageAfterTime(3000);
-					header('Location:index.php?action=showMain');
+					header('Location:index.php?action=showOrderList');
+					/*switch($joinery -> stand -> id):
+						case '1':
+						case '2':	
+							header('Location:index.php?action=showOrderList');
+							break;
+						case '3':
+							header('Location:index.php?action=showOrderList');
+							break;
+						case '4':
+							header('Location:index.php?action=showMain');
+							break;
+						endswitch;*/
 					return;
 				case NO_LOGIN_REQUIRED :
 					$joinery->setMessage('Najpierw proszę się wylogować.');
@@ -104,8 +116,8 @@ try{
 			endswitch;
 			header('Location:index.php?action=showCustomerAddingForm');
 			break;
-		case 'returnBoardsAmountOfPeriod':
-			 print_r($joinery -> returnBoardsAmountOfPeriod());
+		case 'returnAmountsOfPeriod':
+			 print_r($joinery -> returnAmountsOfPeriod());
 			break;	
 		case 'setTheBoardCutting':
 			switch ($joinery -> setTheBoardCutting()):

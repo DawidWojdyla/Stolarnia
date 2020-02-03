@@ -11,6 +11,7 @@
 	<table id="<?=$orderCompletionDate?>" style="display: none;" class="table edgeBandingOrderListTable">
 <?PHP endif; ?>
 	<tr class="orderLink <?=$orderCompletionDate?>" id='<?=$order->orderId?>' onclick="carryOutTheOrder('<?=$order->orderId?>');">
+		<td id="comment<?=$order->orderId?>" style="display: none;"><?=$order -> orderComment?></td>
 	<?PHP if($order->customer_id != 1): ?>
 		<td id="phone<?=$order->orderId?>" style="display:none;"><?=$order->phone?></td>
 		<td id="name<?=$order->orderId?>"><?=$order->customerName?> <?=$order->customerSurname?>

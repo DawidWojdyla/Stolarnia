@@ -4,12 +4,12 @@
 <?PHP unset($_SESSION['orderListPeriodError']); endif; ?>
 <form class="text-center" id='orderListDatesForm' method="post" action="index.php?action=showOrderList">
 	Termin realizacji od <input class="inputHeight" type="date" id="dateFrom" name="dateFrom" <?PHP if(isset($_SESSION['dateFrom'])):?> value="<?=$_SESSION['dateFrom']?>"<?PHP endif; ?> required/> do <input class="inputHeight" type="date" id="dateTo" name="dateTo" <?PHP if(isset($_SESSION['dateTo'])):?> value="<?=$_SESSION['dateTo']?>"<?PHP endif; ?> required/>
-	<div class="btn btn-default btn-block inputHeight" style=" display: inline; max-width: 250px;" type="button" onclick="sendDatesOfOrderList();">Pokaż</div>
+	<div class="btn btn-default inputHeight" style="display: inline; max-width: 250px;" type="button" onclick="sendDatesOfOrderList();">Pokaż</div>
 </form>
-<h3 class="text-center">Lista zleceń</h3>
+<h3 class="text-center">Stan zleceń</h3>
 <table class='table'>
 	<tr>
-		<th>nr dokumentu</th><th>klient</th><th>piła</th><th>data realizacji</th><th>stan</th>
+		<th>nr dokumentu</th><th>klient</th><th>piła</th><th>termin</th><th>stan</th>
 	</tr>
 	<?PHP foreach($orderLists as $orderList): ?> 
 		<?PHP foreach($orderList as $order):?>

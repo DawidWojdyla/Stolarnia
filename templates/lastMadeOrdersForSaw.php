@@ -1,11 +1,11 @@
 <?php if(!isset($this)) die(); ?>
-<h3 class="text-center">Lista zleceń</h3>
+<h3 class="text-center">Ostatnio cięte</h3>
 <table class='table cutFormTable edgeBandingOrderListTable'>
 	<tr>
 		<th>klient</th><th>nr dokumentu</th>
 	</tr>
 <?PHP foreach($orderList as $order):?>
-	<tr class=" btn btn-default btn-block orderLink" style="display: table-row;" id='<?=$order->orderId?>' onclick="carryOutTheOrder('<?=$order->orderId?>');">
+	<tr class="btn btn-default btn-block orderLink" style="display: table-row;" id='<?=$order->orderId?>' onclick="carryOutTheOrder('<?=$order->orderId?>');">
 		<td id="comment<?=$order->orderId?>" style="display: none;"><?=$order -> orderComment?></td>
 		<td id="name<?=$order->orderId?>">
 			<?PHP if($order->customer_id != 1): ?>

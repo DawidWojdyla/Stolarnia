@@ -194,6 +194,25 @@ class Joinery extends MyDB
 		return $edgeBandingMachine->showOrderEdgeBandingForm();
 	}
 	
+	function showLastMadeOrders(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		
+		switch ($this->stand->id){
+			case 1: 
+			case 2:
+				$saw = new Saw ($this->dbo, $this->stand->id);
+				return $saw -> showLastMadeOrders();
+			case 3: 
+				$eBMachine = new EdgeBandingMachine($this->dbo);
+				return $eBMachine -> showLastMadeOrders();
+			case 4: 
+				$orders = new Orders ($this->dbo);
+				return $orders->showLastMadeOrders();
+			Default: 
+			return NO_PERMISSION;
+		}
+	}	
+	
 	function showOrderList(){
 		if(!$this->dbo){ return SERVER_ERROR; }
 		
@@ -212,6 +231,7 @@ class Joinery extends MyDB
 			return NO_PERMISSION;
 		}
 	}
+
 	
 	function showOrderSearchingForm(){
 		if(!$this->dbo){ return SERVER_ERROR; }
@@ -222,12 +242,12 @@ class Joinery extends MyDB
 				$saw = new Saw($this->dbo, $this->stand->id);
 				return $saw->showOrderSearchingForm(); 
 			case 3:
-				$edgeBandingMachine = new  EdgeBandingMachine($this->dbo, $this->stand->id);
+				$edgeBandingMachine = new  EdgeBandingMachine($this->dbo);
 				$edgeBandingMachine -> showOrderSearchingForm();
 				break;
 			case 4:
 				$orders = new Orders($this->dbo);
-				return $orders->showOrderSearchingForm();
+				return $orders -> showOrderSearchingForm();
 			default: 
 				return NO_PERMISSION;
 		}
@@ -242,7 +262,7 @@ class Joinery extends MyDB
 				$saw = new Saw($this->dbo, $this->stand->id);
 				return $saw->showSearchResult(); 
 			case 3:
-				$edgeBandingMachine = new  EdgeBandingMachine($this->dbo, $this->stand->id);
+				$edgeBandingMachine = new  EdgeBandingMachine($this->dbo);
 				$edgeBandingMachine -> showSearchResult();
 				break;
 			case 4:
@@ -253,11 +273,18 @@ class Joinery extends MyDB
 		}
 	}
 	
-	function returnBoardsAmountOfPeriod(){
+	function showOrderDetails(){
+		if(!$this -> dbo) { return SERVER_ERROR; }
+		if ($this -> stand -> id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this -> dbo);
+		return $orders -> showOrderDetails();
+	}
+	
+	function returnAmountsOfPeriod(){
 		if(!$this->dbo){ return SERVER_ERROR; }
 		if ($this->stand->id != 4){  return NO_PERMISSION; }
 		$orders = new Orders($this->dbo);
-		return $orders->returnBoardsAmountOfPeriod();
+		return $orders->returnAmountsOfPeriod();
 	}
   
 }

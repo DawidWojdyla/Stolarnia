@@ -6,7 +6,7 @@ var edgeBandingLastId = 0;
 $(function(){
 	checkIfDocumentNumberIsRequired();
 	checkIfCustomerDataRequired();
-	checkBoardsAmount();
+	checkAmounts();
 });
 
 function setPotentialOrderCompletionDate(){
@@ -18,12 +18,12 @@ function setPotentialOrderCompletionDate(){
 	}
 }
 
-function checkBoardsAmount(){
+function checkAmounts(){
 	var sawSelect = document.getElementById('sawSelect').value;
 	var orderCompletionDate = document.getElementById('orderCompletionDate').value;
 	
 	var ajaxRequest = $.ajax({
-			url: "index.php?action=returnBoardsAmountOfPeriod",
+			url: "index.php?action=returnAmountsOfPeriod",
 			type: "post",
 			data: {
 				sawNumber: sawSelect,
@@ -32,11 +32,19 @@ function checkBoardsAmount(){
 		});
 		
 		ajaxRequest.done(function (response){
-			document.getElementById('boardsAmount').innerHTML = response;
+			if(response != "Brak danych"){
+				var amounts = JSON.parse(response);
+				document.getElementById('boardsAmount').innerHTML = amounts.boardsAmount;
+				document.getElementById('cuttingMetters').innerHTML = amounts.cuttingMetters + " [mb]";
+				document.getElementById('edgeBandingMetters').innerHTML = amounts.edgeBandingMetters + " [mb]";
+			}
+			
 		});
 		
 		ajaxRequest.fail(function (){
 			document.getElementById('boardsAmount').innerHTML = "Nie można pobrać";
+			document.getElementById('cuttingMetters').innerHTML = "Nie można pobrać";
+			document.getElementById('edgeBandingMetters').innerHTML = "Nie można pobrać";
 		});
 }
 

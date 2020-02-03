@@ -19,7 +19,7 @@ function showCuttingModal(boardId){
 }
 
 function showResetCuttingForm(id){
-	document.getElementById('cutting-modal-body').innerHTML = "<h5>Czy napewno chcesz zresetować cięcie wybranej płyty?</h5><form id='resetTheBoardCuttingForm'><input type='hidden' name='boardId' value="+id+"></form><div class='btn btn-default btn-block' onclick='resetTheBoardCutting("+id+");'><span class=\"glyphicon glyphicon-ok\"></span> Tak</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
+	document.getElementById('cutting-modal-body').innerHTML = "<h4>Zresetować cięcie wybranej płyty?</h4><form id='resetTheBoardCuttingForm'><input type='hidden' name='boardId' value="+id+"></form><div class='btn btn-default btn-block' onclick='resetTheBoardCutting("+id+");'><span class=\"glyphicon glyphicon-ok\"></span> Tak</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
 }
 
 function addCutingComment(id){
