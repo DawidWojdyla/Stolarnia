@@ -5,7 +5,7 @@
 		<th class='text-center'>klient</th><th class='text-center'>nr dokumentu</th>
 	</tr>
 <?PHP foreach($orderList as $order):?>
-	<tr class="orderLink <?=$orderCompletionDate?>" id='<?=$order->orderId?>' onclick="carryOutTheOrder('<?=$order->orderId?>');">
+	<tr class="btn btn-default btn-block orderLink" style="display: table-row;" id='<?=$order->orderId?>' onclick="carryOutTheOrder('<?=$order->orderId?>');">
 		<td id="comment<?=$order->orderId?>" style="display: none;"><?=$order -> orderComment?></td>
 	<?PHP if($order->customer_id != 1): ?>
 		<td id="phone<?=$order->orderId?>" style="display:none;"><?=$order->phone?></td>

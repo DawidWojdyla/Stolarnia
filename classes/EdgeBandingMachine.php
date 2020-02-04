@@ -213,6 +213,19 @@ class EdgeBandingMachine
 	}*/
 	
 	
+	function findOrderByDocumentNumber($documentNumber){
+		$query = $this -> dbo -> prepare ("SELECT `orders`.`id` as orderId, `customers`.`id` as customerId,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as phone,`customers_temp`.`name` as tempCustomerName, `customers_temp`.`phone` as tempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `document_number`=:documentNumber");
+		$query -> bindValue(':documentNumber', $documentNumber, PDO::PARAM_STR);
+		if(!$query->execute()){
+			return null;
+		}
+		
+		if(!$result = $query->fetch(PDO::FETCH_OBJ)){
+		  return null; 
+		}
+		return $result;
+	}
+	
 	
 	function updateEdgeBandingComment(){
 		if(!isset($_POST['edgeBandingId']) || $_POST['edgeBandingId'] == '' || ((int)($_POST['edgeBandingId'])) < 1 || !isset($_POST['edgeBandingComment'])){
@@ -361,13 +374,46 @@ class EdgeBandingMachine
 	}
 	
 	function showOrderSearchingForm(){
-		if(!isset($_POST['documentNumber']) || $_POST['documentNumber'] == ''){
+		$documentType = filter_input (INPUT_POST, 'documentType');
+		$documentNumber = filter_input (INPUT_POST, 'documentNumber');
+		$documentBranch = filter_input (INPUT_POST, 'documentBranch');
+		
+		//include 'scripts/orderSeachringFormForEBMachineScripts.php';
+		include 'templates/orderSeachringFormForEBMachine.php';
+	}
+	
+	function showSearchResult(){
+		if (!isset($_POST['documentType']) || $_POST['documentType'] =='' || !isset($_POST['documentNumber']) || $_POST['documentNumber'] == "" || !isset($_POST['documentBranch']) || $_POST['documentBranch'] == "" ){
 			return FORM_DATA_MISSING;
 		}
-		$documentNumber = filter_input(INPUT_POST, 'documentNumber');
 		
-		include 'scripts/orderSeachringFormForEBMachineScripts.php';
-		include 'templates/orderSeachringFormForEBMachine.php';
+		$_POST['documentNumber'] = str_pad($_POST['documentNumber'], 6, "0", STR_PAD_LEFT);
+		$documentNumber = $_POST['documentType'] . $_POST['documentNumber'] . $_POST['documentBranch'];
+		
+		
+		if($order = $this -> findOrderByDocumentNumber($documentNumber)){
+			$orderId = $order -> orderId;
+			$comment = $order -> orderComment;
+			if($order -> customerId != 1){
+				$customerName = $order->customerName . ' ' . $order->customerSurname;
+				$phone = $order->phone;
+			}
+			else{
+				$customerName = $order -> tempCustomerName;
+				$phone = $order -> tempPhone;
+			}
+			
+			$boards 	= $this -> returnOrderDetails($orderId);
+			$boards 	= $this -> groupOrderDetailsByBoardsId($boards);
+			$workers 	= $this -> returnEdgeBandingWorkers();
+		
+			include 'scripts/orderEdgeBandingFormScripts.php';
+			include 'templates/orderEdgeBandingForm.php';
+		}
+		else{
+			include 'templates/noResults.php';
+		}
+	
 	}
 }
 ?>
