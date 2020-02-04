@@ -2,7 +2,7 @@
 <h3 class="text-center">Lista zleceń</h3>
 <table class='table cutFormTable edgeBandingOrderListTable'>
 	<tr>
-		<th>klient</th><th>nr dokumentu</th>
+		<th class='text-center'>klient</th><th class='text-center'>nr dokumentu</th>
 	</tr>
 <?PHP foreach($orderList as $order):?>
 	<tr class=" btn btn-default btn-block orderLink" style="display: table-row;" id='<?=$order->orderId?>' onclick="carryOutTheOrder('<?=$order->orderId?>');">

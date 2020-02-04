@@ -117,6 +117,18 @@ class EdgeBandingMachine
 		return $orders;
 	}
 	
+		function showLastEdgeBandingOrders($positionsAmount){
+		$positionsAmount = intval($positionsAmount);
+		$orders = array();
+		if($query = $this -> dbo -> prepare ("SELECT max(`edge_banding`.`edge_banding_completion_date`) as lastEBDate,`orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone`, `orders`.`order_completion_date`, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `orders_boards`.`order_id`=`orders`.`id` AND `orders`.`customer_id`=`customers`.`id` AND `edge_banding`.`edge_banding_completion_date` IS NOT NULL GROUP BY orderId ORDER BY lastEBDate DESC LIMIT :positionsAmount")){
+			$query -> bindValue (':positionsAmount', $positionsAmount, PDO::PARAM_INT);
+			if ($query -> execute()){ 
+				$orders = $query -> fetchAll(PDO::FETCH_OBJ);
+			}
+		}
+		return $orders;
+	}
+	
 	function returnOrderDetails($orderId){
 		$boards = array();
 		if($result = $this->dbo->query("SELECT ob.`id` as boardId, `boards_signs`.`sign` as boardSign, boardSymbols.`symbol` as boardSymbol, `boards_thickness`.`thickness`, `boards_structures`.`structure`, ob.`amount`, ob.`cutting_metters`, ob.`cutting_completion_date`,`cutting_comments`.`comment` as cuttingComment, eb.`id` as edgeBandingId,`edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_types`.`type` as edgeBandType, edgeBandSymbols.`symbol` as edgeBandSymbol, `eb`.`edge_banding_metters_wz` as wzMetters, `eb`.`edge_banding_metters_machine` as machineMetters, `eb`.`edge_banding_completion_date` as edgeBandingDate, `edge_band_comments`.`comments` as edgeBandComment, `edge_banding_comments`.`comments` as edgeBandingComment, `workers`.`name` as cuttingWorkers, `workers`.`id` as cuttingWorkersId FROM `orders_boards` ob LEFT JOIN `boards_symbols` as boardSymbols on boardSymbols.`id`=ob.`board_symbol_id` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=ob.`id`, `boards_signs`, `boards_thickness`, `boards_structures`, `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_banding_comments` ON eb.`id`=`edge_banding_comments`.`edge_banding_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types`, `cutting_workers`, `workers` WHERE ob.`order_id`={$orderId} AND ob.`board_sign_id`=`boards_signs`.`id` AND ob.`board_thickness_id`=`boards_thickness`.`id` AND ob.`board_structure_id`=`boards_structures`.`id` AND `eb`.`orders_boards_id`=`ob`.`id` AND `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id` AND `cutting_workers`.`worker_id`=`workers`.`id` AND `cutting_workers`.`orders_boards_id`=ob.`id`")){
@@ -139,7 +151,7 @@ class EdgeBandingMachine
 			$tempArray[$boardId]['boardCuttingMetters'] = ($boards[0] -> cutting_metters + 0);
 			$dateTime = new DateTime($boards[0] -> cutting_completion_date);
 			$tempArray[$boardId]['boardCuttingDate'] = $dateTime -> format("d-m-Y");
-			$tempArray[$boardId]['boardCuttingTime'] = $dateTime -> format("H:i:s");
+			$tempArray[$boardId]['boardCuttingTime'] = $dateTime -> format("H:i");
 			$i = 0;
 			$j = 0;
 			$eId =0;
@@ -161,7 +173,7 @@ class EdgeBandingMachine
 							$tempArray[$boardId]['boardCuttingMetters'] = ($boards[$i] -> cutting_metters + 0);
 							$dateTime = new DateTime($boards[$i] -> cutting_completion_date);
 							$tempArray[$boardId]['boardCuttingDate'] = $dateTime -> format("d-m-Y");
-							$tempArray[$boardId]['boardCuttingTime'] = $dateTime -> format("H:i:s");
+							$tempArray[$boardId]['boardCuttingTime'] = $dateTime -> format("H:i");
 						}
 						if($key == 'edgeBandingId' || $key == 'stickerSymbol'  || $key == 'edgeBandType' || $key == 'edgeBandSymbol'  || $key == 'wzMetters'  || $key == 'machineMetters'  || $key == 'edgeBandingDate'  || $key == 'edgeBandComment' || $key == 'edgeBandingComment'){
 							$tempArray [$boardId]['edgeBanding'][$j][$key] = $value;
@@ -317,6 +329,17 @@ class EdgeBandingMachine
 		include 'scripts/orderEdgeBandingFormScripts.php';
 		include 'templates/orderEdgeBandingForm.php';
 	}*/
+	
+		function showLastMadeOrders(){
+		//$this->setOrderListPeriod();
+		
+		$positionsAmount = 30;
+		
+		$orderList = $this -> showLastEdgeBandingOrders($positionsAmount);
+		
+		include 'scripts/lastMadeOrdersForEBMachineScript.php';
+		include 'templates/lastMadeOrdersForEBMachine.php';
+	}
 	
 	function showOrderEdgeBandingForm(){
 		if(!isset($_POST['orderId']) || $_POST['orderId'] == '' || ((int)($_POST['orderId'])) < 1){

@@ -35,8 +35,8 @@ function checkAmounts(){
 			if(response != "Brak danych"){
 				var amounts = JSON.parse(response);
 				document.getElementById('boardsAmount').innerHTML = amounts.boardsAmount;
-				document.getElementById('cuttingMetters').innerHTML = amounts.cuttingMetters + " [mb]";
-				document.getElementById('edgeBandingMetters').innerHTML = amounts.edgeBandingMetters + " [mb]";
+				document.getElementById('cuttingMetters').innerHTML = amounts.cuttingMetters;
+				document.getElementById('edgeBandingMetters').innerHTML = amounts.edgeBandingMetters;
 			}
 			
 		});

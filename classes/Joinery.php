@@ -207,7 +207,7 @@ class Joinery extends MyDB
 				return $eBMachine -> showLastMadeOrders();
 			case 4: 
 				$orders = new Orders ($this->dbo);
-				return $orders->showLastMadeOrders();
+				return $orders -> showLastMadeOrders();
 			Default: 
 			return NO_PERMISSION;
 		}

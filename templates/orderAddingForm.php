@@ -112,13 +112,13 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Ilość płyt tego dnia:</td><td><div id='boardsAmount' style="font-style: italic; font-weight:bold;"></div></td>
+			<td>Ilość płyt tego dnia:</td><td><div id='boardsAmount' style="font-style: italic;"></div></td>
 		</tr>
 		<tr>
-			<td>Cięcie:</td><td><div id='cuttingMetters' style="font-style: italic; font-weight:bold;"></div></td>
+			<td>Cięcie [mb]:</td><td><div id='cuttingMetters' style="font-style: italic;"></div></td>
 		</tr>
 		<tr>
-			<td>Oklejanie:</td><td><div id='edgeBandingMetters'  style="font-style: italic; font-weight:bold;"></div></td>
+			<td>Oklejanie [mb]:</td><td><div id='edgeBandingMetters'  style="font-style: italic;"></div></td>
 		</tr>
 		<?PHP if(isset($_SESSION['sellerIdError'])):?>
 		<tr class="danger"><td colspan="2"><div class="error"><?=$_SESSION['sellerIdError']?></div></td></tr>

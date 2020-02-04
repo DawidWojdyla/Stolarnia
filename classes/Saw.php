@@ -228,7 +228,7 @@ class Saw
 	function showLastCutBoards($positionsAmount){
 		$positionsAmount = intval($positionsAmount);
 		$orders = array();
-		if($query = $this -> dbo -> prepare ("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname,  `customers`.`phone`, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NOT NULL) ORDER BY `order_completion_date` DESC LIMIT :positionsAmount")){
+		if($query = $this -> dbo -> prepare ("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname,  `customers`.`phone`, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `orders_boards` ON `orders_boards`.`order_id`=`orders`.`id` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `orders_boards`.`cutting_completion_date` IS NOT NULL ORDER BY `orders_boards`.`cutting_completion_date` DESC LIMIT :positionsAmount")){
 			$query -> bindValue (':positionsAmount', $positionsAmount, PDO::PARAM_INT);
 			if ($query -> execute()){ 
 				$orders = $query -> fetchAll(PDO::FETCH_OBJ);
@@ -261,9 +261,11 @@ class Saw
 			return FORM_DATA_MISSING;
 		}
 		$orderId = filter_input(INPUT_POST, 'orderId');
-		$orderTitle = filter_input(INPUT_POST, 'orderName');
+		$documentNumber = filter_input(INPUT_POST, 'documentNumber');
+		$customerName = filter_input(INPUT_POST, 'customerName');
 		$phone = filter_input(INPUT_POST, 'phone');
-		//$this -> showTheOrder($orderId, $orderTitle);
+		$comment = filter_input(INPUT_POST, 'comment');
+		
 		$boards = $this -> returnOrderDetails($orderId);
 		$sawWorkers = $this -> returnSawWorkers();
 		

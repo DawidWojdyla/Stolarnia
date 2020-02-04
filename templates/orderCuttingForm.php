@@ -1,5 +1,5 @@
 <?php if(!isset($this)) die(); ?>
-<h3 class="text-center"><?=$orderTitle?></h3>
+<div class="orderTitle"><div><?PHP if($comment != ""): ?><span style="font-size: 18px;" class="glyphicon glyphicon-pushpin pointer" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="right" data-content="<?=$comment?>"></span> <?PHP endif;?><?=$documentNumber?></div><div><?=$customerName?></div></div>
 <table class="table cutFormTable">
 	<th class='text-center'>płyta</th><th class='text-center'><div>ilość</div><div>[szt.]</div></th><th class='text-center'><div>cięcie</div><div>[mb]</div></th><th class='text-center'>status</th>
 	<?PHP foreach($boards as $board): ?>

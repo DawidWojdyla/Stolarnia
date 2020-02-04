@@ -2,6 +2,10 @@
 var isEdgeBanding = false;
 var itemsToDo = 0;
 
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover({sanitize: false, html : true});   
+});
+
 function askIfShowOrderList(){
 	document.getElementById('cutting-modal-body').innerHTML = "<div class='btn btn-default btn-block' onclick='window.location.href=\"index.php?action=showOrderList\"'><span class=\"glyphicon glyphicon-list-alt\"></span> Lista zleceń</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-menu-left\"> Powrót</div>";
 	$('#cutting-modal').modal('show');
