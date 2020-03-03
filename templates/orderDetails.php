@@ -78,9 +78,6 @@
 	<?PHP endif; ?>
 	<?PHP endforeach; ?>
 </table>
-
-<?PHP print_r($order); ?>
-	
 <div class="modal fade" id="updatingOrderDataModal" role="dialog">
 	<div class="modal-dialog">
 		<div class="modal-content">
