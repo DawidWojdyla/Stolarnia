@@ -1,12 +1,13 @@
 <?php if(!isset($this)) die(); ?>
 <h3 class="text-center">Znajdź zlecenie: </h3>
 <form action="index.php?action=findOrderByDocumentNumber" name="orderSearchingForm" id="orderSearchingForm" method="post" autocomplete="off">
-	<table class="table table-condensed">
+	<table style="max-width: 600px; margin: auto;" class="table">
 		<tr>
 			<td>Nr dokumentu:</td>
 			<td>
-				<div style="min-width: 160px;" class="fullWidth">
-					<select id='documentTypeSelect' class="inputHeight" name="documentType">
+				<div class="row">
+				<div class="col-sm-3">
+					<select id='documentTypeSelect' class="form-control text-center" name="documentType">
 						<option value="PA"  
 							<?PHP if ($documentType == 'PA'):?>
 							selected
@@ -20,25 +21,30 @@
 							selected
 							<?PHP endif;?>>RV</option>
 					</select>
-					<input id='documentNumberInput' class="documentNumber inputHeight" type="text" pattern="\d*" maxlength="6" name="documentNumber" value="<?=$documentNumber?>" />
-					<select class="inputHeight" name="documentBranch">
+					</div>
+					<div class="col-sm-6">
+					<input id='documentNumberInput' class="form-control text-center" type="text" pattern="\d*" maxlength="6" name="documentNumber" value="<?=$documentNumber?>" />
+					</div>
+					<div class="col-sm-3">
+					<select class="form-control text-center" name="documentBranch">
 						<option value="RZ" <?PHP if ($documentBranch == 'RZ'):?>selected<?PHP endif;?>>RZ</option>
 						<option value="RA" <?PHP if ($documentBranch == 'RA'):?>selected<?PHP endif;?>>RA</option>
 						<option value="KR" <?PHP if ($documentBranch == 'KR'):?>selected<?PHP endif;?>>KR</option>
 						<option value="NS" <?PHP if ($documentBranch == 'NS'):?>selected<?PHP endif;?>>NS</option>
 						<option value="5" <?PHP if ($documentBranch == '5'):?>selected<?PHP endif;?>>	</option>
 					</select>
+					</div>
 				</div>
 			</td>
 		</tr>
 		<tr>
 			<td>Nazwa klienta:</td>
-			<td><input minlength="2"  id='customerName' class="inputHeight" type="text" name="customerName" maxlength="25" value="<?=$customerName?>"/></td>
+			<td><input minlength="2"  id='customerName' class="form-control" type="text" name="customerName" maxlength="25" value="<?=$customerName?>"/></td>
 		</tr>
 		<tr>
 			<td>Numer telefonu:</td>
 			<td>
-				<input class="inputHeight" type="tel" id='customerPhone' name="customerPhone" pattern="[1-9]{1}[0-9]{8}" minlength="9" maxlength="9" value="<?=$customerPhone?>" />
+				<input class="form-control" type="tel" id='customerPhone' name="customerPhone" pattern="[1-9]{1}[0-9]{8}" minlength="9" maxlength="9" value="<?=$customerPhone?>" />
 			</td>
 		</tr>
 		<tr><td colspan='2'><button class="btn btn-default btn-block" type="submit"><span class="glyphicon glyphicon-search"></span> Znajdź</button></td></tr>

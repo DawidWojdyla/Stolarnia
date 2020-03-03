@@ -129,6 +129,132 @@ class Joinery extends MyDB
 		return $customers -> addNewCustomer();
 	}
 	
+	function updateDocumentNumber(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateDocumentNumber();
+	}
+	
+	function updateCustomerId(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateCustomerId();
+	}
+	
+	function updateCustomerIdAndRemoveTempData(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateCustomerIdAndRemoveTempData();
+	}
+	
+	function updateCustomerTempData(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateCustomerTempData();
+	}
+	
+	function updateCustomerIdAndAddTempData(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateCustomerIdAndAddTempData();
+	}
+	
+	function updateSawNumber(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateSawNumber();
+	}
+	
+	function updateAdmissionDate(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateAdmissionDate();
+	}
+	
+	function updateCompletionDate(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateCompletionDate();
+	}
+	
+	function updateSeller(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateSeller();
+	}
+	
+	function updateOrderComment(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateOrderComment();
+	}
+	
+	function addNewBoard(){
+		if(!$this->dbo){ return "ACTION_FAILED"; }
+		if ($this->stand->id != 4){ return "ACTION_FAILED"; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> addNewBoard();
+	}
+	
+	function removeBoard(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> removeBoard();
+	}
+	
+	function updateBoard(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateBoard();
+	}
+	
+	function updateBoardAmount(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateBoardAmount();
+	}
+	
+	function updateCuttingMetters(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateCuttingMetters();
+	}
+	
+	function addNewEdgeBanding(){
+		if(!$this->dbo){ return "ACTION_FAILED"; }
+		if ($this->stand->id != 4){ return "ACTION_FAILED"; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> addNewEdgeBanding();
+	}
+	
+	function updateEdgeBanding(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> updateEdgeBanding();
+	}
+	
+	function removeEdgeBanding(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> removeEdgeBanding();
+	}
+	
 	function setTheBoardCutting(){
 		if(!$this->dbo){ return SERVER_ERROR; }
 		if ($this->stand->id != 1 && $this->stand->id != 2){ return NO_PERMISSION; }
@@ -278,6 +404,13 @@ class Joinery extends MyDB
 		if ($this -> stand -> id != 4){ return NO_PERMISSION; }
 		$orders = new Orders ($this -> dbo);
 		return $orders -> showOrderDetails();
+	}
+	
+	function showOrderUpdatingForm(){
+		if(!$this -> dbo) { return SERVER_ERROR; }
+		if ($this -> stand -> id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this -> dbo);
+		return $orders -> showOrderUpdatingForm();
 	}
 	
 	function returnAmountsOfPeriod(){

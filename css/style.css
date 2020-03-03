@@ -1,5 +1,6 @@
 body{
 	background-color:#cdcdcd;
+	font-size: 14px;
 }
 
 input, select, textarea{
@@ -191,7 +192,7 @@ input, select, textarea{
 }
 .orderTitle{
 	text-align: center;
-	font-size: 26px;
+	font-size: 24px;
 	padding: 5px;
 }
 
@@ -206,4 +207,22 @@ input, select, textarea{
 
 .ebtr > td{
 	padding: 10px 3px;
+}
+
+.noPadding{
+	padding-left: 0px;
+	padding-right: 0px;
+}
+.noMargin{
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+.form-control{
+	line-height: normal!important;
+}
+
+.top {
+    display: inline-block;
+    vertical-align: top;
 }

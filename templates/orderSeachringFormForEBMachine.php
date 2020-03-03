@@ -3,10 +3,10 @@
 <form action="index.php?action=findOrderByDocumentNumber" name="orderSearchingForm" id="orderSearchingForm" method="post" autocomplete="off">
 	<table class="table table-condensed">
 		<tr>
-			<td>Nr dokumentu:</td>
+			<td>Dokument:</td>
 			<td>
-				<div style="min-width: 160px;" class="fullWidth">
-					<select id='documentTypeSelect' class="inputHeight" name="documentType">
+				<div class="fullWidth">
+					<select id='documentTypeSelect' style='max-width: 51px; display: inline; padding:2px;' class="form-control" name="documentType">
 						<option value="PA"  
 							<?PHP if ($documentType == 'PA'):?>
 							selected
@@ -20,8 +20,8 @@
 							selected
 							<?PHP endif;?>>RV</option>
 					</select>
-					<input id='documentNumberInput' class="documentNumber inputHeight" type="text" pattern="\d*" maxlength="6" name="documentNumber" value="<?=$documentNumber?>" required/>
-					<select class="inputHeight" name="documentBranch">
+					<input id='documentNumberInput' style='display: inline; width: 72px;' class="documentNumber form-control" type="text" pattern="\d*" maxlength="6" name="documentNumber" value="<?=$documentNumber?>" required/>
+					<select class="form-control" style='max-width: 51px; display: inline; padding:2px;'  name="documentBranch">
 						<option value="RZ" <?PHP if ($documentBranch == 'RZ'):?>selected<?PHP endif;?>>RZ</option>
 						<option value="RA" <?PHP if ($documentBranch == 'RA'):?>selected<?PHP endif;?>>RA</option>
 						<option value="KR" <?PHP if ($documentBranch == 'KR'):?>selected<?PHP endif;?>>KR</option>
@@ -34,4 +34,4 @@
 		<tr><td colspan='2'><button class="btn btn-default btn-block" type="submit"><span class="glyphicon glyphicon-expand"></span> Realizuj</button></td></tr>
 	</table>
 </form>
-	
+<div style="margin-bottom: -30px;"></div>

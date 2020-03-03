@@ -116,6 +116,303 @@ try{
 			endswitch;
 			header('Location:index.php?action=showCustomerAddingForm');
 			break;
+		case 'updateDocumentNumber':
+			switch ($joinery -> updateDocumentNumber()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case DOCUMENT_NUMBER_ALREADY_EXISTS:
+					print_r('DOCUMENT_NUMBER_ALREADY_EXISTS');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateCustomerId':
+			switch ($joinery -> updateCustomerId()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateCustomerIdAndRemoveTempData':
+			switch ($joinery -> updateCustomerIdAndRemoveTempData()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateCustomerTempData':
+			switch ($joinery -> updateCustomerTempData()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateCustomerIdAndAddTempData':
+			switch ($joinery -> updateCustomerIdAndAddTempData()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateSawNumber':
+			switch ($joinery -> updateSawNumber()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateAdmissionDate':
+			switch ($joinery -> updateAdmissionDate()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateCompletionDate':
+			switch ($joinery -> updateCompletionDate()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateSeller':
+			switch ($joinery -> updateSeller()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateOrderComment':
+			switch ($joinery -> updateOrderComment()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'addNewBoard':
+			 print_r($joinery -> addNewBoard());
+			break;	
+		case 'updateBoard':
+			switch ($joinery -> updateBoard()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'removeBoard':
+			switch ($joinery -> removeBoard()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateBoardAmount':
+			switch ($joinery -> updateBoardAmount()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateCuttingMetters':
+			switch ($joinery -> updateCuttingMetters()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateEdgeBanding':
+			switch ($joinery -> updateEdgeBanding()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'removeEdgeBanding':
+			switch ($joinery -> removeEdgeBanding()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'addNewEdgeBanding':
+			 print_r($joinery -> addNewEdgeBanding());
+			break;	
 		case 'returnAmountsOfPeriod':
 			 print_r($joinery -> returnAmountsOfPeriod());
 			break;	

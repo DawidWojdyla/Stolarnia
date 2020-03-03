@@ -13,27 +13,20 @@
 	</tr>
 	<?PHP foreach($orderLists as $orderList): ?> 
 		<?PHP foreach($orderList as $order):?>
-	<tr class="<?PHP switch($order->state):?><?PHP case 'niepocięte':?>danger<?PHP break; ?><?PHP case 'pocięte':?>info<?PHP break; ?><?PHP case 'gotowe':?>success<?PHP break; ?><?PHP endswitch;?>">
-		<td>
-			<?PHP if ($order->document_number): ?>
-			<?=$order->document_number?>
-			<?PHP else: ?>
-			Brak
-			<?PHP endif; ?>
+	<tr id="<?=$order -> orderId?>" onclick="showOrderOptions('<?=$order -> orderId?>');" class="<?PHP switch($order->state):?><?PHP case 'niepocięte':?>danger<?PHP break; ?><?PHP case 'pocięte':?>info<?PHP break; ?><?PHP case 'gotowe':?>success<?PHP break; ?><?PHP endswitch;?>">
+		<td id="document<?=$order -> orderId?>"><?PHP if ($order->document_number): ?><?=$order->document_number?><?PHP else: ?>Brak<?PHP endif; ?></td>
+		<td id="customerId<?=$order -> orderId?>" style="display: none;"><?=$order->customerId?></td>
+		<td  id="customerName<?=$order -> orderId?>"><?PHP if($order->customer_id != 1): ?><?=$order->customerName?> <?=$order->customerSurname?> (<?=$order->customerPhone?>)<?PHP else: ?><?=$order->customerTempName?> (<?=$order->customerTempPhone?>)<?PHP endif;?>
 		</td>
-		<td>
-			<?PHP if($order->customer_id != 1): ?>
-			<?=$order->customerName?> <?=$order->customerSurname?> (<?=$order->customerPhone?>)
-			<?PHP else: ?>
-			<?=$order->customerTempName?> (<?=$order->customerTempPhone?>)
-			<?PHP endif;?>
-		</td>
-		<td>
+		<td id="sawNumber<?=$order -> orderId?>">
 			<?=$order->saw_number?>
 		</td>
-		<td>
+		<td id="completionDate<?=$order -> orderId?>">
 			<?=$order->order_completion_date?>
 		</td>
+		<td style="display: none;" id="admissionDate<?=$order -> orderId?>"><?=$order -> admission_date?></td>
+		<td style="display: none;" id="sellerName<?=$order -> orderId?>"><?=$order -> sellerName?></td>
+		<td id="comment<?=$order -> orderId?>" style="display: none;"><?=$order->orderComment?></td>
 		<td>
 			<?=$order->state?>
 		</td>

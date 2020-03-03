@@ -39,7 +39,7 @@ class Checker
 	
 	function checkAdmissionDate(){
 		if ($_POST['admissionDate'] ==""){
-			$_SESSION['admissionDateError'] = "Musisz podać datę złożenia zamówienia";
+			$_SESSION['admissionDateError'] = "Musisz podać datę złożenia zlecenia";
 			return false;
 		}
 		
@@ -50,7 +50,7 @@ class Checker
 			return false;
 		}  
 		else if ($_POST['admissionDate'] > date('Y-m-d')){
-			$_SESSION['admissionDateError'] = "Nie można dodać zamówienia z przyszłości";
+			$_SESSION['admissionDateError'] = "Nie można dodać zlecenia z przyszłości";
 			return false;
 		}
 		return true;
