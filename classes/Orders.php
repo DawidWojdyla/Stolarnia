@@ -51,6 +51,7 @@ class Orders
 		
 		if($_POST['customerId'] == '1'){
 			$customerName = filter_input(INPUT_POST, 'customerName');
+			$customerName = ucwords($customerName);
 			$query  = $this->dbo -> prepare ("INSERT INTO `customers_temp` VALUES (@orderId, :customerName, :customerPhone)");
 			$query -> bindValue (':customerName',$customerName, PDO::PARAM_STR);
 			$query -> bindValue (':customerPhone', $_POST['customerPhone'], PDO::PARAM_STR);
@@ -145,7 +146,7 @@ class Orders
 		
 
 		//NUMER KLIENTA
-		$isAllOk = $checker->checkCustomerData();
+		$isAllOk = $checker -> checkCustomerData();
 		$_SESSION['customerPhone'] = filter_input(INPUT_POST, 'customerPhone');
 		$_SESSION['customerName'] = filter_input(INPUT_POST, 'customerName');
 		
@@ -222,18 +223,12 @@ class Orders
 		
 		return $this->addNewOrderToTheDatabase();
 	}
-	
-	/*function returnCustomers(){
-		$customers = array();
-		if($result = $this->dbo->query("SELECT `id`, `name`, `surname`, `phone` FROM customers WHERE `id` <> 1 ORDER BY `surname`")){
-			$customers = $result->fetchAll(PDO::FETCH_OBJ);
-		}
-		return $customers;
-	}*/
+
 	function addNewCustomerTempData($orderId, $customerName, $customerPhone){
 		if( !$this->dbo){
 			return SERVER_ERROR;
 		}
+		$customerName = ucwords($customerName);
 		$query  = $this -> dbo -> prepare ("INSERT INTO `customers_temp` VALUES (:orderId, :customerName, :customerPhone)");
 		$query -> bindValue (':orderId', $orderId, PDO::PARAM_INT);
 		$query -> bindValue (':customerName',$customerName, PDO::PARAM_STR);
@@ -248,6 +243,7 @@ class Orders
 		if( !$this->dbo){
 			return SERVER_ERROR;
 		}
+		$customerName = ucwords($customerName);
 		$query  = $this -> dbo -> prepare ("UPDATE `customers_temp` SET `name`=:customerName, `phone`=:customerPhone WHERE `order_id`=:orderId");
 		$query -> bindValue (':orderId', $orderId, PDO::PARAM_INT);
 		$query -> bindValue (':customerName',$customerName, PDO::PARAM_STR);
@@ -533,10 +529,7 @@ class Orders
 		return $this -> setNewOrderComment($_POST['orderId'], $_POST['comment']);
 	}
 	
-	
-	
-	
-	
+
 	function setNewBoard($orderId, $boardSignId, $boardThicknessId, $boardSymbolId, $boardStructureId, $boardAmount, $cuttingMetters){
 		
 		if( !$this->dbo){
@@ -728,7 +721,7 @@ class Orders
 			return FORM_DATA_MISSING;
 		}
 			
-		return $this -> setBoardAmount($_POST['boardId'], $_POST['cuttingMetters']);
+		return $this -> setCuttingMetters($_POST['boardId'], $_POST['cuttingMetters']);
 	}
 	
 	function deleteEdgeBandComment($edgeBandingId){
@@ -892,8 +885,22 @@ class Orders
 		}
 		return $sellers;
 	}
-	function returnSawLimit($sawNumber){
-		if($result = $this->dbo->query("SELECT `board_limit` FROM board_limit_per_one_day WHERE `saw_number`={$sawNumber}")){
+	function returnBoardsLimitPerDay(){
+		if($result = $this->dbo->query("SELECT `limit_value` FROM limits WHERE `limit_name`='boardsPerDay'")){
+			$limit = $result->fetch(PDO::FETCH_NUM);
+		}
+		return $limit[0];
+	}
+	
+	function returnCuttingMettersLimitPerDay(){
+		if($result = $this->dbo->query("SELECT `limit_value` FROM limits WHERE `limit_name`='cuttingMettersPerDay'")){
+			$limit = $result->fetch(PDO::FETCH_NUM);
+		}
+		return $limit[0];
+	}
+	
+	function returnEdgeBandingMettersLimitPerDay(){
+		if($result = $this->dbo->query("SELECT `limit_value` FROM limits WHERE `limit_name`='edgeBandingMettersPerDay'")){
 			$limit = $result->fetch(PDO::FETCH_NUM);
 		}
 		return $limit[0];
@@ -979,9 +986,17 @@ class Orders
 		return $lastOrderCompletionDate[0];
 	}
 	
+	function returnOrdersOfPeriod($dateFrom, $dateTo){
+		$orders = array();
+		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `orders`.`worker_id` as sellerId, `workers`.`name` as sellerName,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, CASE WHEN `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL) THEN 'niepocięte' WHEN `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `cutting_completion_date` IS NULL OR `edge_banding`.`edge_banding_metters_machine`='0') THEN 'gotowe' ELSE 'pocięte' END as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `orders`.`customer_id`=`customers`.`id` AND `workers`.`id`=`orders`.`worker_id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') ORDER BY `order_completion_date`")){
+			$orders = $result->fetchAll(PDO::FETCH_OBJ);
+		}
+		return $orders;
+	}
+	
 	function returnNotCutOrdersOfPeriod($dateFrom, $dateTo){
 		$orders = array();
-		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'niepocięte' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL) ORDER BY `order_completion_date`")){
+		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `orders`.`worker_id` as sellerId, `workers`.`name` as sellerName,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'niepocięte' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `orders`.`customer_id`=`customers`.`id` AND `workers`.`id`=`orders`.`worker_id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL) ORDER BY `order_completion_date`")){
 			$orders = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $orders;
@@ -989,7 +1004,7 @@ class Orders
 	
 	function returnCutButNotCompletedOrdersOfPeriod($dateFrom, $dateTo){
 		$orders = array();
-		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'pocięte' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` WHERE `orders_boards`.`cutting_completion_date` IS NULL) AND `orders`.`id` IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `edge_banding`.`edge_banding_metters_machine`='0') ORDER BY `order_completion_date`")){
+		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`worker_id` as sellerId, `workers`.`name` as sellerName, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'pocięte' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `orders`.`customer_id`=`customers`.`id` AND `workers`.`id`=`orders`.`worker_id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` WHERE `orders_boards`.`cutting_completion_date` IS NULL) AND `orders`.`id` IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `edge_banding`.`edge_banding_metters_machine`='0') ORDER BY `order_completion_date`")){
 			$orders = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $orders;
@@ -997,20 +1012,23 @@ class Orders
 	
 	function returnCompletedOrdersOfPeriod($dateFrom, $dateTo){
 		$orders = array();
-		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'gotowe' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `cutting_completion_date` IS NULL OR `edge_banding`.`edge_banding_metters_machine`='0') ORDER BY `order_completion_date`")){
+		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`worker_id` as sellerId, `workers`.`name` as sellerName, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'gotowe' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `orders`.`customer_id`=`customers`.`id` AND `workers`.`id`=`orders`.`worker_id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `cutting_completion_date` IS NULL OR `edge_banding`.`edge_banding_metters_machine`='0') ORDER BY `order_completion_date`")){
 			$orders = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $orders;
 	}
 	
-	/*function returnOrderDetails($orderId){
-		$orderDetails = array();
-		if($result = $this->dbo->query("SELECT ob.`id` as boardId, `boards_signs`.`sign` as boardSign, `boards_signs`.`id` as boardSignId, boardSymbols.`symbol` as boardSymbol, boardSymbols.`id` as boardSymbolId, `boards_thickness`.`thickness`, `boards_thickness`.`id` as boardThicknessId, `boards_structures`.`structure`, `boards_structures`.`id` as boardStructureId, ob.`amount`, ob.`cutting_metters`, ob.`cutting_completion_date`, `cutting_comments`.`comment` as cuttingComment, cuttingWorkers.`name` as cuttingWorkerName, cuttingWorkers.`id` as cuttingWorkerId, ebQuery.edgeBandingId as edgeBandingId, ebQuery.stickerSymbol, ebQuery.stickerSymbolId, ebQuery.edgeBandType, ebQuery.edgeBandTypeId, ebQuery.edgeBandSymbol, ebQuery.edgeBandSymbolId, ebQuery.wzMetters, ebQuery.machineMetters, ebQuery.edgeBandingDate, ebQuery.edgeBandComment, ebQuery.edgeBandingComment, ebQuery.edgeBandingWorkerName, ebQuery.edgeBandingWorkerId FROM `orders_boards` ob LEFT JOIN (SELECT eb.`orders_boards_id` as ebObId, eb.`id` as edgeBandingId, `edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_sticker_symbols`.`id` as stickerSymbolId, `edge_band_types`.`type` as edgeBandType, `edge_band_types`.`id` as edgeBandTypeId, edgeBandSymbols.`symbol` as edgeBandSymbol, edgeBandSymbols.`id` as edgeBandSymbolId, `eb`.`edge_banding_metters_wz` as wzMetters, `eb`.`edge_banding_metters_machine` as machineMetters, `eb`.`edge_banding_completion_date` as edgeBandingDate, `edge_band_comments`.`comments` as edgeBandComment, `edge_banding_comments`.`comments` as edgeBandingComment, edgeBandingWorkers.`name` as edgeBandingWorkerName, edgeBandingWorkers.`id` as edgeBandingWorkerId FROM `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_banding_workers` ebw ON ebw.`edge_banding_id`=eb.`id` LEFT JOIN `workers` as edgeBandingWorkers on edgeBandingWorkers.`id`=ebw.`worker_id` LEFT JOIN `edge_banding_comments` ON eb.`id`=`edge_banding_comments`.`edge_banding_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types` WHERE `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id`) as ebQuery ON ebQuery.ebObId=ob.`id` LEFT JOIN `boards_symbols` as boardSymbols on boardSymbols.`id`=`ob`.`board_symbol_id` LEFT JOIN `cutting_workers` cw on cw.`orders_boards_id`=ob.`id` LEFT JOIN `workers` as cuttingWorkers ON cuttingWorkers.`id`=cw.`worker_id` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=ob.`id`, `boards_signs`, `boards_thickness`, `boards_structures` WHERE ob.`order_id`={$orderId} AND ob.`board_sign_id`=`boards_signs`.`id` AND ob.`board_thickness_id`=`boards_thickness`.`id` AND ob.`board_structure_id`=`boards_structures`.`id`")){
-			$orderDetails = $result->fetchAll(PDO::FETCH_OBJ);
+	//MAX(`edge_banding`.`edge_banding_completion_date`) as maxEBDate,
+	// COALESCE(`orders_boards`.`cutting_completion_date`, `edge_banding`.`edge_banding_completion_date`) 
+		
+	function returnLastMadeOrders($ordersAmount){
+		$orders = array();
+		
+		if($result = $this->dbo->query("SELECT GREATEST(`orders_boards`.`cutting_completion_date`, COALESCE(`edge_banding`.`edge_banding_completion_date`, 0)) as lastDate, `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `orders`.`worker_id` as sellerId, `workers`.`name` as sellerName,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `orders_boards` ON `orders`.`id`=`orders_boards`.`order_id` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `orders`.`customer_id`=`customers`.`id` AND `workers`.`id`=`orders`.`worker_id` AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `cutting_completion_date` IS NULL OR `edge_banding`.`edge_banding_metters_machine`='0') GROUP BY `orders`.`id` ORDER BY lastDate DESC LIMIT {$ordersAmount}")){
+			$orders = $result->fetchAll(PDO::FETCH_OBJ);
 		}
-		return $orderDetails;
-	}*/
-	
+		return $orders;
+	}	
 	
 	function returnOrderDetailsForUpdatingForm($orderId){
 		$orderDetails = array();
@@ -1020,13 +1038,14 @@ class Orders
 		return $orderDetails;
 	}
 	
+	/* NARAZIE NIE USUWAJ (ZAPYTANIE POPRAWNE)
 	function returnOrderEBDetails($orderId){
 		$orderDetails = array();
 		if($result = $this->dbo->query("SELECT eb.`orders_boards_id` as ebObId, eb.`id` as edgeBandingId, `edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_sticker_symbols`.`id` as stickerSymbolId, `edge_band_types`.`type` as edgeBandType, `edge_band_types`.`id` as edgeBandTypeId, edgeBandSymbols.`symbol` as edgeBandSymbol, edgeBandSymbols.`id` as edgeBandSymbolId, `eb`.`edge_banding_metters_wz` as wzMetters, `eb`.`edge_banding_metters_machine` as machineMetters, `eb`.`edge_banding_completion_date` as edgeBandingDate, `edge_band_comments`.`comments` as edgeBandComment, `edge_banding_comments`.`comments` as edgeBandingComment, edgeBandingWorkers.`name` as edgeBandingWorkerName FROM `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_banding_workers` ebw ON ebw.`edge_banding_id`=eb.`id` LEFT JOIN `workers` as edgeBandingWorkers on edgeBandingWorkers.`id`=ebw.`worker_id` LEFT JOIN `edge_banding_comments` ON eb.`id`=`edge_banding_comments`.`edge_banding_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types` WHERE `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id`")){
 			$orderDetails = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $orderDetails;
-	}
+	}*/
 	
 	function returnOrderDetails($orderId){
 		$orderDetails = array();
@@ -1035,27 +1054,7 @@ class Orders
 		}
 		return $orderDetails;
 	}
-	/*function returnOrderDetails2($orderId){
-		$boards = array();
-		if($result = $this->dbo->query("SELECT ob.`id` as boardId, `boards_signs`.`sign` as boardSign, boardSymbols.`symbol` as boardSymbol, `boards_thickness`.`thickness`, `boards_structures`.`structure`, ob.`amount`, ob.`cutting_metters`, ob.`cutting_completion_date`,`cutting_comments`.`comment` as cuttingComment, eb.`id` as edgeBandingId,`edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_types`.`type` as edgeBandType, edgeBandSymbols.`symbol` as edgeBandSymbol, `eb`.`edge_banding_metters_wz` as wzMetters, `eb`.`edge_banding_metters_machine` as machineMetters, `eb`.`edge_banding_completion_date` as edgeBandingDate, `edge_band_comments`.`comments` as edgeBandComment, `edge_banding_comments`.`comments` as edgeBandingComment, `workers`.`name` as cuttingWorkers, `workers`.`id` as cuttingWorkersId FROM `orders_boards` ob LEFT JOIN `boards_symbols` as boardSymbols on boardSymbols.`id`=ob.`board_symbol_id` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=ob.`id`, `boards_signs`, `boards_thickness`, `boards_structures`, `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_banding_comments` ON eb.`id`=`edge_banding_comments`.`edge_banding_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types`, `cutting_workers`, `workers` WHERE ob.`order_id`={$orderId} AND ob.`board_sign_id`=`boards_signs`.`id` AND ob.`board_thickness_id`=`boards_thickness`.`id` AND ob.`board_structure_id`=`boards_structures`.`id` AND `eb`.`orders_boards_id`=`ob`.`id` AND `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id` AND `cutting_workers`.`worker_id`=`workers`.`id` AND `cutting_workers`.`orders_boards_id`=ob.`id`")){
-			$boards = $result->fetchAll(PDO::FETCH_OBJ);
-		}
-		return $boards;
-	}*/
-	
-	
-	//, ebQuery.edgeBandingId as edgeBandingId, ebQuery.stickerSymbol, ebQuery.stickerSymbolId, ebQuery.edgeBandType, ebQuery.edgeBandTypeId, ebQuery.edgeBandSymbol, ebQuery.edgeBandSymbolId, ebQuery.wzMetters, ebQuery.machineMetters, ebQuery.edgeBandingDate, ebQuery.edgeBandComment, ebQuery.edgeBandingComment, ebQuery.edgeBandingWorkerName, ebQuery.edgeBandingWorkerId 
-	
-	
-	// LEFT JOIN (SELECT eb.`orders_boards_id` as ebObId, eb.`id` as edgeBandingId, `edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_sticker_symbols`.`id` as stickerSymbolId, `edge_band_types`.`type` as edgeBandType, `edge_band_types`.`id` as edgeBandTypeId, edgeBandSymbols.`symbol` as edgeBandSymbol, edgeBandSymbols.`id` as edgeBandSymbolId, `eb`.`edge_banding_metters_wz` as wzMetters, `eb`.`edge_banding_metters_machine` as machineMetters, `eb`.`edge_banding_completion_date` as edgeBandingDate, `edge_band_comments`.`comments` as edgeBandComment, `edge_banding_comments`.`comments` as edgeBandingComment, edgeBandingWorkers.`name` as edgeBandingWorkerName, edgeBandingWorkers.`id` as edgeBandingWorkerId FROM `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_banding_workers` ebw ON ebw.`edge_banding_id`=eb.`id` LEFT JOIN `workers` as edgeBandingWorkers on edgeBandingWorkers.`id`=ebw.`worker_id` LEFT JOIN `edge_banding_comments` ON eb.`id`=`edge_banding_comments`.`edge_banding_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types` WHERE `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id`) as ebQuery ON ebQuery.ebObId=ob.`id` 
 
-	/*function returnOrderDetails($orderId){
-		$orders = array();
-		if($result = $this->dbo->query("SELECT `orders_boards`.`id` as boardId, `boards_signs`.`sign`, `boards_symbols`.`symbol`, `boards_thickness`.`thickness`, `boards_structures`.`structure`, `orders_boards`.`amount`, `orders_boards`.`cutting_metters`, `orders_boards`.`cutting_completion_date`,`cutting_comments`.`comment` as cuttingComment, `edge_banding`.`id` as edgeBandingId FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=`orders_boards`.`id`, `boards_signs`, `boards_symbols`, `boards_thickness`, `boards_structures` WHERE `orders_boards`.`order_id`={$orderId} AND `orders_boards`.`board_sign_id`=`boards_signs`.`id` AND `orders_boards`.`board_symbol_id`=`boards_symbols`.`id` AND `orders_boards`.`board_thickness_id`=`boards_thickness`.`id` AND `orders_boards`.`board_structure_id`=`boards_structures`.`id` GROUP BY boardId")){
-			$boards = $result->fetchAll(PDO::FETCH_OBJ);
-		}
-		return $boards;
-	}*/
 	function findOrders($conditions){
 		$query = "SELECT `orders`.`id` as orderId, `orders`.`document_number`, `workers`.`id` as sellerId, `workers`.`name` as sellerName, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `customers`.`id` as customerId,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as phone,`customers_temp`.`name` as tempCustomerName, `customers_temp`.`phone` as tempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `workers`.`id`=`orders`.`worker_id` AND `orders`.`customer_id`=`customers`.`id`";
 		$query .= $conditions;
@@ -1069,16 +1068,6 @@ class Orders
 		}
 		return $result;
 	}
-	
-	
-	/*function returnOrdersOfPeriod(){
-		
-		$notCutOrders = $this -> returnNotCutOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
-		//$cutButNotCompletedOrders = $this -> returnCutButNotCompletedOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
-		$completedOrders = $this -> returnCompletedOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
-		
-		return $orders;
-	}*/
 	
 	function returnPotentialOrderCompletionDate($sawNumber){
 		$date = $this -> returnLastOrderCompletionDate($sawNumber);
@@ -1100,9 +1089,14 @@ class Orders
 		
 		$customerList = $customers -> returnCustomerList();
 		$sellers = $this -> returnSellers();
-		if(!isset($_SESSION['sawLimits'])){
-			$_SESSION['sawLimits'][1] = $this -> returnSawLimit(1);
-			$_SESSION['sawLimits'][2] = $this -> returnSawLimit(2);
+		if(!isset($_SESSION['boardsLimit'])){
+			$_SESSION['boardsLimit'] = $this -> returnBoardsLimitPerDay();
+		}
+		if(!isset($_SESSION['cuttingMettersLimit'])){
+			$_SESSION['cuttingMettersLimit'] = $this -> returnCuttingMettersLimitPerDay();
+		}
+		if(!isset($_SESSION['edgeBandingMettersLimit'])){
+			$_SESSION['edgeBandingMettersLimit'] = $this -> returnEdgeBandingMettersLimitPerDay();
 		}
 		
 		$potentialOrderCompletionDates[1] = $this -> returnPotentialOrderCompletionDate(1);
@@ -1145,12 +1139,21 @@ class Orders
 		$orderLists = array();
 		//funkcja odpowiedzialna za wyświetlenie listy zleceń
 		$this->setOrderListPeriod();
-		$orderLists[0] = $this -> returnNotCutOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
-		$orderLists[1]  = $this -> returnCutButNotCompletedOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
-		$orderLists[2] = $this -> returnCompletedOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
+		//$orderLists[0] = $this -> returnNotCutOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
+		//$orderLists[1]  = $this -> returnCutButNotCompletedOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
+		//$orderLists[2] = $this -> returnCompletedOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
+		$orderList = $this -> returnOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
 		
 		include 'scripts/orderListForShopScripts.php';
 		include 'templates/orderListForShop.php';
+	}
+	
+	function showLastMadeOrders(){
+
+		$orderList = $this -> returnLastMadeOrders(15);
+		
+		include 'scripts/lastMadeOrdersForShopScripts.php';
+		include 'templates/lastMadeOrdersForShop.php';
 	}
 	
 	function showOrderSearchingForm(){
@@ -1160,12 +1163,11 @@ class Orders
 		$customerName = filter_input (INPUT_POST, 'customerName');
 		$customerPhone = filter_input (INPUT_POST, 'customerPhone');
 		
-		include 'scripts/orderSearchingFormForShopScripts.php';
 		include 'templates/orderSearchingFormForShop.php';
 	}
 	
 	function showSearchResult(){
-		if (!isset($_POST['documentNumber']) || !isset($_POST['documentNumber']) || !isset($_POST['documentBranch']) || !isset($_POST['customerName']) || !isset($_POST['customerPhone'])){
+		if (!isset($_POST['documentType']) || !isset($_POST['documentNumber']) || !isset($_POST['documentBranch']) || !isset($_POST['customerName']) || !isset($_POST['customerPhone'])){
 			return FORM_DATA_MISSING;
 		}
 		$condition1 = "";

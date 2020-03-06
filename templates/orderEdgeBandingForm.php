@@ -13,7 +13,7 @@
 		<td style="border-top: 1.5px solid white;"><div><?=$edgeBanding['edgeBandType']?><?PHP if($edgeBanding['edgeBandSymbol'] != '---'): ?> <?=$edgeBanding['edgeBandSymbol']?><?PHP endif; ?></td>
 		<td style="border-top: 1.5px solid white;"><?=$edgeBanding['stickerSymbol']?></td>
 		<td style="border-top: 1.5px solid white;"><?=($edgeBanding['wzMetters']+0)?></td>
-		<td style="border-top: 1.5px solid white;" id="m<?=$edgeBanding['edgeBandingId']?>"><?=($edgeBanding['machineMetters']+0)?></td>
+		<td style="border-top: 1.5px solid white;" id="m<?=$edgeBanding['edgeBandingId']?>"><?=($edgeBanding['machineMetters'])?></td>
 	</tr>
 	<?PHP if($edgeBanding['edgeBandComment']): ?>
 	<tr class="pointer" onclick="showEdgeBandingModal(<?=$edgeBanding['edgeBandingId']?>);">

@@ -29,18 +29,6 @@ try{
 					$joinery->setMessage('Zalogowanie prawidłowe');
 					$joinery->hideMessageAfterTime(3000);
 					header('Location:index.php?action=showOrderList');
-					/*switch($joinery -> stand -> id):
-						case '1':
-						case '2':	
-							header('Location:index.php?action=showOrderList');
-							break;
-						case '3':
-							header('Location:index.php?action=showOrderList');
-							break;
-						case '4':
-							header('Location:index.php?action=showMain');
-							break;
-						endswitch;*/
 					return;
 				case NO_LOGIN_REQUIRED :
 					$joinery->setMessage('Najpierw proszę się wylogować.');
@@ -539,6 +527,78 @@ try{
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
 					break;
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateCustomerName':
+			switch ($joinery -> updateCustomerName()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateCustomerSurname':
+			switch ($joinery -> updateCustomerSurname()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateCustomerPhone':
+			switch ($joinery -> updateCustomerPhone()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateCustomerAddress':
+			switch ($joinery -> updateCustomerAddress()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
 				case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');

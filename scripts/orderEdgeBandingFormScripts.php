@@ -38,7 +38,7 @@ function showAddingddEdgeBandingForm(edgeBandingId){
 }
 
 function showEdgeBandingModal(edgeBandingId){
-	if(document.getElementById('m'+edgeBandingId).innerHTML == '0'){ 
+	if(document.getElementById('m'+edgeBandingId).innerHTML == '0.00' ){ 
 		document.getElementById('edgeBandingModalBody').innerHTML ="<div class='btn btn-default btn-block' onclick='showAddingddEdgeBandingForm("+edgeBandingId+");'><span class=\"glyphicon glyphicon-plus\"></span> Dodaj oklejanie</div><div class='btn btn-default btn-block' onclick='updateEdgeBandingComment("+edgeBandingId+");'><span class=\"glyphicon glyphicon-edit\"></span> Dodaj/edytuj uwagi</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class='glyphicon glyphicon-remove'></span> Anuluj</div>";
 	
 	}

@@ -1,11 +1,10 @@
 <?php if(!isset($this)) die(); ?>
 <div class="contentContainer">
-	<div class="text-center header">Klienci</div>
 	<table class='table orderListTable'>
 		<tr>
 			<th>nazwa</th><th>nr telefonu</th><th>adres</th>
 		</tr>
-	<?PHP foreach($customerList as $customer):?>
+	<?PHP foreach($customers as $customer):?>
 		<tr class="pointer"  onclick="showCustomerOptions('<?=$customer -> id?>');">
 			<td>
 				<span id='name<?=$customer -> id?>'><?=$customer -> name?></span> <span id='surname<?=$customer -> id?>'><?=$customer -> surname?></span>
@@ -20,6 +19,7 @@
 	<?PHP endforeach; ?>	
 	</table>
 </div>
+
 <div class="modal fade" id="modal" role="dialog">
 	<div class="modal-dialog">
 		<div class="contentContainer">

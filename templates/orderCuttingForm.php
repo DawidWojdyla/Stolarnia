@@ -7,7 +7,7 @@
 	<script>isEdgeBanding = true;</script>
 	<?PHP endif; ?>
  	<tr class="btn btn-default btn-block" style="display: table-row;" id="<?=$board->boardId?>" onclick="showCuttingModal(<?=$board->boardId?>);">
-		<td id='board<?=$board->boardId?>'><?=$board->sign?><?=($board->thickness+0)?><?PHP if($board->symbol != '---'): ?>-<?=$board->symbol?><?PHP endif;?><?PHP if($board->structure != '---'): ?><?=$board->structure?><?PHP endif;?></td><td><?=($board->amount+0)?></td><td><?=($board->cutting_metters+0)?></td><td  id="s<?=$board->boardId?>"><?PHP if($board->cutting_completion_date == NULL): ?>niepocięta<script>itemsToDo++;</script><?PHP else: ?>pocięta<?PHP endif; ?></td></tr>
+		<td id='board<?=$board->boardId?>' class="text-center"><?=$board->sign?><?=($board->thickness+0)?><?PHP if($board->symbol != '---'): ?>-<?=$board->symbol?><?PHP endif;?><?PHP if($board->structure != '---'): ?><?=$board->structure?><?PHP endif;?></td><td class="text-center"><?=($board->amount+0)?></td><td class="text-center"><?=($board->cutting_metters+0)?></td><td class="text-center" id="s<?=$board->boardId?>"><?PHP if($board->cutting_completion_date == NULL): ?>niepocięta<script>itemsToDo++;</script><?PHP else: ?>pocięta<?PHP endif; ?></td></tr>
 		<tr style="display:none;"><td id="c<?=$board->boardId?>"><?=$board->cuttingComment?></td></tr>
 	<?PHP endforeach; ?>
 	</table>

@@ -1,2 +1,5 @@
 <?php if(!isset($this)) die(); ?>
-<h3 class="text-center">Nie można znaleźć zlecenia na podstawie pustego formularza!</h3>
+<div style="margin-top: 35px;"></div>
+<div class='contentContainer'>
+	<div class="text-center header">Nie można znaleźć zlecenia na podstawie pustego formularza!</div>
+</div>

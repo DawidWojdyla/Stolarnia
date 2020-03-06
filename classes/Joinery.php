@@ -320,6 +320,34 @@ class Joinery extends MyDB
 		return $edgeBandingMachine->showOrderEdgeBandingForm();
 	}
 	
+	function updateCustomerName(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$customers = new Customers ($this->dbo);
+		return $customers -> updateCustomerName();
+	}
+	
+	function updateCustomerSurname(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$customers = new Customers ($this->dbo);
+		return $customers -> updateCustomerSurname();
+	}
+	
+	function updateCustomerPhone(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$customers = new Customers ($this->dbo);
+		return $customers -> updateCustomerPhone();
+	}
+	
+	function updateCustomerAddress(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$customers = new Customers ($this->dbo);
+		return $customers -> updateCustomerAddress();
+	}
+	
 	function showLastMadeOrders(){
 		if(!$this->dbo){ return SERVER_ERROR; }
 		
@@ -398,6 +426,30 @@ class Joinery extends MyDB
 				return NO_PERMISSION;
 		}
 	}
+	
+	function showCustomerSearchingForm(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		
+		$customers = new Customers($this->dbo);
+		return $customers -> showSearchingForm();
+	}
+	
+	function showCustomerUpdatingForm(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		
+		$customers = new Customers($this->dbo);
+		return $customers -> showCustomerUpdatingForm();
+	}
+
+	function showCustomerSearchResult(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+			
+		$customers = new Customers($this->dbo);
+		return $customers->showSearchResult();
+	}	
 	
 	function showOrderDetails(){
 		if(!$this -> dbo) { return SERVER_ERROR; }

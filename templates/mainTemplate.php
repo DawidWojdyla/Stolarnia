@@ -174,6 +174,20 @@
 										break;
 								endswitch;
 								break;
+							case 'showCustomerSearchingForm' :
+								switch($joinery->showCustomerSearchingForm()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
 							case 'showOrderDetails' :
 								switch($joinery->showOrderDetails()):
 									case NO_PERMISSION:
@@ -190,32 +204,6 @@
 								break;
 							case 'showOrderUpdatingForm' :
 								switch($joinery->showOrderUpdatingForm()):
-									case NO_PERMISSION:
-										$joinery->setMessage('Brak uprawnień.');
-										header('Location:index.php?action=showMain');
-										return;
-									case SERVER_ERROR:
-										$joinery->setMessage('Błąd serwera!');
-										header('Location:index.php?action=showMain');
-										return;
-									default:
-										break;
-								endswitch;
-								break;
-							case 'findOrderByDocumentNumber':
-								switch($joinery->showOrderSearchingForm()):
-									case NO_PERMISSION:
-										$joinery->setMessage('Brak uprawnień.');
-										header('Location:index.php?action=showMain');
-										return;
-									case SERVER_ERROR:
-										$joinery->setMessage('Błąd serwera!');
-										header('Location:index.php?action=showMain');
-										return;
-									default:
-										break;
-								endswitch;
-								switch($joinery->showSearchResult()):
 									case NO_PERMISSION:
 										$joinery->setMessage('Brak uprawnień.');
 										header('Location:index.php?action=showMain');
@@ -254,8 +242,48 @@
 										break;
 								endswitch;
 								break;
+							case 'findTheCustomer':
+								switch($joinery->showCustomerSearchingForm()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								switch($joinery->showCustomerSearchResult()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
 							case 'showCustomerList' :
 								switch($joinery->showCustomerList()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
+							case 'showCustomerUpdatingForm' :
+								switch($joinery->showCustomerUpdatingForm()):
 									case NO_PERMISSION:
 										$joinery->setMessage('Brak uprawnień.');
 										header('Location:index.php?action=showMain');

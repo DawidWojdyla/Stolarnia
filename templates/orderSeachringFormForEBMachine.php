@@ -1,6 +1,6 @@
 <?php if(!isset($this)) die(); ?>
 <h3 class="text-center">Realizuj zlecenie: </h3>
-<form action="index.php?action=findOrderByDocumentNumber" name="orderSearchingForm" id="orderSearchingForm" method="post" autocomplete="off">
+<form action="index.php?action=findTheOrder" name="orderSearchingForm" id="orderSearchingForm" method="post" autocomplete="off">
 	<table class="table table-condensed">
 		<tr>
 			<td>Dokument:</td>
@@ -20,7 +20,7 @@
 							selected
 							<?PHP endif;?>>RV</option>
 					</select>
-					<input id='documentNumberInput' style='display: inline; width: 72px;' class="documentNumber form-control" type="text" pattern="\d*" maxlength="6" name="documentNumber" value="<?=$documentNumber?>" required/>
+					<input id='documentNumberInput' style='display: inline; width: 73px;' class="documentNumber form-control text-center" type="text" pattern="\d*" maxlength="6" name="documentNumber" value="<?=$documentNumber?>" required/>
 					<select class="form-control" style='max-width: 51px; display: inline; padding:2px;'  name="documentBranch">
 						<option value="RZ" <?PHP if ($documentBranch == 'RZ'):?>selected<?PHP endif;?>>RZ</option>
 						<option value="RA" <?PHP if ($documentBranch == 'RA'):?>selected<?PHP endif;?>>RA</option>

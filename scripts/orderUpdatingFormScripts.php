@@ -29,7 +29,7 @@ function updateCustomerData(){
 	}
 	updatingOrderDataModalBody += "><?=$customer->surname?> <?=$customer->name?> (<?=$customer->phone?>)</option><?PHP endforeach; ?></select></div>";
 	
-	updatingOrderDataModalBody += "<div style='margin-top: 10px;'><label class='control-label' for='customerTempName'>Nazwa klienta:</label><input type='text' id='customerTempName' class='form-control text-center' name='customerTempName' value='";
+	updatingOrderDataModalBody += "<div style='margin-top: 10px;'><label class='control-label' for='customerTempName'>Nazwa klienta:</label><input type='text' id='customerTempName' class='form-control text-center text-capitalize' name='customerTempName' value='";
 	if (customerId == '1'){
 		updatingOrderDataModalBody += document.getElementById('customerName').innerHTML + "'"; 
 	}else{
@@ -74,6 +74,7 @@ function updateCustomer(lastCustomerId){
 function updateCustomerTempData(){
 	var customerTempName = document.getElementById('customerTempName').value;
 	var customerTempPhone = document.getElementById('customerTempPhone').value;
+	customerTempName = customerTempName.trim();
 	
 	var message = "";
 	
@@ -83,7 +84,12 @@ function updateCustomerTempData(){
 		setTimeout(function(){closeModal('updatingOrderDataModal');}, 1000);
 	}
 	else{
-		if(isNaN(customerTempPhone) || customerTempPhone.length != 9){
+		if(customerTempName == ""){
+			message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nazwa klienta nie może być pusta";
+			showMessage(message);
+			setTimeout(function(){closeModal('updatingOrderDataModal');}, 1000);
+		}
+		else if(isNaN(customerTempPhone) || customerTempPhone.length != 9){
 			message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Numer musi zawierać 9 cyfr";
 			showMessage(message);
 			setTimeout(function(){closeModal('updatingOrderDataModal');}, 1000);
@@ -135,13 +141,17 @@ function updateCustomerTempData(){
 function updateCustomerIdAndAddTempData(){
 	var customerTempName = document.getElementById('customerTempName').value;
 	var customerTempPhone = document.getElementById('customerTempPhone').value;
-	
+	customerTempName = customerTempName.trim();
 	var message = "";
 	
 	if(isNaN(customerTempPhone) || customerTempPhone.length != 9){
 		message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Numer musi składać się z 9 cyfr";
 		showMessage(message);
 		setTimeout(function(){closeModal('updatingOrderDataModal');}, 1000);
+	}else if(customerTempName == ""){
+			message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nazwa klienta nie może być pusta";
+			showMessage(message);
+			setTimeout(function(){closeModal('updatingOrderDataModal');}, 1000);
 	}else{
 	
 		var ajaxRequest = $.ajax({
@@ -301,6 +311,8 @@ function updateDocumentNumber(){
 		documentType = doc.substr(0, 2);
 		documentNumber = doc.substr(2, 6);
 		documentBranch = doc.substr(2, 6);
+	}else{
+		documentNumber = "";
 	}		
 	
 	updatingOrderDataModalBody = "<h3>Numer dokumentu</h3><div style='margin-top: 20px; min-width: 160px;' class='fullWidth'><select id='documentTypeSelect' style='max-width: 80px; display:inline;' class='form-control' name='documentType' required><option value='PA' ";
@@ -328,10 +340,6 @@ function updateDocumentNumber(){
 			updatingOrderDataModalBody += "selected";
 		}
 		updatingOrderDataModalBody += ">RA</option><option value='KR' ";
-		if(documentBranch == 'KR'){
-			updatingOrderDataModalBody +="selected";
-		}
-		updatingOrderDataModalBody += ">KR</option><option value='KR' ";
 		if(documentBranch == 'KR'){
 			updatingOrderDataModalBody += "selected";
 		}
@@ -699,6 +707,7 @@ function updateSeller(){
 function setComment(oldComment){
 	var message = "";
 	var newComment = document.getElementById('newComment').value;
+	newComment = newComment.trim();
 	if(newComment == oldComment){
 		message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Uwagi pozostają bez zmian";
 		showMessage(message);
@@ -907,6 +916,7 @@ function setEdgeBanding(edgeBandingId){
 	var newStickerSymbolId = document.getElementById('eBSticker').value;
 	var newEBWzMetters = document.getElementById('eBWzMetters').value;
 	var newEBComment = document.getElementById('eBComment').value;
+	newEBComment = newEBComment.trim();
 	
 	newEBWzMetters = newEBWzMetters.replace(",", ".");
 	
@@ -977,7 +987,7 @@ function updateEdgeBanding(edgeBandingId){
 	var eBWzMetters = document.getElementById('eBWzMetters'+edgeBandingId).innerHTML;
 	var eBComment= document.getElementById('eBComment'+edgeBandingId).innerHTML;
 	
-	var updatingOrderDataModalBody = "<h3>Okleina</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-3'><label for='eBType'>typ</label><select style='text-align-last: center;' id='eBType' class='form-control'>";
+	var updatingOrderDataModalBody = "<h3>Okleina</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-3'><label for='eBType'>typ</label><select id='eBType' class='form-control textCenterSelect'>";
 		<?PHP foreach($edgeBandTypes as $edgeBandType):?>
 		updatingOrderDataModalBody += "<option value='<?=$edgeBandType->id?>'";
 
@@ -986,7 +996,7 @@ function updateEdgeBanding(edgeBandingId){
 		}	
 		updatingOrderDataModalBody += "><?=$edgeBandType->type?></option>";
 		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='eBSymbol'>symbol</label><select style='text-align-last: center;'  id='eBSymbol' class='form-control'>";
+		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='eBSymbol'>symbol</label><select id='eBSymbol' class='form-control textCenterSelect'>";
 		<?PHP foreach($boardsSymbols as $boardSymbol):?>
 		updatingOrderDataModalBody += "<option value='<?=$boardSymbol->id?>'";
 		if(<?=$boardSymbol->id?> == eBSymbolId){
@@ -994,7 +1004,7 @@ function updateEdgeBanding(edgeBandingId){
 		}
 		updatingOrderDataModalBody += "><?=$boardSymbol->symbol?></option>";
 		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='eBSticker'>naklejki</label><select style='text-align-last: center;' id='eBSticker' class='form-control'>";
+		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='eBSticker'>naklejki</label><select id='eBSticker' class='form-control textCenterSelect'>";
 		<?PHP foreach($edgeBandStickerSymbols as $edgeBandStickerSymbol):?>
 		updatingOrderDataModalBody += "<option value='<?=$edgeBandStickerSymbol->id?>'";
 		if(<?=$edgeBandStickerSymbol->id?> == stickerSymbolId){
@@ -1002,7 +1012,7 @@ function updateEdgeBanding(edgeBandingId){
 		}			
 		updatingOrderDataModalBody += "><?=$edgeBandStickerSymbol->symbol?></option>";
 		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='eBWzMetters'>metry</label><div><input id='eBWzMetters' class='form-control text-center' type='text' min='0.5' max='10000' step='0.5' required value='"+eBWzMetters+"'/></div></div></div><div style='margin-top: 10px;' class='row'><div class='col-sm-3'><label for='newEBComment'>okleina uwagi:</label></div><div class='col-sm-9'><input id='eBComment' type='text' class='form-control text-center' value='"+eBComment+"'/></div></div><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick=\"setEdgeBanding('"+edgeBandingId+"');\"><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
+		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='eBWzMetters'>metry</label><div><input id='eBWzMetters' class='form-control text-center' type='text' min='0.5' max='10000' step='0.5' required value='"+eBWzMetters+"'/></div></div></div><div style='margin-top: 10px;' class='row'><div class='col-sm-3'><label for='newEBComment'>okleina - uwagi:</label></div><div class='col-sm-9'><input id='eBComment' type='text' class='form-control text-center' value='"+eBComment+"'/></div></div><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick=\"setEdgeBanding('"+edgeBandingId+"');\"><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
 	
 	document.getElementById('updatingOrderDataModalBody').innerHTML = updatingOrderDataModalBody;
 		
@@ -1085,7 +1095,7 @@ function updateBoard(boardId){
 	var boardStructureId = document.getElementById('boardStructureId'+boardId).innerHTML;
 	
 	
-	var updatingOrderDataModalBody = "<h3>Zmiana płyty</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-3'><label for='boardSign'>rodzaj</label><select style='text-align-last: center;' id='boardSign' class='form-control'>";
+	var updatingOrderDataModalBody = "<h3>Zmiana płyty</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-3'><label for='boardSign'>rodzaj</label><select id='boardSign' class='form-control textCenterSelect'>";
 		<?PHP foreach($boardsSigns as $boardSign):?>
 		updatingOrderDataModalBody += "<option value='<?=$boardSign->id?>'";
 
@@ -1094,7 +1104,7 @@ function updateBoard(boardId){
 		}	
 		updatingOrderDataModalBody += "><?=$boardSign->sign?></option>";
 		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='boardThickness'>grubość</label><select style='text-align-last: center;'  id='boardThickness' class='form-control'>";
+		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='boardThickness'>grubość</label><select id='boardThickness' class='form-control textCenterSelect'>";
 		<?PHP foreach($boardsThickness as $boardThickness):?>
 		updatingOrderDataModalBody += "<option value='<?=$boardThickness->id?>'";
 		if(<?=$boardThickness->id?> == boardThicknessId){
@@ -1102,7 +1112,7 @@ function updateBoard(boardId){
 		}
 		updatingOrderDataModalBody += "><?=$boardThickness->thickness?></option>";
 		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='boardSymbol'>symbol</label><select style='text-align-last: center;' id='boardSymbol' class='form-control'>";
+		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='boardSymbol'>symbol</label><select id='boardSymbol' class='form-control textCenterSelect'>";
 		<?PHP foreach($boardsSymbols as $boardSymbol):?>
 		updatingOrderDataModalBody += "<option value='<?=$boardSymbol->id?>'";
 		if(<?=$boardSymbol->id?> == boardSymbolId){
@@ -1110,7 +1120,7 @@ function updateBoard(boardId){
 		}			
 		updatingOrderDataModalBody += "><?=$boardSymbol->symbol?></option>";
 		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='boardStructure'>struktura</label><select style='text-align-last: center;'  id='boardStructure' class='form-control'>";
+		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='boardStructure'>struktura</label><select id='boardStructure' class='form-control textCenterSelect'>";
 		<?PHP foreach($boardsStructures as $boardStructure):?>
 		updatingOrderDataModalBody += "<option value='<?=$boardStructure->id?>'";
 		if(<?=$boardStructure->id?> == boardStructureId){
@@ -1230,15 +1240,15 @@ function setNewEdgeBanding(boardId){
 }
 
 function addNewEdgeBanding(boardId){
-	var updatingOrderDataModalBody = "<h3>Dodaj oklejanie</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-3'><label for='eBType'>typ</label><select style='text-align-last: center;' id='eBType' class='form-control'>";
+	var updatingOrderDataModalBody = "<h3>Dodaj oklejanie</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-3'><label for='eBType'>typ</label><select id='eBType' class='form-control textCenterSelect'>";
 		<?PHP foreach($edgeBandTypes as $edgeBandType):?>
 		updatingOrderDataModalBody += "<option value='<?=$edgeBandType->id?>'><?=$edgeBandType->type?></option>";
 		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='eBSymbol'>symbol</label><select style='text-align-last: center;'  id='eBSymbol' class='form-control'>";
+		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='eBSymbol'>symbol</label><select id='eBSymbol' class='form-control textCenterSelect'>";
 		<?PHP foreach($boardsSymbols as $boardSymbol):?>
 		updatingOrderDataModalBody += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
 		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='eBSticker'>naklejki</label><select style='text-align-last: center;' id='eBSticker' class='form-control'>";
+		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='eBSticker'>naklejki</label><select id='eBSticker' class='form-control textCenterSelect'>";
 		<?PHP foreach($edgeBandStickerSymbols as $edgeBandStickerSymbol):?>
 		updatingOrderDataModalBody += "<option value='<?=$edgeBandStickerSymbol->id?>'><?=$edgeBandStickerSymbol->symbol?></option>";
 		<?PHP endforeach; ?>
@@ -1360,7 +1370,7 @@ function setNewBoard(){
 }
 
 function addNewBoard(){
-	var updatingOrderDataModalBody = "<h3>Dodaj nową pozycję</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-3'><label for='boardSign'>rodzaj</label><select style='text-align-last: center;' id='boardSign' class='form-control'>";
+	var updatingOrderDataModalBody = "<h3>Dodaj nową pozycję</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-3'><label for='boardSign'>rodzaj</label><select id='boardSign' class='form-control textCenterSelect'>";
 		<?PHP foreach($boardsSigns as $boardSign):?>
 		updatingOrderDataModalBody += "<option value='<?=$boardSign->id?>'";
 
@@ -1369,7 +1379,7 @@ function addNewBoard(){
 		}	
 		updatingOrderDataModalBody += "><?=$boardSign->sign?></option>";
 		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='boardThickness'>grubość</label><select style='text-align-last: center;'  id='boardThickness' class='form-control'>";
+		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='boardThickness'>grubość</label><select id='boardThickness' class='form-control textCenterSelect'>";
 		<?PHP foreach($boardsThickness as $boardThickness):?>
 		updatingOrderDataModalBody += "<option value='<?=$boardThickness->id?>'";
 		if('<?=$boardThickness -> thickness?>' == '18.0'){
@@ -1377,11 +1387,11 @@ function addNewBoard(){
 		}
 		updatingOrderDataModalBody += "><?=$boardThickness->thickness?></option>";
 		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='boardSymbol'>symbol</label><select style='text-align-last: center;' id='boardSymbol' class='form-control'>";
+		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='boardSymbol'>symbol</label><select id='boardSymbol' class='form-control textCenterSelect'>";
 		<?PHP foreach($boardsSymbols as $boardSymbol):?>
 		updatingOrderDataModalBody += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
 		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='boardStructure'>struktura</label><select style='text-align-last: center;'  id='boardStructure' class='form-control'>";
+		updatingOrderDataModalBody += "</select></div><div class='col-sm-3'><label for='boardStructure'>struktura</label><select id='boardStructure' class='form-control textCenterSelect'>";
 		<?PHP foreach($boardsStructures as $boardStructure):?>
 		updatingOrderDataModalBody += "<option value='<?=$boardStructure->id?>'><?=$boardStructure->structure?></option>";
 		<?PHP endforeach; ?>

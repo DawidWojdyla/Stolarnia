@@ -28,7 +28,6 @@ class Checker
 				$_SESSION['customerPhoneError'] = 'Format numeru telefonu jest nieprawidłowy.';
 				return false;
 			}
-			//$_POST['customerName'] = filter_input(INPUT_POST, 'customerName');
 			return true;
 		}
 		if ((int)($_POST['customerId']) <1){

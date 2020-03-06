@@ -1,6 +1,6 @@
 <?php if(!isset($this)) die(); ?>
 <h3 class="text-center">Realizuj zlecenie: </h3>
-<form action="index.php?action=findOrderByDocumentNumber" name="orderSearchingForm" id="orderSearchingForm" method="post" autocomplete="off">
+<form action="index.php?action=findTheOrder" name="orderSearchingForm" id="orderSearchingForm" method="post" autocomplete="off">
 	<table class="table table-condensed">
 		<tr>
 			<td>Dokument:</td>
