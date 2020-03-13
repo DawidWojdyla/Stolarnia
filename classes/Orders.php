@@ -223,6 +223,93 @@ class Orders
 		
 		return $this->addNewOrderToTheDatabase();
 	}
+	
+	function deleteEdgeBandCommentsHavingOrderId($orderId){
+		if( !$this->dbo){
+			return SERVER_ERROR;
+		}
+		$query = $this -> dbo -> prepare ("DELETE FROM `edge_band_comments` WHERE `edge_banding_id` IN (SELECT `id` FROM `edge_banding` WHERE `orders_boards_id` IN (SELECT `id` FROM `orders_boards` WHERE `order_id`=:orderId))");
+		$query -> bindValue (':orderId', $orderId, PDO::PARAM_INT);
+		if (!$query -> execute()){ 
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;
+	}
+	
+	function deleteEdgeBandingsHavingOrderId($orderId){
+		if( !$this->dbo){
+			return SERVER_ERROR;
+		}
+		$query = $this -> dbo -> prepare ("DELETE FROM `edge_banding` WHERE `orders_boards_id` IN (SELECT `id` FROM `orders_boards` WHERE `order_id`=:orderId)");
+		$query -> bindValue (':orderId', $orderId, PDO::PARAM_INT);
+		if (!$query -> execute()){ 
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;
+	}
+	
+	function deleteBoardsHavingOrderId($orderId){
+		if( !$this->dbo){
+			return SERVER_ERROR;
+		}
+		$query = $this -> dbo -> prepare ("DELETE FROM `orders_boards` WHERE `order_id`=:orderId");
+		$query -> bindValue (':orderId', $orderId, PDO::PARAM_INT);
+		if (!$query -> execute()){ 
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;
+	}
+	
+	function deleteOrder($orderId){
+		if( !$this->dbo){
+			return SERVER_ERROR;
+		}
+		$query = $this -> dbo -> prepare ("DELETE FROM `orders` WHERE `id`=:orderId");
+		$query -> bindValue (':orderId', $orderId, PDO::PARAM_INT);
+		if (!$query -> execute()){ 
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;
+	}
+	
+	function removeOrder(){
+		if(!isset($_POST['orderId']) || $_POST['orderId'] == '' || ((int)($_POST['orderId'])) < 1){
+			return FORM_DATA_MISSING;
+		}
+		
+		if (!$this -> dbo -> beginTransaction()){
+			return SERVER_ERROR;
+		}
+		
+		if ($this -> deleteEdgeBandCommentsHavingOrderId($_POST['orderId']) != ACTION_OK ){
+			return ACTION_FAILED;
+		}
+		
+		if ($this -> deleteEdgeBandingsHavingOrderId($_POST['orderId']) != ACTION_OK ){
+			return ACTION_FAILED;
+		}
+		
+		if ($this -> deleteBoardsHavingOrderId($_POST['orderId']) != ACTION_OK ){
+			return ACTION_FAILED;
+		}
+		
+		if ($this -> removeCustomerTempData($_POST['orderId']) != ACTION_OK ){
+			return ACTION_FAILED;
+		}
+		
+		if ($this -> deleteOrderComment($_POST['orderId']) != ACTION_OK ){
+			return ACTION_FAILED;
+		}
+		
+		if ($this -> deleteOrder($_POST['orderId']) != ACTION_OK ){
+			return ACTION_FAILED;
+		}
+		
+		if(!$this -> dbo -> commit()){
+			return SERVER_ERROR;
+		}
+		return ACTION_OK;
+	}
 
 	function addNewCustomerTempData($orderId, $customerName, $customerPhone){
 		if( !$this->dbo){
@@ -1056,9 +1143,9 @@ class Orders
 	}
 
 	function findOrders($conditions){
-		$query = "SELECT `orders`.`id` as orderId, `orders`.`document_number`, `workers`.`id` as sellerId, `workers`.`name` as sellerName, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `customers`.`id` as customerId,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as phone,`customers_temp`.`name` as tempCustomerName, `customers_temp`.`phone` as tempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `workers`.`id`=`orders`.`worker_id` AND `orders`.`customer_id`=`customers`.`id`";
+		$query = "SELECT `orders`.`id` as orderId, `orders`.`document_number`, `workers`.`id` as sellerId, `workers`.`name` as sellerName, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `customers`.`id` as customerId,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as phone,`customers_temp`.`name` as tempCustomerName, `customers_temp`.`phone` as tempPhone, `orders_comments`.`comments` as orderComment, MIN( IFNULL( `orders_boards`.`cutting_completion_date`, '0')) as minCuttingDate FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `orders_boards`,`customers`, `workers` WHERE `orders_boards`.`order_id`=`orders`.`id` AND `workers`.`id`=`orders`.`worker_id` AND `orders`.`customer_id`=`customers`.`id`";
 		$query .= $conditions;
-		$query .= " ORDER BY `orders`.`admission_date` DESC LIMIT 50";
+		$query .= " GROUP BY `orders`.`id` ORDER BY `orders`.`admission_date` DESC LIMIT 50";
 		if(!$query = $this -> dbo -> query ($query)){
 			return null;
 		}

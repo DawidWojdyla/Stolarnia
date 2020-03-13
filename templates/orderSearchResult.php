@@ -16,6 +16,7 @@
 			<td id="customerId<?=$order -> orderId?>" style="display: none;"><?=$order->customerId?></td>
 			<td id="comment<?=$order -> orderId?>" style="display: none;"><?=$order->orderComment?></td>
 			<td id="sellerId<?=$order -> orderId?>" style="display: none;"><?=$order->sellerId?></td>
+			<td id="minCuttingDate<?=$order -> orderId?>" style="display: none;"><?=$order -> minCuttingDate?></td>
 		</tr>
 			<?PHP endforeach; ?>
 	</table>

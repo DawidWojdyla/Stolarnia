@@ -101,6 +101,13 @@ class Joinery extends MyDB
 		return $orders -> addNewOrder();
 	}
 	
+	function removeOrder(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if ($this->stand->id != 4){ return NO_PERMISSION; }
+		$orders = new Orders ($this->dbo);
+		return $orders -> removeOrder();
+	}
+	
 	function showOrderAddingForm(){
 		if(!$this->dbo) return SERVER_ERROR;
 		if ($this->stand->id != 4)  return NO_PERMISSION;
