@@ -35,7 +35,7 @@ function checkAmounts(){
 			if(response != "Brak danych"){
 				var amounts = JSON.parse(response);
 				document.getElementById('boardsAmount').innerHTML = amounts.boardsAmount;
-				if(parseInt(amounts.boardsAmount) >= <?=$_SESSION['boardsLimit']?>){
+				if(parseInt(amounts.boardsAmount) >= <?=$_SESSION['Limits'] -> boardsLimit?>){
 					document.getElementById('boardsAmount').style.backgroundColor  = "lightcoral";
 				}
 				else{
@@ -44,7 +44,7 @@ function checkAmounts(){
 				}
 				
 				document.getElementById('cuttingMetters').innerHTML = amounts.cuttingMetters;
-				if(parseInt(amounts.cuttingMetters) >= <?=$_SESSION['cuttingMettersLimit']?>){
+				if(parseInt(amounts.cuttingMetters) >= <?=$_SESSION['Limits'] -> cuttingMettersLimit?>){
 					document.getElementById('cuttingMetters').style.backgroundColor  = "lightcoral";
 				}
 				else{
@@ -52,7 +52,7 @@ function checkAmounts(){
 					document.getElementById('cuttingMetters').style.backgroundColor  = "inherit";
 				}
 				document.getElementById('edgeBandingMetters').innerHTML = amounts.edgeBandingMetters;
-				if(parseInt(amounts.edgeBandingMetters) >= <?=$_SESSION['edgeBandingMettersLimit']?>){
+				if(parseInt(amounts.edgeBandingMetters) >= <?=$_SESSION['Limits'] -> edgeBandingMettersLimit?>){
 					document.getElementById('edgeBandingMetters').style.backgroundColor  = "lightcoral";
 				}
 				else{

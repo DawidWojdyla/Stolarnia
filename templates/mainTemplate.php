@@ -37,7 +37,7 @@
 					<ul class="nav navbar-nav">
 				<?PHP 
 						if($joinery->stand):
-							switch($_SESSION['stand']->id): 
+							switch($joinery->stand->id): 
 								case '1':
 								case '2': include 'templates/sawMenu.php';
 									break;

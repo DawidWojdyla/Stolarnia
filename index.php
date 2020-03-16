@@ -16,8 +16,7 @@ try{
 	if(!$message && $action == 'showLoginForm'){
 		$message = 'Wybierz stanowisko i wprowadź hasło';
 	}
-	if($action == 'showLoginForm' && $joinery->stand){
-		$joinery->setMessage('Najpierw proszę się wylogować.');
+	if($action == 'showLoginForm' && $joinery -> stand){
 		header('Location:index.php?action=showMain');
 		return;
 	}
@@ -27,51 +26,51 @@ try{
 			switch($joinery->login()){
 				case ACTION_OK :
 					$joinery->setMessage('Zalogowanie prawidłowe');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 					header('Location:index.php?action=showOrderList');
 					return;
 				case NO_LOGIN_REQUIRED :
 					$joinery->setMessage('Najpierw proszę się wylogować.');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 					header('Location:index.php?action=showMain');
 					return;
 				case ACTION_FAILED :
 				case FORM_DATA_MISSING :
 					$joinery->setMessage('Logowanie nie powiodło się.');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 					break;
 				default:
 					$joinery->setMessage('Błąd serwera. Zalogowanie nie jest obecnie możliwe.');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 			}
-				header('Location:index.php?action=showLoginForm');
+			header('Location:index.php?action=showLoginForm');
 			break;
 		case 'addNewOrder':
 			switch ($joinery -> addNewOrder()):
 				case ACTION_OK:
 					$joinery->setMessage('Dodano nowe zlecenie.');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 					break;
 				case FORM_DATA_MISSING:
 					$joinery->setMessage('Proszę wypełnić poprawnie wymagane pola formularza.');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 					break;
 				case ACTION_FAILED:
 					$joinery->setMessage('Obecnie dodanie zlecenia nie jest możliwe.');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 					break;
 				case DOCUMENT_NUMBER_ALREADY_EXISTS:
 					$joinery->setMessage('Dokument o takim numerze już istnieje w bazie.');
 					break;
 				case NO_PERMISSION:
 					$joinery->setMessage('Brak uprawnień do dodania nowego zlecenia.');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 					header('Location:index.php?action=showMain');
 					return;
 				case SERVER_ERROR:
 				default:
 					$joinery->setMessage('Błąd serwera!');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 			endswitch;
 			header('Location:index.php?action=showOrderAddingForm');
 			break;
@@ -79,28 +78,28 @@ try{
 			switch ($joinery -> addNewCustomer()):
 				case ACTION_OK:
 					$joinery->setMessage('Dodano nowego klienta.');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 					break;
 				case FORM_DATA_MISSING:
 					$joinery->setMessage('Proszę wypełnić poprawnie wymagane pola formularza.');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 					break;
 				case ACTION_FAILED:
 					$joinery->setMessage('Obecnie dodanie klienta nie jest możliwe.');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 					break;
 				case CUSTOMER_NUMBER_ALREADY_EXISTS:
 					$joinery->setMessage('Klient o takim numerze telefonu już istnieje w bazie.');
 					break;
 				case NO_PERMISSION:
 					$joinery->setMessage('Brak uprawnień do dodania nowego klienta.');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 					header('Location:index.php?action=showMain');
 					return;
 				case SERVER_ERROR:
 				default:
 					$joinery->setMessage('Błąd serwera!');
-					$joinery->hideMessageAfterTime(3000);
+					$joinery->setHidingMessageDelay(3000);
 			endswitch;
 			header('Location:index.php?action=showCustomerAddingForm');
 			break;

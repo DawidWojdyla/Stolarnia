@@ -4,8 +4,8 @@ class Joinery extends MyDB
 	public $stand = null;
 	
 	function __construct($host, $user, $password, $dbName, $dbType= 'mysql', $charset ='utf8'){
-		$this->dbo = $this->initDB($host, $user, $password, $dbName, $dbType= 'mysql', $charset ='utf8');
-		$this->stand = $this->getActualStand();
+		$this -> dbo = $this -> initDB($host, $user, $password, $dbName, $dbType= 'mysql', $charset ='utf8');
+		$this -> stand = $this -> getActualStand();
 	}
 	
 	function getActualStand(){
@@ -32,7 +32,7 @@ class Joinery extends MyDB
 		}
 	}
 	
-	function hideMessageAfterTime($delay){
+	function setHidingMessageDelay($delay){
 		$_SESSION['delay'] = $delay;
 	}
 	
@@ -74,11 +74,8 @@ class Joinery extends MyDB
 		  return ACTION_FAILED;
 		}
 		
-		 //if(!password_verify($password, $result[1])){
-			//return ACTION_FAILED;
-		 //}
-		 if($password != $result[1]){
-			 return ACTION_FAILED;
+		 if(!password_verify($password, $result[1])){
+			return ACTION_FAILED;
 		 }
 		 
 		$_SESSION['stand'] = new Stand($standId, $result[0]);
@@ -87,12 +84,11 @@ class Joinery extends MyDB
 	}
 	  
 	function logout(){
-		if($this->stand == 4 && isset($_SESSION['sawLimits'])){
-			unset($_SESSION['sawLimits']);
+		if($this->stand == 4 && isset($_SESSION['Limits'])){
+			unset($_SESSION['Limits']);
 		}
-		$this->stand = null;
-		if (isset($_SESSION['stand']))
-		unset($_SESSION['stand']);
+		$this -> stand = null;
+		if (isset($_SESSION['stand'])){ unset($_SESSION['stand']); }
 	}
 	
 	function addNewOrder(){

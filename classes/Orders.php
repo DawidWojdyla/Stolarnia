@@ -1160,7 +1160,7 @@ class Orders
 		$date = $this -> returnLastOrderCompletionDate($sawNumber);
 		$boardsAmountOfTheDay = $this -> returnBoardsAmoutPerDay($sawNumber, $date);
 		
-		if($boardsAmountOfTheDay >= $_SESSION['sawLimits'][$sawNumber]){
+		if($boardsAmountOfTheDay >= $_SESSION['Limits'] -> boardsLimit){
 			// zwróć datę następnego dnia jeśli jest roboczy
 			$checker = new Checker();
 			do{
@@ -1176,14 +1176,8 @@ class Orders
 		
 		$customerList = $customers -> returnCustomerList();
 		$sellers = $this -> returnSellers();
-		if(!isset($_SESSION['boardsLimit'])){
-			$_SESSION['boardsLimit'] = $this -> returnBoardsLimitPerDay();
-		}
-		if(!isset($_SESSION['cuttingMettersLimit'])){
-			$_SESSION['cuttingMettersLimit'] = $this -> returnCuttingMettersLimitPerDay();
-		}
-		if(!isset($_SESSION['edgeBandingMettersLimit'])){
-			$_SESSION['edgeBandingMettersLimit'] = $this -> returnEdgeBandingMettersLimitPerDay();
+		if(!isset($_SESSION['Limits'])){
+			$_SESSION['Limits'] = new Limits($this -> returnBoardsLimitPerDay(), $this -> returnCuttingMettersLimitPerDay(), $this -> returnEdgeBandingMettersLimitPerDay());
 		}
 		
 		$potentialOrderCompletionDates[1] = $this -> returnPotentialOrderCompletionDate(1);
