@@ -69,8 +69,48 @@
 							case 'showLoginForm' :
 								include 'loginForm.php';
 								break;
-							case 'showWorkerAddingForm' :
+							case 'showWorkerAddingForm':
 								switch($joineryAdmin -> showWorkerAddingForm()):
+									case NO_PERMISSION:
+										$joineryAdmin -> setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joineryAdmin -> setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
+							case 'showWorkerSearchingForm':
+								switch($joineryAdmin -> showWorkerSearchingForm()):
+									case NO_PERMISSION:
+										$joineryAdmin -> setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joineryAdmin -> setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
+							case 'findWorker':
+								switch($joineryAdmin -> showWorkerSearchingForm()):
+									case NO_PERMISSION:
+										$joineryAdmin -> setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joineryAdmin -> setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								switch($joineryAdmin -> showWorkerSearchResult()):
 									case NO_PERMISSION:
 										$joineryAdmin -> setMessage('Brak uprawnień.');
 										header('Location:index.php?action=showMain');

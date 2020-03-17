@@ -317,14 +317,6 @@ class EdgeBandingMachine
 		return ACTION_OK;
 	}
 	
-	function returnEdgeBandingWorkers(){
-		$edgeBandingWorkers = array();
-		if($result = $this->dbo->query("SELECT `id`, `name` FROM `workers` WHERE `id` IN (SELECT `worker_id` FROM `workers_stands` WHERE `stand_id`= 3)")){
-			$edgeBandingWorkers = $result->fetchAll(PDO::FETCH_OBJ);
-		}
-		return $edgeBandingWorkers;
-	}
-	
 	function showOrderList(){
 		//$this->setOrderListPeriod();
 		$orderList = $this->returnOutstandingOrders();
@@ -334,16 +326,8 @@ class EdgeBandingMachine
 		include 'templates/orderListForEBMachine.php';
 	}
 	
-	/*function showTheOrder($orderId, $orderTitle){
-		$boards 	= $this -> returnOrderDetails($orderId);
-		$boards 	= $this -> groupOrderDetailsByBoardsId($boards);
-		$workers 	= $this -> returnEdgeBandingWorkers();
-		
-		include 'scripts/orderEdgeBandingFormScripts.php';
-		include 'templates/orderEdgeBandingForm.php';
-	}*/
 	
-		function showLastMadeOrders(){
+	function showLastMadeOrders(){
 		//$this->setOrderListPeriod();
 		
 		$positionsAmount = 30;
@@ -367,7 +351,9 @@ class EdgeBandingMachine
 
 		$boards 	= $this -> returnOrderDetails($orderId);
 		$boards 	= $this -> groupOrderDetailsByBoardsId($boards);
-		$workers 	= $this -> returnEdgeBandingWorkers();
+		
+		$workers = new Workers($this -> dbo);
+		$workers 	= $workers -> returnEdgeBandingWorkers();
 		
 		include 'scripts/orderEdgeBandingFormScripts.php';
 		include 'templates/orderEdgeBandingForm.php';
@@ -405,7 +391,10 @@ class EdgeBandingMachine
 			
 			$boards 	= $this -> returnOrderDetails($orderId);
 			$boards 	= $this -> groupOrderDetailsByBoardsId($boards);
-			$workers 	= $this -> returnEdgeBandingWorkers();
+			
+		
+			$workers = new Workers($this -> dbo);
+			$workers 	= $workers -> returnEdgeBandingWorkers();
 		
 			include 'scripts/orderEdgeBandingFormScripts.php';
 			include 'templates/orderEdgeBandingForm.php';

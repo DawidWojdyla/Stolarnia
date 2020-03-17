@@ -1,9 +1,9 @@
 <?php if(!isset($this)) die(); ?>
 <div class="contentContainer">
-<div class="text-center header">Nowy pracownik</div>
+<div class="text-center header">Dodaj pracownika</div>
 <form action="index.php?action=addNewWorker" name="workerAddingForm" id="workerAddingForm" method="post" autocomplete="off">
 <div class="tabContainer">
-	<table class="table table-condensed addingTab">
+	<table class="table addingTab">
 		<?PHP if (isset($_SESSION ['workerNameError'])):?>
 		<tr class="danger text-center"><td colspan="2"><?=$_SESSION ['workerNameError']?></td></tr>
 		<?PHP unset($_SESSION ['workerNameError']); endif; ?>

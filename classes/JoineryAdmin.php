@@ -107,5 +107,22 @@ class JoineryAdmin extends MyDB
 		return $workers -> addNewWorker();
 	}
 	
+	function showWorkerSearchingForm(){
+		if(!$this->dbo) { return SERVER_ERROR; }
+		if (!$this -> loggedAdmin) {  return NO_PERMISSION; }
+		$workers = new Workers ($this->dbo);
+		return $workers->showSearchingForm();
+	}
+	
+	function showWorkerSearchResult(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+			
+		$workers = new Workers($this -> dbo);
+		return $workers -> showSearchResult();
+	}	
+	
+	
+	
 }
 ?>

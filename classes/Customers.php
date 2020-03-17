@@ -108,7 +108,7 @@ class Customers
 	}
 	
 	function showCustomerList(){
-		$customerList = $this->returnCustomerListWithAddresses();
+		$customerList = $this -> returnCustomerListWithAddresses();
 		
 		include 'scripts/customerListScripts.php';
 		include 'templates/customerList.php';

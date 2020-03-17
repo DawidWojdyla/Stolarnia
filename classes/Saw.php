@@ -209,22 +209,6 @@ class Saw
 		return $result;
 	}
 	
-	function returnSawWorkers(){
-		$sawWorkers = array();
-		if($result = $this->dbo->query("SELECT `id`, `name` FROM workers WHERE `id` IN (SELECT `worker_id` FROM workers_stands WHERE `stand_id`= 1 OR `stand_id`= 2)")){
-			$sawWorkers = $result->fetchAll(PDO::FETCH_OBJ);
-		}
-		return $sawWorkers;
-	}
-	
-	/*function showTheOrder($orderId, $orderTitle){
-		$boards = $this -> returnOrderDetails($orderId);
-		$sawWorkers = $this -> returnSawWorkers();
-		
-		include 'scripts/orderCuttingFormScripts.php';
-		include 'templates/orderCuttingForm.php';
-	}*/
-	
 	function showLastCutBoards($positionsAmount){
 		$positionsAmount = intval($positionsAmount);
 		$orders = array();
@@ -267,7 +251,8 @@ class Saw
 		$comment = filter_input(INPUT_POST, 'comment');
 		
 		$boards = $this -> returnOrderDetails($orderId);
-		$sawWorkers = $this -> returnSawWorkers();
+		$workers = new Workers($this -> dbo);
+		$sawWorkers = $workers -> returnSawWorkers();
 		
 		include 'scripts/orderCuttingFormScripts.php';
 		include 'templates/orderCuttingForm.php';
@@ -302,7 +287,8 @@ class Saw
 				$phone = $order -> tempPhone;
 			}
 			$boards = $this -> returnOrderDetails($order->orderId);
-			$sawWorkers = $this -> returnSawWorkers();
+			$workers = new Workers($this -> dbo);
+			$sawWorkers = $workers -> returnSawWorkers();
 		
 			include 'scripts/orderCuttingFormScripts.php';
 			include 'templates/orderCuttingForm.php';
