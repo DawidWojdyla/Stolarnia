@@ -58,26 +58,80 @@ try{
 					break;
 				case FORM_DATA_MISSING:
 					$joineryAdmin -> setMessage('Proszę wypełnić poprawnie wymagane pola formularza.');
-					$joineryAdmin->setHidingMessageDelay(3000);
+					$joineryAdmin -> setHidingMessageDelay(3000);
 					break;
 				case ACTION_FAILED:
-					$joineryAdmin->setMessage('Obecnie dodanie pracownika nie jest możliwe.');
-					$joineryAdmin->setHidingMessageDelay(3000);
+					$joineryAdmin -> setMessage('Obecnie dodanie pracownika nie jest możliwe.');
+					$joineryAdmin -> setHidingMessageDelay(3000);
 					break;
 				case WORKER_NAME_ALREADY_EXISTS:
-					$joineryAdmin->setMessage('Pracownik o takim imieniu i nazwisku już istnieje w bazie.');
+					$joineryAdmin -> setMessage('Pracownik o takim imieniu i nazwisku już istnieje w bazie.');
 					break;
 				case NO_PERMISSION:
-					$joineryAdmin->setMessage('Brak uprawnień do dodania nowego pracownika.');
-					$joineryAdmin->setHidingMessageDelay(3000);
+					$joineryAdmin -> setMessage('Brak uprawnień do dodania nowego pracownika.');
+					$joineryAdmin -> setHidingMessageDelay(3000);
 					header('Location:index.php?action=showMain');
 					return;
 				case SERVER_ERROR:
 				default:
-					$joineryAdmin->setMessage('Błąd serwera!');
-					$joineryAdmin->setHidingMessageDelay(3000);
+					$joineryAdmin -> setMessage('Błąd serwera!');
+					$joineryAdmin -> setHidingMessageDelay(3000);
 			endswitch;
 			header('Location:index.php?action=showWorkerAddingForm');
+			break;
+		case 'updateWorkerName':
+			switch ($joineryAdmin -> updateWorkerName()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateWorkerSurname':
+			switch ($joineryAdmin -> updateWorkerSurname()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateWorkerStands':
+			switch ($joineryAdmin -> updateWorkerStands()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
 			break;
 		default:
 			include 'templates/mainTemplate.php';

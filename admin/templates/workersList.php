@@ -1,11 +1,14 @@
 <?php if(!isset($this)) die(); ?>
 <div class="contentContainer">
+	<?PHP if(!isset($name)):?>
+	<div class="text-center header">Lista pracowników</div>
+	<?PHP endif; ?>
 	<table class='table orderListTable'>
 		<tr>
 			<th>imię</th><th>nazwisko</th><th>stanowiska</th>
 		</tr>
 	<?PHP foreach($workers as $worker):?>
-		<tr class="pointer" onclick="showworkerOptions('<?=$worker -> workerId?>');">
+		<tr class="pointer" onclick="showWorkerOptions('<?=$worker -> workerId?>');">
 			<td>
 				<span id='name<?=$worker -> workerId?>'><?=$worker -> name?></span>
 			</td>
@@ -14,7 +17,7 @@
 			</td>
 			<td>
 				<span id='stands<?=$worker -> workerId?>'><?=$worker -> standsNames?></span>
-				<span style="display: none;" id='standIds<?=$worker -> workerId?>'><?=$worker -> standsIds?></span>
+				<span style="display: none;" id='standsIds<?=$worker -> workerId?>'><?=$worker -> standsIds?></span>
 			</td>
 		</tr>
 	<?PHP endforeach; ?>	

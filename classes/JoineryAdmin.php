@@ -97,7 +97,14 @@ class JoineryAdmin extends MyDB
 		if(!$this->dbo) { return SERVER_ERROR; }
 		if (!$this -> loggedAdmin) {  return NO_PERMISSION; }
 		$workers = new Workers ($this->dbo);
-		return $workers->showWorkerAddingForm();
+		return $workers -> showWorkerAddingForm();
+	}
+	
+	function showWorkerUpdatingForm(){
+		if(!$this->dbo) { return SERVER_ERROR; }
+		if (!$this -> loggedAdmin) {  return NO_PERMISSION; }
+		$workers = new Workers ($this->dbo);
+		return $workers -> showWorkerUpdatingForm();
 	}
 	
 	function addNewWorker(){
@@ -106,6 +113,35 @@ class JoineryAdmin extends MyDB
 		$workers = new Workers ($this->dbo);
 		return $workers -> addNewWorker();
 	}
+	
+	function updateWorkerName(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$workers = new Workers ($this->dbo);
+		return $workers -> updateWorkerName();
+	}
+	
+	function updateWorkerSurname(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$workers = new Workers ($this->dbo);
+		return $workers -> updateWorkerSurname();
+	}
+	
+	function updateWorkerStands(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$workers = new Workers ($this->dbo);
+		return $workers -> updateWorkerStands();
+	}
+	
+	function showWorkersList(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+			
+		$workers = new Workers($this -> dbo);
+		return $workers -> showWorkersList();
+	}	
 	
 	function showWorkerSearchingForm(){
 		if(!$this->dbo) { return SERVER_ERROR; }

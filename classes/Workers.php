@@ -47,6 +47,129 @@ class Workers
 		include 'templates/workerAddingForm.php';
 	}
 	
+	function setWorkerName($id, $name){
+		if( !$this->dbo){
+			return SERVER_ERROR;
+		}
+		
+		$name = ucwords($name);
+		
+		$query = $this -> dbo -> prepare ("UPDATE `workers` SET `name`=:name WHERE `id`=:id");
+		$query -> bindValue (':name', $name, PDO::PARAM_STR);
+		$query -> bindValue (':id', $id, PDO::PARAM_INT);
+		
+		if (!$query -> execute()){ 
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;	
+	}
+	
+	
+	function updateWorkerName(){
+		if(!isset($_POST['id']) || $_POST['id'] == '' || ((int)($_POST['id'])) < 1 || !isset($_POST['name']) || $_POST['name'] == ''  ){
+			return FORM_DATA_MISSING;
+		}
+		return $this -> setWorkerName($_POST['id'], $_POST['name']);
+	}
+	
+	function setWorkerSurname($id, $surname){
+		if( !$this->dbo){
+			return SERVER_ERROR;
+		}
+		
+		$surname = ucwords($surname);
+		
+		$query = $this -> dbo -> prepare ("UPDATE `workers` SET `surname`=:surname WHERE `id`=:id");
+		$query -> bindValue (':surname', $surname, PDO::PARAM_STR);
+		$query -> bindValue (':id', $id, PDO::PARAM_INT);
+		
+		if (!$query -> execute()){ 
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;	
+	}
+	
+	function updateWorkerSurname(){
+		if(!isset($_POST['id']) || $_POST['id'] == '' || ((int)($_POST['id'])) < 1 || !isset($_POST['surname']) || $_POST['surname'] == ''  ){
+			return FORM_DATA_MISSING;
+		}
+		return $this -> setWorkerSurname($_POST['id'], $_POST['surname']);
+	}
+	
+	function deleteWorkerStands($workerId){
+		if( !$this->dbo){
+			return SERVER_ERROR;
+		}
+		
+		$query = $this->dbo->prepare("DELETE FROM `workers_stands` WHERE `worker_id`=:workerId");
+		$query->bindValue(':workerId', $workerId, PDO::PARAM_INT);   
+		
+		if(!$query->execute()){
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;		
+	}
+	
+	function setWorkerStands($id, $stands){
+		if( !$this->dbo){
+			return SERVER_ERROR;
+		}
+		
+		foreach($stands as $standId){
+			
+			$query = $this -> dbo -> prepare ("INSERT INTO `workers_stands` VALUES (:id, :standId)");
+			$query -> bindValue (':id', $id, PDO::PARAM_INT);
+			$query -> bindValue (':standId', $standId, PDO::PARAM_INT);
+		
+			if (!$query -> execute()){ 
+				return ACTION_FAILED;
+			}	
+		}
+		return ACTION_OK;
+	}
+	
+	function updateWorkerStands(){
+		if(!isset($_POST['id']) || $_POST['id'] == '' || ((int)($_POST['id'])) < 1 || !isset($_POST['standsString']) || $_POST['standsString'] == ''  ){
+			return FORM_DATA_MISSING;
+		}
+		
+		if(!$this -> dbo -> beginTransaction()){
+			return SERVER_ERROR;
+		}
+		
+		if($this -> deleteWorkerStands($_POST['id']) != ACTION_OK){
+			return ACTION_FAILED;
+		}
+		$stands =  explode(',', $_POST['standsString']);
+		
+		if($this -> setWorkerStands($_POST['id'], $stands) != ACTION_OK){
+			return ACTION_FAILED;
+		}
+		
+		if(!$this -> dbo -> commit()){
+			return SERVER_ERROR;
+		}	
+		return ACTION_OK;
+	}
+	
+	function showWorkerUpdatingForm(){
+		if (!isset($_POST['id']) || $_POST['id'] ==''){
+			return FORM_DATA_MISSING;
+		}
+
+		$id = filter_input (INPUT_POST, 'id');
+		$name = filter_input (INPUT_POST, 'firstName');
+		$surname = filter_input (INPUT_POST, 'surname');	
+		$stands = filter_input (INPUT_POST, 'stands');	
+		$standsIds = filter_input (INPUT_POST, 'standsIds');	
+		
+		$standsObject = new Stands($this -> dbo);
+		$standsList = $standsObject -> returnStandsList();
+		
+		include 'scripts/workerUpdatingFormScripts.php';
+		include 'templates/workerUpdatingForm.php';
+	}
+	
 	function checkIfWorkerNamesExistInDatabase($name, $surname){
 		$query = $this -> dbo -> prepare("SELECT `id` FROM `workers` WHERE `name`=:name AND `surname`=:surname");
 		$query -> bindValue (':name', $name, PDO::PARAM_STR);
@@ -114,7 +237,7 @@ class Workers
 		return $this -> addNewWorkerToDatabase($name, $surname, $_POST['stands']);
 	}
 	
-		function findWorkers($conditions12, $condition3){
+		function returnWorkersList($conditions12 = "", $condition3 = ""){
 		$query = "SELECT `workers`.`id` AS workerId, `workers`.`name`, `workers`.`surname`, GROUP_CONCAT(`stands`.`id` ORDER BY  `stands`.`id`) AS standsIds, GROUP_CONCAT(`stands`.`name` ORDER BY `stands`.`id` SEPARATOR ', ') AS standsNames  FROM `workers`, `stands`, `workers_stands` WHERE `workers_stands`.`worker_id`=`workers`.`id` AND `workers_stands`.`stand_id`=`stands`.`id`" . $conditions12 . " GROUP BY `workers`.`id`" . $condition3 . " ORDER BY `surname`";
 		
 		if(!$query = $this -> dbo -> query ($query)){
@@ -126,6 +249,12 @@ class Workers
 		}
 		return $result;
 	}	
+	
+	function showWorkersList(){
+		$workers = $this -> returnWorkersList();
+		include 'scripts/workersListScripts.php';
+		include 'templates/workersList.php';
+	}
 	
 	function showSearchResult(){
 		if (!isset($_POST['name']) || !isset($_POST['surname'])){
@@ -156,9 +285,9 @@ class Workers
 			$condition3 = substr($condition3, 0, -1);
 			$condition3 .= "%'";
 		}
-		if($workers = $this -> findWorkers($condition1 . $condition2, $condition3)){
+		if($workers = $this -> returnWorkersList($condition1 . $condition2, $condition3)){
 			include 'scripts/workersListScripts.php';
-			include 'templates/workerSearchResult.php';
+			include 'templates/workersList.php';
 		}else{
 			include 'templates/noResults.php';
 		}
