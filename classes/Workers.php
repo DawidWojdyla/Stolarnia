@@ -9,7 +9,15 @@ class Workers
 	
 	function returnWorkers(){
 		$workers = array();
-		if($result = $this -> dbo -> query("SELECT `id`, CONCAT_WS(' ',`name`, `surname`) as name FROM workers")){
+		if($result = $this -> dbo -> query("SELECT `id`, CONCAT_WS(' ',`name`, `surname`) as name FROM workers WHERE `id` NOT IN (SELECT `worker_id` FROM `workers_removed`)")){
+			$sawWorkers = $result -> fetchAll(PDO::FETCH_OBJ);
+		}
+		return $workers;
+	}
+	
+	function returnRemovedWorkers(){
+		$workers = array();
+		if($result = $this -> dbo -> query("SELECT `id`, CONCAT_WS(' ',`name`, `surname`) as name FROM workers WHERE `id` IN (SELECT `worker_id` FROM `workers_removed`)")){
 			$sawWorkers = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $workers;
@@ -17,7 +25,7 @@ class Workers
 	
 	function returnSawWorkers(){
 		$sawWorkers = array();
-		if($result = $this -> dbo -> query("SELECT `id`, CONCAT_WS(' ',`name`, `surname`) as name FROM workers WHERE `id` IN (SELECT `worker_id` FROM workers_stands WHERE `stand_id`= 1 OR `stand_id`= 2)")){
+		if($result = $this -> dbo -> query("SELECT `id`, CONCAT_WS(' ',`name`, `surname`) as name FROM workers WHERE `id` IN (SELECT `worker_id` FROM workers_stands WHERE `stand_id`= 1 OR `stand_id`= 2) AND `id` NOT IN (SELECT `worker_id` FROM `workers_removed`)")){
 			$sawWorkers = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $sawWorkers;
@@ -25,7 +33,7 @@ class Workers
 	
 	function returnEdgeBandingWorkers(){
 		$edgeBandingWorkers = array();
-		if($result = $this->dbo->query("SELECT `id`, CONCAT_WS(' ',`name`, `surname`) as name FROM `workers` WHERE `id` IN (SELECT `worker_id` FROM `workers_stands` WHERE `stand_id`= 3)")){
+		if($result = $this->dbo->query("SELECT `id`, CONCAT_WS(' ',`name`, `surname`) as name FROM `workers` WHERE `id` IN (SELECT `worker_id` FROM `workers_stands` WHERE `stand_id`= 3) AND `id` NOT IN (SELECT `worker_id` FROM `workers_removed`)")){
 			$edgeBandingWorkers = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $edgeBandingWorkers;
@@ -33,7 +41,7 @@ class Workers
 	
 	function returnSellers(){
 		$sellers = array();
-		if($result = $this -> dbo -> query("SELECT `id`, CONCAT_WS(' ',`name`, `surname`) as name FROM workers WHERE `id` IN (SELECT `worker_id` FROM workers_stands WHERE `stand_id`= 4)")){
+		if($result = $this -> dbo -> query("SELECT `id`, CONCAT_WS(' ',`name`, `surname`) as name FROM workers WHERE `id` IN (SELECT `worker_id` FROM workers_stands WHERE `stand_id`= 4) AND `id` NOT IN (SELECT `worker_id` FROM `workers_removed`)")){
 			$sellers = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $sellers;
@@ -152,6 +160,46 @@ class Workers
 		return ACTION_OK;
 	}
 	
+	function addWorkerToRemovedWorkersList($id){
+		if( !$this->dbo){
+			return SERVER_ERROR;
+		}
+		$query = $this -> dbo -> prepare ("INSERT INTO `workers_removed` VALUES (:id)");
+		$query -> bindValue (':id', $id, PDO::PARAM_INT);
+	
+		if (!$query -> execute()){ 
+			return ACTION_FAILED;
+		}	
+		return ACTION_OK;
+	}
+	
+	function removeWorker(){
+		if(!isset($_POST['id']) || $_POST['id'] == '' || ((int)($_POST['id'])) < 1 ){
+			return FORM_DATA_MISSING;
+		}
+		return $this -> addWorkerToRemovedWorkersList($_POST['id']);
+	}
+	
+	function deleteWorkerFromRemovedWorkersList($id){
+		if( !$this->dbo){
+			return SERVER_ERROR;
+		}
+		$query = $this -> dbo -> prepare ("DELETE FROM `workers_removed` WHERE `worker_id`=:id");
+		$query -> bindValue (':id', $id, PDO::PARAM_INT);
+	
+		if (!$query -> execute()){ 
+			return ACTION_FAILED;
+		}	
+		return ACTION_OK;
+	}
+	
+	function restoreWorker(){
+		if(!isset($_POST['id']) || $_POST['id'] == '' || ((int)($_POST['id'])) < 1 ){
+			return FORM_DATA_MISSING;
+		}
+		return $this -> deleteWorkerFromRemovedWorkersList($_POST['id']);
+	}
+	
 	function showWorkerUpdatingForm(){
 		if (!isset($_POST['id']) || $_POST['id'] ==''){
 			return FORM_DATA_MISSING;
@@ -237,8 +285,8 @@ class Workers
 		return $this -> addNewWorkerToDatabase($name, $surname, $_POST['stands']);
 	}
 	
-		function returnWorkersList($conditions12 = "", $condition3 = ""){
-		$query = "SELECT `workers`.`id` AS workerId, `workers`.`name`, `workers`.`surname`, GROUP_CONCAT(`stands`.`id` ORDER BY  `stands`.`id`) AS standsIds, GROUP_CONCAT(`stands`.`name` ORDER BY `stands`.`id` SEPARATOR ', ') AS standsNames  FROM `workers`, `stands`, `workers_stands` WHERE `workers_stands`.`worker_id`=`workers`.`id` AND `workers_stands`.`stand_id`=`stands`.`id`" . $conditions12 . " GROUP BY `workers`.`id`" . $condition3 . " ORDER BY `surname`";
+	function returnWorkersList($conditions12 = "", $condition3 = ""){
+		$query = "SELECT `workers`.`id` AS workerId, `workers`.`name`, `workers`.`surname`, GROUP_CONCAT(`stands`.`id` ORDER BY  `stands`.`id`) AS standsIds, GROUP_CONCAT(`stands`.`name` ORDER BY `stands`.`id` SEPARATOR ', ') AS standsNames  FROM `workers`, `stands`, `workers_stands` WHERE `workers`.`id` NOT IN (SELECT `worker_id` FROM `workers_removed`) AND `workers_stands`.`worker_id`=`workers`.`id` AND `workers_stands`.`stand_id`=`stands`.`id`" . $conditions12 . " GROUP BY `workers`.`id`" . $condition3 . " ORDER BY `surname`";
 		
 		if(!$query = $this -> dbo -> query ($query)){
 			return null;
@@ -248,13 +296,33 @@ class Workers
 		  return null; 
 		}
 		return $result;
-	}	
+	}
+	
+	function returnRemovedWorkersList(){
+		$query = "SELECT `workers`.`id` AS workerId, `workers`.`name`, `workers`.`surname`, GROUP_CONCAT(`stands`.`id` ORDER BY  `stands`.`id`) AS standsIds, GROUP_CONCAT(`stands`.`name` ORDER BY `stands`.`id` SEPARATOR ', ') AS standsNames  FROM `workers`, `stands`, `workers_stands` WHERE `workers`.`id` IN (SELECT `worker_id` FROM `workers_removed`) AND `workers_stands`.`worker_id`=`workers`.`id` AND `workers_stands`.`stand_id`=`stands`.`id` GROUP BY `workers`.`id` ORDER BY `surname`";
+		
+		if(!$query = $this -> dbo -> query ($query)){
+			return null;
+		}
+		
+		if(!$result = $query -> fetchAll(PDO::FETCH_OBJ)){
+		  return null; 
+		}
+		return $result;
+	}
 	
 	function showWorkersList(){
 		$workers = $this -> returnWorkersList();
 		include 'scripts/workersListScripts.php';
 		include 'templates/workersList.php';
 	}
+	
+	function showRemovedWorkersList(){
+		$removedWorkers = $this -> returnRemovedWorkersList();
+		include 'scripts/removedWorkersListScripts.php';
+		include 'templates/removedWorkersList.php';
+	}
+	
 	
 	function showSearchResult(){
 		if (!isset($_POST['name']) || !isset($_POST['surname'])){

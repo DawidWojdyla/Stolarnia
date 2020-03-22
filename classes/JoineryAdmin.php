@@ -143,6 +143,14 @@ class JoineryAdmin extends MyDB
 		return $workers -> showWorkersList();
 	}	
 	
+	function showRemovedWorkersList(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+			
+		$workers = new Workers($this -> dbo);
+		return $workers -> showRemovedWorkersList();
+	}
+	
 	function showWorkerSearchingForm(){
 		if(!$this->dbo) { return SERVER_ERROR; }
 		if (!$this -> loggedAdmin) {  return NO_PERMISSION; }
@@ -156,6 +164,22 @@ class JoineryAdmin extends MyDB
 			
 		$workers = new Workers($this -> dbo);
 		return $workers -> showSearchResult();
+	}	
+	
+	function removeWorker(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+			
+		$workers = new Workers($this -> dbo);
+		return $workers -> removeWorker();
+	}	
+	
+	function restoreWorker(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+			
+		$workers = new Workers($this -> dbo);
+		return $workers -> restoreWorker();
 	}	
 	
 	

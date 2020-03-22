@@ -1,14 +1,13 @@
 <?php if(!isset($this)) die(); ?>
 <div class="contentContainer">
-	<?PHP if(!isset($name)):?>
-	<div class="text-center header">Lista pracowników</div>
-	<?PHP endif; ?>
+<?PHP if($removedWorkers): ?>
+	<div class="text-center header">Lista usuniętych pracowników</div>
 	<table class='table orderListTable'>
 		<tr>
 			<th>imię</th><th>nazwisko</th><th>stanowiska</th>
 		</tr>
-	<?PHP foreach($workers as $worker):?>
-		<tr id='<?=$worker -> workerId?>'  class="pointer" onclick="showWorkerOptions('<?=$worker -> workerId?>');">
+	<?PHP foreach($removedWorkers as $worker):?>
+		<tr id='<?=$worker -> workerId?>' class="pointer" onclick="showWorkerOptions('<?=$worker -> workerId?>');">
 			<td>
 				<span id='name<?=$worker -> workerId?>'><?=$worker -> name?></span>
 			</td>
@@ -20,8 +19,11 @@
 				<span style="display: none;" id='standsIds<?=$worker -> workerId?>'><?=$worker -> standsIds?></span>
 			</td>
 		</tr>
-	<?PHP endforeach; ?>	
+	<?PHP endforeach;?>	
 	</table>
+	<?PHP else: ?>
+	<div class="text-center header">Lista usuniętych pracowników jest pusta</div>
+	<?PHP endif; ?>
 </div>
 
 <div class="modal fade" id="modal" role="dialog">

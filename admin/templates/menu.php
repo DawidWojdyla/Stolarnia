@@ -5,6 +5,7 @@
 		<li><a href="index.php?action=showWorkerAddingForm"><span class="glyphicon glyphicon-plus"></span> Nowy</a></li>
 		<li><a href="index.php?action=showWorkerSearchingForm"><span class="glyphicon glyphicon-search"></span> Znajdź</a></li>
 		<li><a href="index.php?action=showWorkersList"><span class="glyphicon glyphicon-th-list"></span> Lista</a></li>
+		<li><a href="index.php?action=showRemovedWorkersList"><span class="glyphicon glyphicon-ban-circle"></span> Usunięci</a></li>
 	</ul>
 </li>
 <li class="dropdown">
