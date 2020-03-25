@@ -107,6 +107,27 @@ class JoineryAdmin extends MyDB
 		return $workers -> showWorkerUpdatingForm();
 	}
 	
+	function showStandsUpdatingForm(){
+		if(!$this->dbo) { return SERVER_ERROR; }
+		if (!$this -> loggedAdmin) {  return NO_PERMISSION; }
+		$stands = new Stands ($this->dbo);
+		return $stands -> showStandsUpdatingForm();
+	}
+	
+	function updateStandName(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$stands = new Stands ($this->dbo);
+		return $stands -> updateStandName();
+	}
+	
+	function updateStandPassword(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$stands = new Stands ($this->dbo);
+		return $stands -> updateStandPassword();
+	}
+	
 	function addNewWorker(){
 		if(!$this -> dbo){ return SERVER_ERROR; }
 		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
@@ -182,7 +203,33 @@ class JoineryAdmin extends MyDB
 		return $workers -> restoreWorker();
 	}	
 	
+	function showLimitsUpdatingForm(){
+		if(!$this->dbo) { return SERVER_ERROR; }
+		if (!$this -> loggedAdmin) {  return NO_PERMISSION; }
+		$limits = new Limits ($this -> dbo);
+		return $limits -> showLimitsUpdatingForm();
+	}
 	
+	function updateBoardsLimit(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$limits = new Limits ($this -> dbo);
+		return $limits -> updateBoardsLimit();
+	}
+	
+	function updateCuttingMettersLimit(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$limits = new Limits ($this -> dbo);
+		return $limits -> updateCuttingMettersLimit();
+	}
+	
+	function updateEdgeBandingMettersLimit(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$limits = new Limits ($this -> dbo);
+		return $limits -> updateEdgeBandingMettersLimit();
+	}
 	
 }
 ?>

@@ -950,27 +950,6 @@ class Orders
 		return ACTION_OK;
 	}
 	
-	function returnBoardsLimitPerDay(){
-		if($result = $this->dbo->query("SELECT `limit_value` FROM limits WHERE `limit_name`='boardsPerDay'")){
-			$limit = $result->fetch(PDO::FETCH_NUM);
-		}
-		return $limit[0];
-	}
-	
-	function returnCuttingMettersLimitPerDay(){
-		if($result = $this->dbo->query("SELECT `limit_value` FROM limits WHERE `limit_name`='cuttingMettersPerDay'")){
-			$limit = $result->fetch(PDO::FETCH_NUM);
-		}
-		return $limit[0];
-	}
-	
-	function returnEdgeBandingMettersLimitPerDay(){
-		if($result = $this->dbo->query("SELECT `limit_value` FROM limits WHERE `limit_name`='edgeBandingMettersPerDay'")){
-			$limit = $result->fetch(PDO::FETCH_NUM);
-		}
-		return $limit[0];
-	}
-	
 	function returnBoardsSigns(){
 		$boardsSigns = array();
 		if($result = $this->dbo->query("SELECT `id`, `sign` FROM boards_signs")){
@@ -1156,7 +1135,8 @@ class Orders
 		$workers = new Workers($this -> dbo);
 		$sellers = $workers -> returnSellers();
 		if(!isset($_SESSION['Limits'])){
-			$_SESSION['Limits'] = new Limits($this -> returnBoardsLimitPerDay(), $this -> returnCuttingMettersLimitPerDay(), $this -> returnEdgeBandingMettersLimitPerDay());
+			$limits = new Limits($this -> dbo);
+			$_SESSION['Limits'] = $limits -> returnLimits();
 		}
 		
 		$potentialOrderCompletionDates[1] = $this -> returnPotentialOrderCompletionDate(1);

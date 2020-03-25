@@ -97,6 +97,20 @@
 										break;
 								endswitch;
 								break;
+							case 'showStandsUpdatingForm':
+								switch($joineryAdmin -> showStandsUpdatingForm()):
+									case NO_PERMISSION:
+										$joineryAdmin -> setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joineryAdmin -> setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
 							case 'showWorkersList':
 								switch($joineryAdmin -> showWorkersList()):
 									case NO_PERMISSION:
@@ -153,6 +167,20 @@
 										break;
 								endswitch;
 								switch($joineryAdmin -> showWorkerSearchResult()):
+									case NO_PERMISSION:
+										$joineryAdmin -> setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joineryAdmin -> setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
+							case 'showLimitsUpdatingForm':
+								switch($joineryAdmin -> showLimitsUpdatingForm()):
 									case NO_PERMISSION:
 										$joineryAdmin -> setMessage('Brak uprawnień.');
 										header('Location:index.php?action=showMain');

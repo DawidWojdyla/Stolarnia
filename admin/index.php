@@ -169,6 +169,99 @@ try{
 					print_r('SERVER_ERROR');
 			endswitch;
 			break;
+		case 'updateStandName':
+			switch ($joineryAdmin -> updateStandName()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateStandPassword':
+			switch ($joineryAdmin -> updateStandPassword()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case PASSWORDS_DO_NOT_MATCH:
+					print_r('PASSWORDS_DO_NOT_MATCH');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateBoardsLimit':
+			switch ($joineryAdmin -> updateBoardsLimit()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateCuttingMettersLimit':
+			switch ($joineryAdmin -> updateCuttingMettersLimit()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'updateEdgeBandingMettersLimit':
+			switch ($joineryAdmin -> updateEdgeBandingMettersLimit()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
 		default:
 			include 'templates/mainTemplate.php';
 	}

@@ -58,7 +58,7 @@ class Joinery extends MyDB
 		
 		$passwordLength = mb_strlen($password, 'utf8');
 		
-		if($standId < 1 || $standId > 4 || $passwordLength < 2 || $passwordLength > 10){
+		if($standId < 1 || $standId > 4 || $passwordLength < 3 || $passwordLength > 15){
 			return ACTION_FAILED;
 		}
 		
@@ -70,7 +70,7 @@ class Joinery extends MyDB
 			return SERVER_ERROR;
 		}
 		
-		if(!$result = $PDOstatement->fetch(PDO::FETCH_NUM)){
+		if(!$result = $PDOstatement -> fetch(PDO::FETCH_NUM)){
 		  return ACTION_FAILED;
 		}
 		
