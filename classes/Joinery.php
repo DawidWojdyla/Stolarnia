@@ -84,9 +84,6 @@ class Joinery extends MyDB
 	}
 	  
 	function logout(){
-		if($this->stand == 4 && isset($_SESSION['Limits'])){
-			unset($_SESSION['Limits']);
-		}
 		$this -> stand = null;
 		if (isset($_SESSION['stand'])){ unset($_SESSION['stand']); }
 	}

@@ -6,8 +6,6 @@ class PasswordsManager
 	function __construct($dbo){
 		$this -> dbo = $dbo;
 	}
-	
-	
-	
+
 }
 ?>

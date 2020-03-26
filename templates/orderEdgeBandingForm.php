@@ -15,7 +15,7 @@
 		<th>obrzeże</th><th>naklejki</th><th><div>wz</div><div>[mb]</div></th><th><div>maszyna</div><div>[mb]</div></th>
 	<?PHP endif; ?>	
 		<tr class="pointer ebtr"  id="<?=$board -> edgeBandingId?>" onclick="showEdgeBandingModal(<?=$board -> edgeBandingId?>);">
-			<td style="border-top: 1.5px solid white;"><div><?=$board -> edgeBandType?><?PHP if($board -> edgeBandSymbol != '---'): ?> <?=$board -> edgeBandSymbol?></td>
+			<td style="border-top: 1.5px solid white;"><div><?=$board -> edgeBandType?><?PHP if($board -> edgeBandSymbol != '---'): ?> <?=$board -> edgeBandSymbol?><?PHP endif; ?></td>
 			<td style="border-top: 1.5px solid white;"><?=$board -> stickerSymbol?></td>
 			<td style="border-top: 1.5px solid white;"><?=($board -> wzMetters+0)?></td>
 			<td style="border-top: 1.5px solid white;" id="m<?=$board -> edgeBandingId?>"><?=($board -> machineMetters)?></td>
@@ -26,7 +26,6 @@
 		</tr>
 		<?PHP endif; ?>
 		<tr style="display:none;"><td id="c<?=$board -> edgeBandingId?>"><?PHP if($board -> edgeBandingComment): ?><?=$board -> edgeBandingComment?><?PHP endif; ?></td></tr>
-	<?PHP endif; ?>
 
 	<?PHP endforeach; ?>
 		</table>

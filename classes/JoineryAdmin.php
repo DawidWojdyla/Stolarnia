@@ -231,5 +231,26 @@ class JoineryAdmin extends MyDB
 		return $limits -> updateEdgeBandingMettersLimit();
 	}
 	
+	function showAdminUpdatingForm(){
+		if(!$this->dbo) { return SERVER_ERROR; }
+		if (!$this -> loggedAdmin) {  return NO_PERMISSION; }
+		$admin = new Admin ($this -> dbo);
+		return $admin -> showAdminUpdatingForm();
+	}
+	
+	function updateAdminLogin(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$admin = new Admin ($this->dbo);
+		return $admin -> updateLogin();
+	}
+	
+	function updateAdminPassword(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$admin = new Admin ($this->dbo);
+		return $admin -> updatePassword();
+	}
+	
 }
 ?>

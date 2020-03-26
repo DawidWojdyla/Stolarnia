@@ -193,6 +193,20 @@
 										break;
 								endswitch;
 								break;
+							case 'showAdminUpdatingForm':
+								switch($joineryAdmin -> showAdminUpdatingForm()):
+									case NO_PERMISSION:
+										$joineryAdmin -> setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joineryAdmin -> setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
 							case 'showMain':
 							default:
 							include 'templates/innerContentDiv.php';

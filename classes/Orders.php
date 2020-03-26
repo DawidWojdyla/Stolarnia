@@ -1113,11 +1113,11 @@ class Orders
 		return $result;
 	}
 	
-	function returnPotentialOrderCompletionDate($sawNumber){
+	function returnPotentialOrderCompletionDate($sawNumber, $boardsLimit){
 		$date = $this -> returnLastOrderCompletionDate($sawNumber);
 		$boardsAmountOfTheDay = $this -> returnBoardsAmoutPerDay($sawNumber, $date);
 		
-		if($boardsAmountOfTheDay >= $_SESSION['Limits'] -> boardsLimit){
+		if($boardsAmountOfTheDay >= $boardsLimit){
 			// zwróć datę następnego dnia jeśli jest roboczy
 			$checker = new Checker();
 			do{
@@ -1134,13 +1134,12 @@ class Orders
 		
 		$workers = new Workers($this -> dbo);
 		$sellers = $workers -> returnSellers();
-		if(!isset($_SESSION['Limits'])){
-			$limits = new Limits($this -> dbo);
-			$_SESSION['Limits'] = $limits -> returnLimits();
-		}
+
+		$limits = new Limits($this -> dbo);
+		$limits = $limits -> returnLimits();
 		
-		$potentialOrderCompletionDates[1] = $this -> returnPotentialOrderCompletionDate(1);
-		$potentialOrderCompletionDates[2] = $this -> returnPotentialOrderCompletionDate(2);
+		$potentialOrderCompletionDates[1] = $this -> returnPotentialOrderCompletionDate(1, $limits -> boardsPerDay);
+		$potentialOrderCompletionDates[2] = $this -> returnPotentialOrderCompletionDate(2, $limits -> boardsPerDay);
 		
 		//$boardsAmount = $this -> returnBoardsAmoutPerDay(1, $potentialOrderCompletionDates[1]);
 		
