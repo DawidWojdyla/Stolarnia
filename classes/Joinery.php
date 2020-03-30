@@ -391,7 +391,25 @@ class Joinery extends MyDB
 			return NO_PERMISSION;
 		}
 	}
-
+	
+	function showNotCutOrderList(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		
+		switch ($this->stand->id){
+			//case 1: 
+			//case 2:
+				//$saw = new Saw ($this->dbo, $this->stand->id);
+				//return $saw -> showOrderList();
+			case 3: 
+				$eBMachine = new EdgeBandingMachine($this -> dbo);
+				return $eBMachine -> showNotCutOrderList();
+			//case 4: 
+				//$orders = new Orders ($this->dbo);
+				//return $orders->showOrderList();
+			Default: 
+			return NO_PERMISSION;
+		}
+	}
 	
 	function showOrderSearchingForm(){
 		if(!$this->dbo){ return SERVER_ERROR; }

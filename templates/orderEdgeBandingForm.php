@@ -9,7 +9,7 @@
 			<div class="container noPadding italic"><span class="glyphicon glyphicon-paperclip"></span> <?=$comment?></div>
 		</div>
 		<?PHP endif;?>
-		<?PHP if(empty($boards)): ?><h4 class='text-center'>Zlecenie bez oklejania</h4><?PHP endif; ?>
+		<?PHP if(empty($boards)): ?><h3 class='text-center'>Brak pociętych płyt do oklejenia</h3><?PHP endif; ?>
 		<?PHP $lastBoardId = 0; ?>
 		<table>
 		<?PHP foreach($boards as $board): ?>

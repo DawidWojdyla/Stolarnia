@@ -167,6 +167,20 @@
 										break;
 								endswitch;
 								break;
+							case 'showNotCutOrderList' :
+								switch($joinery -> showNotCutOrderList()):
+									case NO_PERMISSION:
+										$joinery->setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
+									case SERVER_ERROR:
+										$joinery->setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
 							case 'showOrderSearchingForm' :
 								switch($joinery->showOrderSearchingForm()):
 									case NO_PERMISSION:

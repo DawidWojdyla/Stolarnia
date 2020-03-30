@@ -33,7 +33,8 @@
 			<td  id="customer<?=$order -> orderId?>"><?PHP if($order->customer_id != 1): ?><span id='customerName<?=$order -> orderId?>'><?=$order->customerName?> <?=$order->customerSurname?></span> (<span id='number<?=$order -> orderId?>'><?=$order->customerPhone?></span>)<?PHP else: ?><span id='customerName<?=$order -> orderId?>'><?=$order->customerTempName?></span> (<span id='number<?=$order -> orderId?>'><?=$order->customerTempPhone?></span>)<?PHP endif;?>
 			</td>
 			<td id="sawNumber<?=$order -> orderId?>"><?=$order->saw_number?></td>
-			<td id="completionDate<?=$order -> orderId?>"><?=$order->order_completion_date?></td>
+			<td style="display: none;" id="completionDate<?=$order -> orderId?>"><?=$order->order_completion_date?></td>
+			<td><?=$order -> completionDate?></td>
 			<td style="display: none;" id="admissionDate<?=$order -> orderId?>"><?=$order -> admission_date?></td>
 			<td style="display: none;" id="sellerName<?=$order -> orderId?>"><?=$order -> sellerName?></td>
 			<td style="display: none;" id="sellerId<?=$order -> orderId?>"><?=$order -> sellerId?></td>
