@@ -23,11 +23,19 @@ class Stands
 		return $standsList;
 	}
 	
+	function showLoginForm(){
+		$stands = $this -> returnStandsList();
+		include 'templates/loginForm.php';
+	}
+	
 	function showStandsUpdatingForm(){
 		$stands = $this -> returnStandsListWithWorkersAmount();
 		include 'scripts/standsUpdatingFormScripts.php';
 		include 'templates/standsUpdatingForm.php';
 	}
+	
+			
+		
 	
 	function	setStandName($id, $name){
 		if(!$this -> dbo){

@@ -74,16 +74,23 @@
 						<?php
 						switch($action):
 							case 'showLoginForm' :
-								include 'loginForm.php';
+								switch($joinery -> showLoginForm()):
+									case SERVER_ERROR:
+										$joinery -> setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
 								break;
 							case 'showOrderAddingForm' :
-								switch($joinery->showOrderAddingForm()):
+								switch($joinery -> showOrderAddingForm()):
 									case NO_PERMISSION:
-										$joinery->setMessage('Brak uprawnień.');
+										$joinery -> setMessage('Brak uprawnień.');
 										header('Location:index.php?action=showMain');
 										return;
 									case SERVER_ERROR:
-										$joinery->setMessage('Błąd serwera!');
+										$joinery -> setMessage('Błąd serwera!');
 										header('Location:index.php?action=showMain');
 										return;
 									default:

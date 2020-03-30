@@ -1,13 +1,23 @@
 <script>
 var isEdgeBanding = false;
 var itemsToDo = 0;
+var smsContent = "ITS%20Rzeszów.%20Państwa%20zamówienie%20zostało%20zrealizowane.%20Zapraszamy%20po%20odbiór%20od%20poniedziałku%20do%20piątku%20w%20godzinach%207-17.%20Pozdrawiamy.";
 
 $(document).ready(function(){
     $('[data-toggle="popover"]').popover({sanitize: false, html : true});   
 });
 
-function askIfShowOrderList(){
-	document.getElementById('cutting-modal-body').innerHTML = "<div class='btn btn-default btn-block' onclick='window.location.href=\"index.php?action=showOrderList\"'><span class=\"glyphicon glyphicon-list-alt\"></span> Lista zleceń</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-menu-left\"> Powrót</div>";
+
+function askWhatToDo(){
+	
+	var cuttingModalBody = "";
+	
+	if(!isEdgeBanding){
+		cuttingModalBody += "<div class='btn btn-default btn-block' onclick='sendSMS();'><span class=\"glyphicon glyphicon-earphone\"></span> Wyślij SMS</div>";
+	}
+	cuttingModalBody += "<div class='btn btn-default btn-block' onclick='window.location.href=\"index.php?action=showOrderList\"'><span class=\"glyphicon glyphicon-list-alt\"></span> Lista zleceń</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-menu-left\"> Powrót</div>";
+	
+	document.getElementById('cutting-modal-body').innerHTML = cuttingModalBody;
 	$('#cutting-modal').modal('show');
 }
 
@@ -153,13 +163,9 @@ function sendBoardCuttingForm(id){
 					document.getElementById('c'+id).innerHTML = cuttingComment;
 					itemsToDo--;
 					if(itemsToDo < 1){
+						setTimeout(function(){ askWhatToDo();}, 1500);
 						if(!isEdgeBanding){
 							document.getElementById('sms').style.display = "block";
-						}
-						else{
-							//askIfShowOrderList();
-							setTimeout(function(){
-								askIfShowOrderList();}, 1500);
 						}
 					}
 					break;
@@ -191,7 +197,6 @@ function sendBoardCuttingForm(id){
 }
 
 function sendSMS(){
-		location.href = "sms:+48<?=$phone?>?body=ITS%20Rzeszów.%20Państwa%20zamówienie%20zostało%20zrealizowane.%20Zapraszamy%20po%20odbiór%20od%20poniedziałku%20do%20piątku%20w%20godzinach%207-17.%20Pozdrawiamy.";
-		askIfShowOrderList();
+		location.href = "sms:+48<?=$phone?>?body=" + smsContent;
 }
 </script>

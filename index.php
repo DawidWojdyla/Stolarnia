@@ -10,7 +10,7 @@ try{
 		$action = $_GET['action'];
 	}
 	
-	$message = $joinery->getMessage();
+	$message = $joinery -> getMessage();
 	$delay = $joinery -> getDelay();
 	
 	if(!$message && $action == 'showLoginForm'){

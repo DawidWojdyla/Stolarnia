@@ -760,7 +760,7 @@ function updateComment(){
 	if(comment == "Brak"){
 		comment = "";
 	}
-	var updatingOrderDataModalBody = "<h3>Uwagi:</h3><textarea style='margin-top: 20px;' id='newComment' class='form-control text-center' name='newComment'>"+comment+"</textarea><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick=\"setComment('"+comment+"');\"><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
+	var updatingOrderDataModalBody = "<h3>Uwagi:</h3><textarea style='margin-top: 20px;' id='newComment' class='form-control text-center' name='newComment' maxlength='500'>"+comment+"</textarea><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick=\"setComment('"+comment+"');\"><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
 	
 	document.getElementById('updatingOrderDataModalBody').innerHTML = updatingOrderDataModalBody;
 		

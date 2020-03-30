@@ -81,7 +81,7 @@
 				</tr>
 				<tr>
 					<td><label>Nazwa klienta:</label></td>
-					<td><input minlength="2"  id='customerName' class="form-control text-center text-capitalize" type="text" name="customerName" maxlength="25" <?PHP if (isset($_SESSION['customerName'])): ?>value="<?=$_SESSION['customerName']?>"<?PHP unset ($_SESSION['customerName']); endif; ?>/></td>
+					<td><input minlength="2"  id='customerName' class="form-control text-center text-capitalize" type="text" name="customerName" maxlength="35" <?PHP if (isset($_SESSION['customerName'])): ?>value="<?=$_SESSION['customerName']?>"<?PHP unset ($_SESSION['customerName']); endif; ?>/></td>
 				</tr>
 				<?PHP if(isset($_SESSION['customerPhoneError'])):?>
 				<tr class="danger"><td colspan="2"><div class="error"><div><?=$_SESSION['customerPhoneError']?></div></div></td></tr>
@@ -160,7 +160,7 @@
 				<tr>
 					<td><label>Uwagi:</label></td>
 					<td>
-						<textarea id="orderCommentTextarea" class='form-control text-center' name="orderComment" rows="3" cols="25" maxlength="250" form="orderAddingForm"><?PHP if (isset($_SESSION['orderComment'])): ?><?=$_SESSION['orderComment']?><?PHP unset ($_SESSION['orderComment']);?><?PHP endif; ?></textarea>
+						<textarea id="orderCommentTextarea" class='form-control text-center' name="orderComment" rows="3" cols="25" maxlength="500" form="orderAddingForm"><?PHP if (isset($_SESSION['orderComment'])): ?><?=$_SESSION['orderComment']?><?PHP unset ($_SESSION['orderComment']);?><?PHP endif; ?></textarea>
 					</td>
 				</tr>
 				<?PHP if (isset($_SESSION['positions'])): $edgeBandingNumber = 0; $positionNumber = 0;?>

@@ -36,8 +36,9 @@ form{
 }
 
 .loginFormWrapper{
-	max-width: 300px;
-	margin: 40px auto;
+	max-width: 600px;
+	margin: 20px auto;
+	padding: 10px;
 }
 .message{
 	text-align: center;
@@ -142,7 +143,10 @@ form{
 	font-size: 26px;
 	background-color: #aaa;
 	color: white;
-	text-shadow: 1px 1px black; 
+	text-shadow: 0.5px 0.5px black,
+						-0.5px -0.5px black,
+						0.5px -0.5px black,
+						-0.5px 0.5px black;
 	padding: 10px;
 }
 
@@ -168,7 +172,10 @@ form{
 .orderListTable th{
 	background-color: #aaa;
 	color: white;
-	text-shadow: 0.5px 0.5px black; 
+	text-shadow: 0.5px 0.5px black,
+						-0.5px 0.5px black,
+						0.5px -0.5px black,
+						-0.5px -0.5px black;
 	border-bottom: 1px solid black;
 	border-top: none;
 }
@@ -199,16 +206,27 @@ form{
 }
 
 .orderLink{
-	font-size: 16px;
-	cursor: pointer;
+	font-size: 13px;
 }
 
 .orderLink:hover{
 }
 .orderLink > td{
-	padding-top: 10px;
-	padding-bottom: 10px;
+	padding-top: 15px!important;
+	padding-bottom: 15px!important;
+	padding-left: 1px!important;
+	padding-right: 1px!important;
 }
+
+.cuttingButton > td{
+	padding-top: 15px!important;
+	padding-bottom: 15px!important;
+}
+
+.cuttingButton:hover{
+	
+}
+
 .modal{
   text-align: center;
   padding: 0!important;
@@ -254,12 +272,12 @@ form{
 }
 
 .cutFormTable{
-	font-size: 16px;
-	border-collapse:separate;
+	font-size: 15px;
+	border-collapse: separate;
 	border-spacing:0 5px; 
 }
 .cutFormTable th{
-	font-size: 14px;
+	font-size: 13px;
 }
 
 .edgeBandingOrderListTable{
@@ -346,3 +364,9 @@ form{
 	text-align-last: center;
 }
 
+.commentContainer{
+	color: black;
+}
+.italic{
+	font-style: italic;
+}

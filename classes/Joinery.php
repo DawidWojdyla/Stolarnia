@@ -47,6 +47,12 @@ class Joinery extends MyDB
 		}
 	}
 	
+	function showLoginForm(){
+		if(!$this -> dbo){ return SERVER_ERROR;}
+		$stands = new Stands($this -> dbo);
+		return $stands -> showLoginForm();
+	}
+	
 	function login(){
 		if( !$this->dbo) return SERVER_ERROR;
 		if ($this->stand) return NO_LOGIN_REQUIRED;
@@ -63,10 +69,10 @@ class Joinery extends MyDB
 		}
 		
 		$query = "SELECT `name`, `password` FROM `stands` WHERE `id`=:standId";
-		$PDOstatement = $this->dbo->prepare($query);
+		$PDOstatement = $this -> dbo -> prepare($query);
 		$PDOstatement -> bindValue(':standId', $standId, PDO::PARAM_INT);
 
-		if(!$PDOstatement->execute()){
+		if(!$PDOstatement -> execute()){
 			return SERVER_ERROR;
 		}
 		
@@ -105,7 +111,7 @@ class Joinery extends MyDB
 		if(!$this->dbo) return SERVER_ERROR;
 		if ($this->stand->id != 4)  return NO_PERMISSION;
 		$orders = new Orders ($this->dbo);
-		return $orders->showOrderAddingForm();
+		return $orders -> showOrderAddingForm();
 	}
 	
 	
@@ -113,14 +119,14 @@ class Joinery extends MyDB
 		if(!$this->dbo) { return SERVER_ERROR; }
 		if ($this->stand->id != 4){ return NO_PERMISSION; }
 		$customers = new Customers ($this->dbo);
-		return $customers->showCustomerList();
+		return $customers -> showCustomerList();
 	}
 	
 	function showCustomerAddingForm(){
 		if(!$this->dbo) return SERVER_ERROR;
 		if ($this->stand->id != 4){ return NO_PERMISSION; }
 		$customers = new Customers ($this->dbo);
-		return $customers->showCustomerAddingForm();
+		return $customers -> showCustomerAddingForm();
 	}
 	
 	function addNewCustomer(){

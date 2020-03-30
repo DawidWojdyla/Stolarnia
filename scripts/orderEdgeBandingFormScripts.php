@@ -81,7 +81,7 @@ function resetEdgeBanding(id){
 	ajaxRequest.done(function (response){
 		switch(response){
 			case 'ACTION_OK': 
-				document.getElementById('m'+id).innerHTML = '0';
+				document.getElementById('m'+id).innerHTML = '0.00';
 				document.getElementById('c'+id).innerHTML = '';
 				message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zresetowano oklejanie";
 				break;
@@ -112,14 +112,15 @@ function resetEdgeBanding(id){
 function sendEdgeBandingMachineMetters(id){
 	var message = "";
 	var machineMetters = document.getElementById('newM'+id).value;
+	machineMetters = machineMetters.replace(",", ".");
 	if(machineMetters == document.getElementById('m'+id).innerHTML){
 		message = "Ilość metrów pozostaje bez zmian";
 		showMessage(message);
 		setTimeout(function(){closeModal('edgeBandingModal');}, 1000);
 	}
 	else{
+		document.getElementById('newM'+id).value = machineMetters;
 		var values = $('#updatingMachineMettersForm').serialize();
-		
 		var ajaxRequest = $.ajax({
 			url: "index.php?action=updateEdgeBandingMachineMetters",
 			type: "post",
@@ -159,6 +160,7 @@ function sendEdgeBandingMachineMetters(id){
 function sendEdgeBandingComment(id){
 	var message = "";
 	var edgeBandingComment = document.getElementById('newC'+id).value;
+	edgeBandingComment = edgeBandingComment.trim();
 	if(edgeBandingComment == document.getElementById('c'+id).innerHTML){
 		message = "Uwagi pozostają bez zmian";
 		showMessage(message);
@@ -207,11 +209,14 @@ function sendEdgeBandingForm(id){
 	if (document.getElementById('edgeBandingForm').elements["workers[]"].selectedIndex == -1 || document.getElementById('newM'+id).value == ''){
 		document.getElementById('sendingButton').click();
 	}
-	else{
-		var values = $('#edgeBandingForm').serialize();
+	else{	
 		var message = "";
 		var edgeBandingComment = document.getElementById('newC'+id).value;
+		edgeBandingComment = edgeBandingComment.trim();
 		var machineMetters = document.getElementById('newM'+id).value;
+		machineMetters = machineMetters.replace(",", ".");
+		document.getElementById('newM'+id).value = machineMetters;
+		var values = $('#edgeBandingForm').serialize();
 		
 		var ajaxRequest = $.ajax({
 			url: "index.php?action=setEdgeBanding",
@@ -223,7 +228,7 @@ function sendEdgeBandingForm(id){
 			switch(response){
 				case 'ACTION_OK': 
 					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano oklejanie";
-					document.getElementById('m'+id).innerHTML = machineMetters;
+					document.getElementById('m'+id).innerHTML = parseFloat(machineMetters).toFixed(2);	
 					document.getElementById('c'+id).innerHTML = edgeBandingComment;
 					break;
 				case 'ACTION_FAILED': 

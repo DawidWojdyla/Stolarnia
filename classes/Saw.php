@@ -99,7 +99,7 @@ class Saw
 	
 	function returnOutstandingOrdersOfTheSaw(){
 		$orders = array();
-		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname,  `customers`.`phone`, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL) ORDER BY `order_completion_date`")){
+		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, DATE_FORMAT(`orders`.`order_completion_date`, '%d.%m') as completionDate, `customers`.`name` as customerName, `customers`.`surname` as customerSurname,  `customers`.`phone`, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL) ORDER BY `order_completion_date`")){
 			$orders = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $orders;
@@ -107,20 +107,12 @@ class Saw
 	
 	function returnOrderDetails($orderId){
 		$boards = array();
-		if($result = $this->dbo->query("SELECT `orders_boards`.`id` as boardId, `boards_signs`.`sign`, `boards_symbols`.`symbol`, `boards_thickness`.`thickness`, `boards_structures`.`structure`, `orders_boards`.`amount`, `orders_boards`.`cutting_metters`, `orders_boards`.`cutting_completion_date`,`cutting_comments`.`comment` as cuttingComment, `edge_banding`.`id` as edgeBandingId FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=`orders_boards`.`id`, `boards_signs`, `boards_symbols`, `boards_thickness`, `boards_structures` WHERE `orders_boards`.`order_id`={$orderId} AND `orders_boards`.`board_sign_id`=`boards_signs`.`id` AND `orders_boards`.`board_symbol_id`=`boards_symbols`.`id` AND `orders_boards`.`board_thickness_id`=`boards_thickness`.`id` AND `orders_boards`.`board_structure_id`=`boards_structures`.`id` GROUP BY boardId")){
+		if($result = $this->dbo->query("SELECT `orders_boards`.`id` as boardId, `boards_signs`.`sign`, `boards_symbols`.`symbol`, `boards_thickness`.`thickness`, `boards_structures`.`structure`, `orders_boards`.`amount`, `orders_boards`.`cutting_metters`, `orders_boards`.`cutting_completion_date`,`cutting_comments`.`comment` as cuttingComment, COUNT(`edge_banding`.`id`) as edgeBandingAmount FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=`orders_boards`.`id`, `boards_signs`, `boards_symbols`, `boards_thickness`, `boards_structures` WHERE `orders_boards`.`order_id`={$orderId} AND `orders_boards`.`board_sign_id`=`boards_signs`.`id` AND `orders_boards`.`board_symbol_id`=`boards_symbols`.`id` AND `orders_boards`.`board_thickness_id`=`boards_thickness`.`id` AND `orders_boards`.`board_structure_id`=`boards_structures`.`id` GROUP BY boardId")){
 			$boards = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $boards;
 	}
-	
-	/*function returnOutstandingOrdersOfTheSaw2(){
-		$orders = array();
-		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, `states`.`name` as state FROM `orders` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `states` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`state_id`=`states`.`id` AND `orders`.`state_id`='0' AND `orders`.`saw_number`={$this->sawNumber} ORDER BY `order_completion_date`")){
-			$orders = $result->fetchAll(PDO::FETCH_OBJ);
-		}
-		return $orders;
-	}*/
-	
+
 	function setTheBoardComment(){
 		if(!isset($_POST['boardId']) || $_POST['boardId'] == '' || ((int)($_POST['boardId'])) < 1 || !isset($_POST['boardCuttingComment'])){
 			return FORM_DATA_MISSING;
@@ -212,7 +204,7 @@ class Saw
 	function showLastCutBoards($positionsAmount){
 		$positionsAmount = intval($positionsAmount);
 		$orders = array();
-		if($query = $this -> dbo -> prepare ("SELECT max(`orders_boards`.`cutting_completion_date`) as lastCuttingDate, `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname,  `customers`.`phone`, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `orders_boards` ON `orders_boards`.`order_id`=`orders`.`id` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `orders_boards`.`cutting_completion_date` IS NOT NULL GROUP BY orderId ORDER BY lastCuttingDate DESC LIMIT :positionsAmount")){
+		if($query = $this -> dbo -> prepare ("SELECT max(`orders_boards`.`cutting_completion_date`) as lastCuttingDate, `orders`.`id` as orderId, `orders`.`document_number`, DATE_FORMAT(`orders`.`order_completion_date`, '%d.%m') as completionDate, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname,  `customers`.`phone`, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `orders_boards` ON `orders_boards`.`order_id`=`orders`.`id` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `orders_boards`.`cutting_completion_date` IS NOT NULL GROUP BY orderId ORDER BY lastCuttingDate DESC LIMIT :positionsAmount")){
 			$query -> bindValue (':positionsAmount', $positionsAmount, PDO::PARAM_INT);
 			if ($query -> execute()){ 
 				$orders = $query -> fetchAll(PDO::FETCH_OBJ);
@@ -233,8 +225,7 @@ class Saw
 	}
 	
 	function showOrderList(){
-		//$this->setOrderListPeriod();
-		$orderList = $this->returnOutstandingOrdersOfTheSaw();
+		$orderList = $this -> returnOutstandingOrdersOfTheSaw();
 		
 		include 'scripts/orderListForSawScripts.php';
 		include 'templates/orderListForSaw.php';
@@ -264,8 +255,7 @@ class Saw
 		$documentNumber = filter_input (INPUT_POST, 'documentNumber');
 		$documentBranch = filter_input (INPUT_POST, 'documentBranch');
 	
-		include 'scripts/orderSeachringFormForSawScripts.php';
-		include 'templates/orderSeachringFormForSaw.php';
+		include 'templates/orderSeachringFormForSawAndEBMachine.php';
 	}
 	
 	function showSearchResult(){
@@ -289,7 +279,6 @@ class Saw
 			$boards = $this -> returnOrderDetails($order->orderId);
 			$workers = new Workers($this -> dbo);
 			$sawWorkers = $workers -> returnSawWorkers();
-		
 			include 'scripts/orderCuttingFormScripts.php';
 			include 'templates/orderCuttingForm.php';
 		}

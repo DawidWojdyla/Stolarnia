@@ -8,33 +8,33 @@
 				<td><label> Nr dokumentu:</label></td>
 				<td>
 					<div class="row noMargin">
-					<div class="col-sm-3 smallerPadding">
-						<select id='documentTypeSelect' class="form-control text-center" name="documentType">
-							<option value="PA"  
-								<?PHP if ($documentType == 'PA'):?>
-								selected
-								<?PHP endif;?>>PA</option>
-							<option value="FV"
-								<?PHP if ($documentType == 'FV'):?>
-								selected
-								<?PHP endif;?>>FV</option>
-							<option value="RV"
-								<?PHP if ($documentType == 'RV'):?>
-								selected
-								<?PHP endif;?>>RV</option>
-						</select>
+						<div class="col-sm-3 smallerPadding">
+							<select id='documentTypeSelect' class="form-control text-center" name="documentType">
+								<option value="PA"  
+									<?PHP if ($documentType == 'PA'):?>
+									selected
+									<?PHP endif;?>>PA</option>
+								<option value="FV"
+									<?PHP if ($documentType == 'FV'):?>
+									selected
+									<?PHP endif;?>>FV</option>
+								<option value="RV"
+									<?PHP if ($documentType == 'RV'):?>
+									selected
+									<?PHP endif;?>>RV</option>
+							</select>
 						</div>
 						<div class="col-sm-6 smallerPadding">
-						<input id='documentNumberInput' class="form-control text-center" type="text" pattern="\d*" maxlength="6" name="documentNumber" value="<?=$documentNumber?>" />
+							<input id='documentNumberInput' class="form-control text-center" type="text" pattern="\d*" maxlength="6" name="documentNumber" value="<?=$documentNumber?>" />
 						</div>
 						<div class="col-sm-3 smallerPadding">
-						<select class="form-control text-center" name="documentBranch">
-							<option value="RZ" <?PHP if ($documentBranch == 'RZ'):?>selected<?PHP endif;?>>RZ</option>
-							<option value="RA" <?PHP if ($documentBranch == 'RA'):?>selected<?PHP endif;?>>RA</option>
-							<option value="KR" <?PHP if ($documentBranch == 'KR'):?>selected<?PHP endif;?>>KR</option>
-							<option value="NS" <?PHP if ($documentBranch == 'NS'):?>selected<?PHP endif;?>>NS</option>
-							<option value="5" <?PHP if ($documentBranch == '5'):?>selected<?PHP endif;?>>	</option>
-						</select>
+							<select class="form-control text-center" name="documentBranch">
+								<option value="RZ" <?PHP if ($documentBranch == 'RZ'):?>selected<?PHP endif;?>>RZ</option>
+								<option value="RA" <?PHP if ($documentBranch == 'RA'):?>selected<?PHP endif;?>>RA</option>
+								<option value="KR" <?PHP if ($documentBranch == 'KR'):?>selected<?PHP endif;?>>KR</option>
+								<option value="NS" <?PHP if ($documentBranch == 'NS'):?>selected<?PHP endif;?>>NS</option>
+								<option value="5" <?PHP if ($documentBranch == '5'):?>selected<?PHP endif;?>>	</option>
+							</select>
 						</div>
 					</div>
 				</td>
