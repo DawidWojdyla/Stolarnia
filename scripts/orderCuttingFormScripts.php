@@ -3,6 +3,10 @@ var isEdgeBanding = false;
 var itemsToDo = 0;
 var smsContent = "ITS%20Rzeszów.%20Państwa%20zamówienie%20zostało%20zrealizowane.%20Zapraszamy%20po%20odbiór%20od%20poniedziałku%20do%20piątku%20w%20godzinach%207-17.%20Pozdrawiamy.";
 
+<?PHP if($smsContent): ?>
+	smsContent = "<?=$smsContent?>";
+<?PHP endif; ?>
+
 $(document).ready(function(){
     $('[data-toggle="popover"]').popover({sanitize: false, html : true});   
 });

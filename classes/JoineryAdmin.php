@@ -252,5 +252,40 @@ class JoineryAdmin extends MyDB
 		return $admin -> updatePassword();
 	}
 	
+		
+	function showSMSUpdatingForm(){
+		if(!$this -> dbo) { return SERVER_ERROR; }
+		if (!$this -> loggedAdmin) {  return NO_PERMISSION; }
+		$smsManager = new SMSManager ($this -> dbo);
+		return $smsManager -> showSMSUpdatingForm();
+	}
+	
+	function updateSMSContent(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$smsManager = new SMSManager ($this -> dbo);
+		return $smsManager -> updateSMSContent();
+	}
+	
+	function updateActiveSMS(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$smsManager = new SMSManager ($this -> dbo);
+		return $smsManager -> updateActiveSMS();
+	}
+	
+	function removeSMSContent(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$smsManager = new SMSManager ($this -> dbo);
+		return $smsManager -> removeSMSContent();
+	}
+	
+	function addNewSMSContent(){
+		if(!$this -> dbo){ return "ACTION_FAILED"; }
+		if (!$this -> loggedAdmin){ return "ACTION_FAILED"; }
+		$smsManager = new SMSManager ($this -> dbo);
+		return $smsManager -> addNewSMSContent();
+	}
 }
 ?>

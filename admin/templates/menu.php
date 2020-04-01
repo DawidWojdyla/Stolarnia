@@ -20,6 +20,7 @@
 	<ul class="dropdown-menu">
 		<li><a href="index.php?action=showLimitsUpdatingForm"><span class="glyphicon glyphicon-scale"></span> Limity</a></li>
 		<li><a href="index.php?action=showStandsUpdatingForm"><span class="glyphicon glyphicon-map-marker"></span> Stanowiska</a></li>
+		<li><a href="index.php?action=showSMSUpdatingForm"><span class="glyphicon glyphicon-phone"></span> SMS</a></li>
 		<li><a href="index.php?action=showAdminUpdatingForm"><span class="glyphicon glyphicon-lock"></span> Konto Admina</a></li>
 	</ul>
 </li>

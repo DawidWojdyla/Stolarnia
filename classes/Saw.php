@@ -245,6 +245,9 @@ class Saw
 		$workers = new Workers($this -> dbo);
 		$sawWorkers = $workers -> returnSawWorkers();
 		
+		$smsManager = new SMSManager($this -> dbo);
+		$smsContent = $smsManager -> returnActiveSMSContent();
+		
 		include 'scripts/orderCuttingFormScripts.php';
 		include 'templates/orderCuttingForm.php';
 	

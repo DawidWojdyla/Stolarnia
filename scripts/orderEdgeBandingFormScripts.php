@@ -4,8 +4,13 @@ $(document).ready(function(){
     $('[data-toggle="popover"]').popover({sanitize: false, html : true});   
 });
 
+var smsContent = "ITS%20Rzeszów.%20Państwa%20zamówienie%20zostało%20zrealizowane.%20Zapraszamy%20po%20odbiór%20od%20poniedziałku%20do%20piątku%20w%20godzinach%207-17.%20Pozdrawiamy."; 
+<?PHP if($smsContent): ?>
+	smsContent = "<?=$smsContent?>";
+<?PHP endif; ?>
+
 function sendSMS(){
-	location.href = 'sms:+48<?=$phone?>?body=ITS%20Rzeszów.%20Państwa%20zamówienie%20zostało%20zrealizowane.%20Zapraszamy%20po%20odbiór%20od%20poniedziałku%20do%20piątku%20w%20godzinach%207-17.%20Pozdrawiamy.';
+	location.href = "sms:+48<?=$phone?>?body=" + smsContent;
 	document.getElementById('edgeBandingModalBody').innerHTML = "<div class='btn btn-default btn-block' onclick='window.location.href=\"index.php?action=showOrderList\"'><span class=\"glyphicon glyphicon-list-alt\"></span> Lista zleceń</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-menu-left\"> Powrót</div>";
 	$('#edgeBandingModal').modal('show');
 }

@@ -4,7 +4,7 @@ class EdgeBandingMachine
 	private $dbo = null;
 	
 	function __construct($dbo){
-		$this->dbo = $dbo;
+		$this -> dbo = $dbo;
 	}
 	
 	function setMachineMetters($edgeBandingId, $edgeBandingMetters){
@@ -199,7 +199,7 @@ class EdgeBandingMachine
 			}
 		}
 		
-		if(!$this->dbo->beginTransaction()){
+		if(!$this -> dbo -> beginTransaction()){
 			return SERVER_ERROR;
 		}
 		if($this -> setEdgeBandingCompletionDate($edgeBandingId) != ACTION_OK){
@@ -229,7 +229,7 @@ class EdgeBandingMachine
 			return FORM_DATA_MISSING;
 		}
 		
-		if(!$this->dbo->beginTransaction()){
+		if(!$this -> dbo -> beginTransaction()){
 			return SERVER_ERROR;
 		}
 		
@@ -237,19 +237,19 @@ class EdgeBandingMachine
 			return ACTION_FAILED;
 		}
 		
-		if($this->resetEdgeBandingCompletionDate($_POST['edgeBandingId']) != ACTION_OK){
+		if($this -> resetEdgeBandingCompletionDate($_POST['edgeBandingId']) != ACTION_OK){
 			return ACTION_FAILED;
 		}
 		
-		if($this->deleteEdgeBandingComment($_POST['edgeBandingId']) != ACTION_OK){
+		if($this -> deleteEdgeBandingComment($_POST['edgeBandingId']) != ACTION_OK){
 			return NO_PERMISSION;
 		}
 		
-		if($this->deleteEdgeBandingWorkers($_POST['edgeBandingId']) != ACTION_OK){
+		if($this -> deleteEdgeBandingWorkers($_POST['edgeBandingId']) != ACTION_OK){
 			return ACTION_FAILED;
 		}
 		
-		if(!$this->dbo->commit()){
+		if(!$this -> dbo -> commit()){
 			return SERVER_ERROR;
 		}
 		
@@ -295,6 +295,9 @@ class EdgeBandingMachine
 		$comment = filter_input(INPUT_POST, 'comment');
 
 		$boards 	= $this -> returnOrderDetails($orderId);
+		
+		$smsManager = new SMSManager($this -> dbo);
+		$smsContent = $smsManager -> returnActiveSMSContent();
 		
 		$workers = new Workers($this -> dbo);
 		$workers 	= $workers -> returnEdgeBandingWorkers();
