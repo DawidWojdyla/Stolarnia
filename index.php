@@ -4,7 +4,7 @@ spl_autoload_register('classLoader');
 session_start();
 
 try{
-	$joinery = new Joinery("localhost", "root", "", "joinery");
+	$joinery = new Joinery("localhost", "root", "", "joinery8");
 	$action = 'showLoginForm';
 	if (isset($_GET['action'])) {
 		$action = $_GET['action'];

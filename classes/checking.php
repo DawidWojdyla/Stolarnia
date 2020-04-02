@@ -26,9 +26,6 @@
 					case 'boardSymbolsId':
 							echo $key.' -> '.$value.'</br>';
 						break;
-					case 'boardStructuresId':
-						echo $key.' -> '.$value.'</br>';
-						break;
 					case 'amounts':
 						echo $key.' -> '.$value.'</br>';
 						break;

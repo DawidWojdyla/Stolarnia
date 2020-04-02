@@ -180,6 +180,7 @@
 							</div>
 							<div class='container-fluid'>
 								<div class='row text-center'>
+								<div class='col-sm-1'></div>
 									<div class='col-sm-2 smallerPadding'>
 										<label class='addingFormSmallLabel textShadow textShadow'>rodzaj</label>
 										<select class='form-control textCenterSelect' name='positions[position<?=$positionNumber?>][boardSignId]' id='boardSign<?=$positionNumber?>' onchange="checkIfNextSelectsAreDisabled('<?=$positionNumber?>');"><?PHP foreach($boardsSigns as $boardSign):?>
@@ -205,13 +206,6 @@
 										</select>
 									</div>
 									<div class='col-sm-2 smallerPadding'>
-										<label class='addingFormSmallLabel textShadow'>struktura</label>
-										<select class='form-control textCenterSelect' id='boardStructure<?=$positionNumber?>' name='positions[position<?=$positionNumber?>][boardStructureId]'><?PHP foreach($boardsStructures as $boardStructure):?><option value='<?=$boardStructure->id?>' 
-										<?PHP if(isset($position['boardStructureId']) && $boardStructure->id == intval($position['boardStructureId'])): ?>selected<?PHP endif; ?>><?=$boardStructure->structure?></option>
-										<?PHP endforeach; ?>
-										</select>
-									</div>
-									<div class='col-sm-2 smallerPadding'>
 										<label class='addingFormSmallLabel textShadow'>ilość [szt.]</label>
 										<input name='positions[position<?=$positionNumber?>][amount]' class='form-control text-center' value="<?=$position['amount']?>" type='number' min='0.5' max='1000' step='0.5' required/>
 									</div>
@@ -219,6 +213,7 @@
 										<label class='addingFormSmallLabel textShadow'>cięcie [mb]</label>
 										<input name='positions[position<?=$positionNumber?>][cuttingMetters]' class='form-control text-center' type='number' min='0.5' max='1000' step='0.5' value="<?=$position['cuttingMetters']?>" required/>
 									</div>
+									<div class='col-sm-1'></div>
 								</div>
 								<?PHP if(isset($position['edgeBandTypesId'])): $edgeBandsAmount = count($position['edgeBandTypesId']); ?>
 								<?PHP for( $j = 0; $j < $edgeBandsAmount; $j++): $edgeBandingNumber++;?>
