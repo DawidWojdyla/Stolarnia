@@ -183,7 +183,7 @@
 								<div class='col-sm-1'></div>
 									<div class='col-sm-2 smallerPadding'>
 										<label class='addingFormSmallLabel textShadow textShadow'>rodzaj</label>
-										<select class='form-control textCenterSelect' name='positions[position<?=$positionNumber?>][boardSignId]' id='boardSign<?=$positionNumber?>' onchange="checkIfNextSelectsAreDisabled('<?=$positionNumber?>');"><?PHP foreach($boardsSigns as $boardSign):?>
+										<select class='form-control textCenterSelect' name='positions[position<?=$positionNumber?>][boardSignId]' id='boardSign<?=$positionNumber?>' onchange="setBoardSelectDefaultOptions('<?=$positionNumber?>');"><?PHP foreach($boardsSigns as $boardSign):?>
 										<option value='<?=$boardSign->id?>' <?PHP if($boardSign->id == intval($position['boardSignId'])): ?>selected<?PHP endif; ?>><?=$boardSign->sign?></option>
 										<?PHP endforeach; ?>
 									</select>

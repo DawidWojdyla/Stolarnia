@@ -947,7 +947,7 @@ class Orders
 	
 	function returnBoardsSigns(){
 		$boardsSigns = array();
-		if($result = $this->dbo->query("SELECT `id`, `sign` FROM boards_signs")){
+		if($result = $this->dbo->query("SELECT `id`, `sign` FROM boards_signs ORDER BY `id`<10 DESC,`id`, `sign` ASC")){
 			$boardsSigns = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $boardsSigns;
@@ -1065,15 +1065,6 @@ class Orders
 		}
 		return $orderDetails;
 	}
-	
-	/* NARAZIE NIE USUWAJ (ZAPYTANIE POPRAWNE)
-	function returnOrderEBDetails($orderId){
-		$orderDetails = array();
-		if($result = $this->dbo->query("SELECT eb.`orders_boards_id` as ebObId, eb.`id` as edgeBandingId, `edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_sticker_symbols`.`id` as stickerSymbolId, `edge_band_types`.`type` as edgeBandType, `edge_band_types`.`id` as edgeBandTypeId, edgeBandSymbols.`symbol` as edgeBandSymbol, edgeBandSymbols.`id` as edgeBandSymbolId, `eb`.`edge_banding_metters_wz` as wzMetters, `eb`.`edge_banding_metters_machine` as machineMetters, `eb`.`edge_banding_completion_date` as edgeBandingDate, `edge_band_comments`.`comments` as edgeBandComment, `edge_banding_comments`.`comments` as edgeBandingComment, edgeBandingWorkers.`name` as edgeBandingWorkerName FROM `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_banding_workers` ebw ON ebw.`edge_banding_id`=eb.`id` LEFT JOIN `workers` as edgeBandingWorkers on edgeBandingWorkers.`id`=ebw.`worker_id` LEFT JOIN `edge_banding_comments` ON eb.`id`=`edge_banding_comments`.`edge_banding_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types` WHERE `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id`")){
-			$orderDetails = $result->fetchAll(PDO::FETCH_OBJ);
-		}
-		return $orderDetails;
-	}*/
 	
 	function returnOrderDetails($orderId){
 		$orderDetails = array();

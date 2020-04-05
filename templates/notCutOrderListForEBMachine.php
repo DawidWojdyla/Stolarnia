@@ -21,6 +21,7 @@
 				<td id="sawNumber<?=$order->orderId?>" style="display: none;"><?=$order -> saw_number?></td>
 				<td id="seller<?=$order->orderId?>" style="display: none;"><?=$order -> sellerName?></td>
 				<td id="date<?=$order->orderId?>" style="display: none;"><?=$order -> admissionDate?></td>
+				<td id="boards<?=$order->orderId?>" style="display: none;"><?=$order -> boards?></td>
 			</tr>
 		<?PHP endforeach; ?>	
 		</table>

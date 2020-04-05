@@ -10,8 +10,9 @@
 		var seller = document.getElementById('seller'+id).innerHTML;
 		var date = document.getElementById('date'+id).innerHTML;
 		var term = document.getElementById('completionDate'+id).innerHTML;
+		var boards = document.getElementById('boards'+id).innerHTML;
 		
-		var modalBody = "<h4>Szczegóły zlecenia</h4><table class='table table-condensed text-left'><tr><td>Dokument:</td><td>"+doc+"</td></tr><tr><tr><td>Klient:</td><td>"+name+"</td></tr><tr><td>Telefon:</td><td>"+phone+"</td></tr><tr><td>Data:</td><td>"+date+"</td></tr><tr><tr><td>Termin:</td><td>"+term+"</td></tr><tr><tr><tr><td>Piła:</td><td>"+sawNumber+"</td></tr><tr><td>Sprzedawca:</td><td>"+seller+"</td></tr>";
+		var modalBody = "<h4>Szczegóły zlecenia</h4><table class='table table-condensed text-left'><tr><td>Dokument:</td><td>"+doc+"</td></tr><tr><tr><td>Klient:</td><td>"+name+"</td></tr><tr><td>Telefon:</td><td>"+phone+"</td></tr><tr><td>Data:</td><td>"+date+"</td></tr><tr><tr><td>Termin:</td><td>"+term+"</td></tr><tr><tr><tr><td>Piła:</td><td>"+sawNumber+"</td></tr><tr><td>Sprzedawca:</td><td>"+seller+"</td></tr><tr><td>Pozycje:</td><td>"+boards+"</td></tr>";
 		if(comment.trim() != ""){
 			modalBody += "<tr><td>Uwagi:</td><td>"+comment+"</td></tr>"
 		}
