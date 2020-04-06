@@ -125,7 +125,7 @@ function checkIfSymbolSelectIsDisabled(id, signId){
 function setBoardSelectDefaultOptions(id){
 	document.getElementById('boardSymbol'+id).value = '1';
 	var signId = document.getElementById('boardSign'+id).value;
-	setThicknessAndSymbolDefaultOption(id, signId);
+	setThicknessDefaultOption(id, signId);
 	checkIfSymbolSelectIsDisabled(id, signId);
 
 }
@@ -157,11 +157,22 @@ function removeEdgeBanding(id){
 
 
 function addEdgeBanding(position){
-	edgeBandingLastId++;
-	document.getElementById('addNewEdgeBandingButton'+position).insertAdjacentHTML("beforebegin","<div style='margin-top: 10px;' class='row text-center' id='e"+edgeBandingLastId+"'><div class='col-sm-2'></div><div style='padding-top: 5px;' class='col-sm-2 smallerPadding'><label class='addingFormSmallLabel textShadow'>typ</label><select name='positions[position"+lastPositionId+"][edgeBandTypesId][]' class='form-control textCenterSelect'><?PHP foreach($edgeBandTypes as $edgeBandType):?><option value='<?=$edgeBandType->id?>' <?PHP if($edgeBandType -> type == '22/08'): ?>selected<?PHP endif; ?>><?=$edgeBandType->type?></option><?PHP endforeach; ?></select></div><div style='padding-top: 5px;' class='col-sm-2 smallerPadding'><label class='addingFormSmallLabel textShadow'>symbol</label><select id='edgeBandingBoardSymbol"+position+"' class='form-control textCenterSelect pos"+position+"' name='positions[position"+lastPositionId+"][edgeBandingBoardSymbolsId][]'><?PHP foreach($boardsSymbols as $boardSymbol):?><option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option><?PHP endforeach; ?></select></div><div style='padding-top: 5px;' class='col-sm-2 smallerPadding'><label class='addingFormSmallLabel textShadow'>naklejki</label><select name='positions[position"+lastPositionId+"][edgeBandsStickersId][]' class='form-control textCenterSelect'><?PHP foreach($edgeBandStickerSymbols as $edgeBandStickerSymbol):?><option value='<?=$edgeBandStickerSymbol->id?>'><?=$edgeBandStickerSymbol->symbol?></option><?PHP endforeach; ?></select></div><div style='padding-top: 5px;' class='col-sm-2 smallerPadding'><label class='addingFormSmallLabel textShadow'>oklejanie [mb]</label><input name='positions[position"+lastPositionId+"][edgeBandingMetters][]' class='form-control' type='number' min='0.5' max='1000' step='0.5' required/></div><div class='col-sm-1' onclick=\"removeEdgeBanding('e"+edgeBandingLastId+"');\"><label class='addingFormSmallLabel textShadow'><span class='glyphicon glyphicon-remove pointer'></span></label></div><div class='col-sm-1'></div></div><div style='margin-top: 10px;' class='row' id='e"+edgeBandingLastId+"comment'><div class='col-sm-2'></div><div class='col-sm-2 smallerPadding text-center'><label class='addingFormSmallLabel textShadow'>uwagi:</label></div><div class='col-sm-6 noPadding'><input class='form-control' name='positions[position"+lastPositionId+"][edgeBandComments][]' autocomplete='off' type='text'/></div><div class='col-sm-2'></div></div>");
+	var thicknessSelect = document.getElementById('boardThickness'+position);
+	var thickness = thicknessSelect.options[thicknessSelect.selectedIndex].text;
+	thickness = parseInt(thickness);
+	if(thickness < 8){
+		alert("Nie można okleinować płyty, która nie ma co najmniej 8mm grubości");
+	}else{
+		edgeBandingLastId++;
+		document.getElementById('addNewEdgeBandingButton'+position).insertAdjacentHTML("beforebegin","<div style='margin-top: 10px;' class='row text-center' id='e"+edgeBandingLastId+"'><div class='col-sm-2'></div><div style='padding-top: 5px;' class='col-sm-2 smallerPadding'><label class='addingFormSmallLabel textShadow'>typ</label><select  id='edgeBandType"+edgeBandingLastId+"' name='positions[position"+position+"][edgeBandTypesId][]' class='form-control textCenterSelect'><?PHP foreach($edgeBandTypes as $edgeBandType):?><option value='<?=$edgeBandType->id?>' <?PHP if($edgeBandType -> type == '22/08'): ?>selected<?PHP endif; ?>><?=$edgeBandType->type?></option><?PHP endforeach; ?></select></div><div style='padding-top: 5px;' class='col-sm-2 smallerPadding'><label class='addingFormSmallLabel textShadow'>symbol</label><select id='edgeBandingBoardSymbol"+edgeBandingLastId+"' class='form-control textCenterSelect pos"+position+"' name='positions[position"+position+"][edgeBandingBoardSymbolsId][]'><?PHP foreach($edgeBandSymbols as $edgeBandSymbol):?><option value='<?=$edgeBandSymbol->id?>'><?=$edgeBandSymbol->symbol?></option><?PHP endforeach; ?></select></div><div style='padding-top: 5px;' class='col-sm-2 smallerPadding'><label class='addingFormSmallLabel textShadow'>naklejki</label><select name='positions[position"+position+"][edgeBandsStickersId][]' class='form-control textCenterSelect'><?PHP foreach($edgeBandStickerSymbols as $edgeBandStickerSymbol):?><option value='<?=$edgeBandStickerSymbol->id?>'><?=$edgeBandStickerSymbol->symbol?></option><?PHP endforeach; ?></select></div><div style='padding-top: 5px;' class='col-sm-2 smallerPadding'><label class='addingFormSmallLabel textShadow'>oklejanie [mb]</label><input name='positions[position"+position+"][edgeBandingMetters][]' class='form-control' type='number' min='0.5' max='1000' step='0.5' required/></div><div class='col-sm-1' onclick=\"removeEdgeBanding('e"+edgeBandingLastId+"');\"><label class='addingFormSmallLabel textShadow'><span class='glyphicon glyphicon-remove pointer'></span></label></div><div class='col-sm-1'></div></div><div style='margin-top: 10px;' class='row' id='e"+edgeBandingLastId+"comment'><div class='col-sm-2'></div><div class='col-sm-2 smallerPadding text-center'><label class='addingFormSmallLabel textShadow'>uwagi:</label></div><div class='col-sm-6 noPadding'><input class='form-control' name='positions[position"+position+"][edgeBandComments][]' autocomplete='off' type='text'/></div><div class='col-sm-2'></div></div>");
 
-	if(document.getElementsByClassName('pos'+position).length == 1){
-		document.getElementById('edgeBandingBoardSymbol'+position).value = document.getElementById('boardSymbol'+position).value;
+		document.getElementById('edgeBandingBoardSymbol'+edgeBandingLastId).value = document.getElementById('boardSymbol'+position).value;
+			
+		if(thickness > 30 ){
+			document.getElementById('edgeBandType'+edgeBandingLastId).value = '7';
+		}else if(thickness > 20){				
+			document.getElementById('edgeBandType'+edgeBandingLastId).value = '6';
+		}
 	}
 }
 
