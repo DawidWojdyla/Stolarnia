@@ -7,7 +7,7 @@
 	<?PHP foreach($customers as $customer):?>
 		<tr class="pointer"  onclick="showCustomerOptions('<?=$customer -> id?>');">
 			<td>
-				<span id='name<?=$customer -> id?>'><?=$customer -> name?></span> <span id='surname<?=$customer -> id?>'><?=$customer -> surname?></span>
+				<span id='name<?=$customer -> id?>'><?=$customer -> name?></span> <span id='surname<?=$customer -> id?>'><?=$customer -> surname?></span> <span id='isRemoved<?=$customer -> id?>'><?PHP if($customer -> customerRemovedId): ?>(usunięty)<?PHP endif; ?></span>
 			</td>
 			<td>
 				<span id='phone<?=$customer -> id?>'><?=$customer -> phone?></span>

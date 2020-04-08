@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 class Customers
 {
 	private $dbo = null;
@@ -41,7 +41,7 @@ class Customers
 			return SERVER_ERROR;
 		}
 		if($_SESSION['customerAddress']){
-			if(!$this->dbo->query("SET @customerId=LAST_INSERT_ID()")){
+			if(!$this -> dbo -> query("SET @customerId=LAST_INSERT_ID()")){
 				return SERVER_ERROR;
 			}
 			$query  = $this->dbo -> prepare ("INSERT INTO `customers_addresses` VALUES (@customerId, :address)");
@@ -85,37 +85,92 @@ class Customers
 		}
 
 		if(!preg_match("/^[1-9]{1}[0-9]{8}$/", $customerPhone)){
-			$_SESSION['customerPhoneError'] = 'Format numeru telefonu jest nieprawid�owy.';
+			$_SESSION['customerPhoneError'] = 'Format numeru telefonu jest nieprawidłowy.';
 			return FORM_DATA_MISSING;
 		}
 		
-		return $this->addNewCustomerToTheDatabase();
+		return $this -> addNewCustomerToTheDatabase();
 	}
 	
-	function returnCustomerList(){
+	
+	function addCustomerToCustomersRemovedList($id){
+		if(!$this->dbo){ return SERVER_ERROR;}
+		$query  = $this -> dbo -> prepare ("INSERT INTO `customers_removed` VALUES (:id)");
+		$query -> bindValue (':id', $id, PDO::PARAM_INT);
+		if (!$query -> execute()){ 
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;
+	}
+	
+	function returnCustomersList(){
 		$customersList = array();
-		if($result = $this->dbo->query("SELECT `id`, `name`, `surname`, `phone` FROM customers WHERE `id` <> 1 ORDER BY `surname`")){
+		if($result = $this -> dbo -> query("SELECT `id`, `name`, `surname`, `phone` FROM customers WHERE `id` <> 1 AND `id` NOT IN (SELECT `customer_id` FROM `customers_removed`) ORDER BY `surname`, `name`")){
 			$customersList = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $customersList;
 	}
-	function returnCustomerListWithAddresses(){
+	
+	function removeCustomerFromCustomersList(){
+		if(!isset($_POST['id']) || $_POST['id'] == '' || ((int)($_POST['id'])) < 1){
+			return FORM_DATA_MISSING;
+		}
+		return $this -> addCustomerToCustomersRemovedList($_POST['id']);
+	}
+	
+	function removeCustomerFromCustomersRemovedList($customerId){
+		if( !$this->dbo){
+			return SERVER_ERROR;
+		}
+		$query = $this -> dbo -> prepare ("DELETE FROM `customers_removed` WHERE `customer_id`=:customerId");
+		$query -> bindValue (':customerId', $customerId, PDO::PARAM_INT);
+		if (!$query -> execute()){ 
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;
+	}
+	
+	function restoreCustomer(){
+		if(!isset($_POST['id']) || $_POST['id'] == '' || ((int)($_POST['id'])) < 1){
+			return FORM_DATA_MISSING;
+		}
+		return $this -> removeCustomerFromCustomersRemovedList($_POST['id']);
+	}
+	
+	function returnCustomersListWithAddresses(){
 		$customersList = array();
-		if($result = $this->dbo->query("SELECT `id`, `name`, `surname`, `phone`, `address` FROM customers LEFT JOIN `customers_addresses` ON `customers_addresses`.`customer_id`=`customers`.`id` WHERE `customers`.`id` <> 1 ORDER BY `surname`")){
+		if($result = $this -> dbo -> query("SELECT `id`, `name`, `surname`, `phone`, `address` FROM customers LEFT JOIN `customers_addresses` ON `customers_addresses`.`customer_id`=`customers`.`id` WHERE `customers`.`id` <> 1 AND `id` NOT IN (SELECT `customer_id` FROM `customers_removed`)  ORDER BY `surname`, `name`")){
 			$customersList = $result->fetchAll(PDO::FETCH_OBJ);
 		}
 		return $customersList;
 	}
 	
-	function showCustomerList(){
-		$customerList = $this -> returnCustomerListWithAddresses();
+	function returnRemovedCustomersListWithAddresses(){
+		$customersList = array();
+		if($result = $this -> dbo -> query("SELECT `id`, `name`, `surname`, `phone`, `address` FROM customers LEFT JOIN `customers_addresses` ON `customers_addresses`.`customer_id`=`customers`.`id` WHERE `customers`.`id` <> 1 AND `id` IN (SELECT `customer_id` FROM `customers_removed`)  ORDER BY `surname`, `name`")){
+			$customersList = $result->fetchAll(PDO::FETCH_OBJ);
+		}
+		return $customersList;
+	}
+	
+	function showCustomersList(){
+		$customersList = $this -> returnCustomersListWithAddresses();
+		$title = "Klienci";
 		
-		include 'scripts/customerListScripts.php';
-		include 'templates/customerList.php';
+		include 'scripts/customersListScripts.php';
+		include 'templates/customersList.php';
+	}
+	
+	function showRemovedCustomersList(){
+		$customersList = $this -> returnRemovedCustomersListWithAddresses();
+		$title = "Lista usuniętych";
+		
+		include 'scripts/removedCustomersListScripts.php';
+		include 'templates/customersList.php';
 	}
 	
 	function findCustomers($conditions){
-		$query = "SELECT `id`, `name`, `surname`, `phone`, `address` FROM customers LEFT JOIN `customers_addresses` ON `customers_addresses`.`customer_id`=`customers`.`id` WHERE 1=1";
+		$query = "SELECT `id`, `name`, `surname`, `phone`, `address`, `customers_removed`.`customer_id` as customerRemovedId FROM customers LEFT JOIN `customers_removed` ON `customers`.`id`=`customers_removed`.`customer_id` LEFT JOIN `customers_addresses` ON `customers_addresses`.`customer_id`=`customers`.`id` WHERE 1=1";
 		$query .= $conditions;
 		$query .= " ORDER BY `surname` LIMIT 50";
 		if(!$query = $this -> dbo -> query ($query)){
@@ -150,7 +205,7 @@ class Customers
 		}
 		else{
 			if($customers = $this -> findCustomers($conditions)){
-				include 'scripts/customerListScripts.php';
+				include 'scripts/customerSearchResultScripts.php';
 				include 'templates/customerSearchResult.php';
 			}
 			else{

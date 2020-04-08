@@ -47,6 +47,7 @@ function showOrderOptions(id){
 
 	$('#modal').modal('show');
 }
+
 function removeTheOrder(id){
 	
 	document.getElementById('modalBody').innerHTML = "<h4>Czy napewno usunąć wybrane zlecenie?</h4><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick=\"removeOrderFromDatabase('"+id+"');\"><span class=\"glyphicon glyphicon-ok\"></span> Tak</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";

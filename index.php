@@ -103,6 +103,42 @@ try{
 			endswitch;
 			header('Location:index.php?action=showCustomerAddingForm');
 			break;
+		case 'removeCustomer':
+			switch ($joinery -> removeCustomer()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
+		case 'restoreCustomer':
+			switch ($joinery -> restoreCustomer()):
+				case ACTION_OK:
+					print_r('ACTION_OK');
+					break;
+				case ACTION_FAILED:
+					print_r('ACTION_FAILED');
+					break;
+				case FORM_DATA_MISSING:
+					print_r('FORM_DATA_MISSING');
+					break;
+				case NO_PERMISSION:
+					print_r('NO_PERMISSION');
+				case SERVER_ERROR:
+				default:
+					print_r('SERVER_ERROR');
+			endswitch;
+			break;
 		case 'removeOrder':
 			switch ($joinery -> removeOrder()):
 				case ACTION_OK:

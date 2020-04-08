@@ -13,6 +13,7 @@
 	<ul class="dropdown-menu">
 		<li><a href="index.php?action=showCustomerAddingForm"><span class="glyphicon glyphicon-plus"></span> Dodaj</a></li>
 		<li><a href="index.php?action=showCustomerSearchingForm"><span class="glyphicon glyphicon-search"></span> Znajdź</a></li>
-		<li><a href="index.php?action=showCustomerList"><span class="glyphicon glyphicon-th-list"></span> Lista</a></li>
+		<li><a href="index.php?action=showCustomersList"><span class="glyphicon glyphicon-th-list"></span> Lista</a></li>
+		<li><a href="index.php?action=showRemovedCustomersList"><span class="glyphicon glyphicon-ban-circle"></span> Usunięci</a></li>
 	</ul>
 </li>

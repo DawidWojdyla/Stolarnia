@@ -1,12 +1,12 @@
 <?php if(!isset($this)) die(); ?>
 <div class="contentContainer">
-	<div class="text-center header">Klienci</div>
+	<div class="text-center header"><?=$title?></div>
 	<table class='table orderListTable'>
 		<tr>
 			<th>nazwa</th><th>nr telefonu</th><th>adres</th>
 		</tr>
-	<?PHP foreach($customerList as $customer):?>
-		<tr class="pointer"  onclick="showCustomerOptions('<?=$customer -> id?>');">
+	<?PHP foreach($customersList as $customer):?>
+		<tr id="<?=$customer -> id?>" class="pointer"  onclick="showCustomerOptions('<?=$customer -> id?>');">
 			<td>
 				<span id='name<?=$customer -> id?>'><?=$customer -> name?></span> <span id='surname<?=$customer -> id?>'><?=$customer -> surname?></span>
 			</td>

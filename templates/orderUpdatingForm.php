@@ -37,14 +37,14 @@
 			<tr>
 				<td><label>Uwagi:</label></td><td><div id="comment" style="float: left;"><?PHP if($comment != ""): ?><?=$comment?><?PHP else: ?>Brak<?PHP endif; ?></div><div class="text-right noPadding"><span onclick="updateComment();" style="font-size: 10px; cursor: pointer; padding:4px 8px;" class="glyphicon glyphicon-pencil btn btn-default noMargin"></span></div></td>
 			</tr>
-			<?PHP $pos = 0; $lastBoardId = 0; ?>
+			<?PHP $lastBoardId = 0; ?>
 			<?PHP foreach ($order as $position):?>
 			<?PHP if($lastBoardId != $position -> boardId): ?>
 			<?PHP $lastBoardId = $position -> boardId; ?>
-			<?PHP $pos++; ?>
+			<script>positionsAmounts++;</script>
 			<tr class="board<?=$position -> boardId?>" id="<?=$position -> boardId?>">
 				<td class="text-center" style="vertical-align: middle; border-top: 2px solid white;">
-					<h3 class="noPadding noMargin" style="float: left; margin-top: 0px;">
+					<h3 class="noPadding noMargin" style="float: left; margin-top: 0px; margin-left: 10%;">
 						<span id="boardSignId<?=$position -> boardId?>" style="display: none;"><?=$position -> boardSignId?></span>
 						<span id="boardThicknessId<?=$position -> boardId?>" style="display: none;"><?=$position -> boardThicknessId?></span>
 						<span id="boardSymbolId<?=$position -> boardId?>" style="display: none;"><?=$position -> boardSymbolId?></span>
@@ -65,7 +65,7 @@
 						<div style="float: left;"><label>cięcie:</label> <span id="cuttingMetters<?=$position -> boardId?>"><?=($position -> cutting_metters)+0?></span> [mb]</div>
 						<div class="text-right noPadding"><span onclick="updateCuttingMetters('<?=$position -> boardId?>');" style="font-size: 10px; cursor: pointer; padding:4px 8px;" class="glyphicon glyphicon-pencil btn btn-default noMargin"></span></div>
 					</div>
-					<div style='margin: 0px auto 3px auto; padding:4px 8px;' class='btn btn-default btn-block' onclick="addNewEdgeBanding('<?=$position -> boardId?>');"><span style="font-size: 10px;" class="glyphicon glyphicon-plus"></span> Oklejanie</div>
+					<div style='margin: 0px auto 3px auto; padding:4px 8px;' class='btn btn-default btn-block' onclick="addNewEdgeBanding('<?=$position -> boardId?>');"><span style="font-size: 13px;" class="glyphicon glyphicon-plus"></span> Oklejanie</div>
 				</td>
 			</tr>
 			<?PHP endif; ?>
@@ -95,7 +95,7 @@
 			<?PHP endforeach; ?>
 			<tr id="newPositionAddingButton">
 				<td style="border-top: none;" colspan="2">
-					<div class="btn btn-default btn-block" onclick="addNewBoard();"><span style="font-size: 10px;" class="glyphicon glyphicon-plus"></span> Dodaj pozycję</div>
+					<div class="btn btn-default btn-block" onclick="addNewBoard();"><span style="font-size: 13px;" class="glyphicon glyphicon-plus"></span> Nowa pozycja</div>
 				</td>
 			</tr>
 		</table>

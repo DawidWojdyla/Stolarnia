@@ -33,6 +33,7 @@ function removeWorkerFromRemovedWorkersList(workerId){
 	});
 			
 	ajaxRequest.done(function (response){
+		alert(response);
 		switch(response){
 			case 'ACTION_OK': 
 				message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Wybrany pracownik został przywrócony";

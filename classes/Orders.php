@@ -1113,7 +1113,7 @@ class Orders
 	function showOrderAddingForm(){
 		
 		$customers = new Customers($this->dbo);
-		$customerList = $customers -> returnCustomerList();
+		$customerList = $customers -> returnCustomersList();
 		
 		$workers = new Workers($this -> dbo);
 		$sellers = $workers -> returnSellers();
@@ -1256,7 +1256,7 @@ class Orders
 		
 		
 		$customers = new Customers($this->dbo);
-		$customerList = $customers -> returnCustomerList();
+		$customerList = $customers -> returnCustomersList();
 		
 		$workers = new Workers($this -> dbo);
 		$sellers = $workers -> returnSellers();
@@ -1296,7 +1296,7 @@ class Orders
 		
 		
 		$customers = new Customers($this->dbo);
-		$customerList = $customers -> returnCustomerList();
+		$customerList = $customers -> returnCustomersList();
 		$workers = new Workers($this -> dbo);
 		$sellers = $workers -> returnSellers();
 		
@@ -1306,6 +1306,7 @@ class Orders
 		
 		$edgeBandStickerSymbols = $this -> returnEdgeBandStickerSymbols();
 		$edgeBandTypes = $this -> returnEdgeBandTypes();
+		$edgeBandSymbols = $this -> returnEdgeBandSymbols();
 
 		$orderId = intval($_POST['orderId']);
 		
