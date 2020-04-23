@@ -20,7 +20,7 @@ function removeCustomer(id){
 	
 	document.getElementById('modalBody').innerHTML = "<h4>Czy napewno usunąć wybranego klienta?</h4><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick=\"removeCustomerFromList('"+id+"');\"><span class=\"glyphicon glyphicon-ok\"></span> Tak</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
 		
-	$('#modal').modal('show');
+	//$('#modal').modal('show');
 }
 
 function removeCustomerFromList(id){
@@ -60,7 +60,7 @@ function removeCustomerFromList(id){
 	ajaxRequest.always(function(){
 		document.getElementById("modalBody").innerHTML = message;
 		setTimeout(function(){
-			$('#modal').modal('hide');}, 1000);
+			$('#modal').modal('hide');}, 1500);
 	});
 }
 

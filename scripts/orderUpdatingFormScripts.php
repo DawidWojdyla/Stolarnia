@@ -1,6 +1,7 @@
 <script>
 var orderId = "<?=$orderId?>";
 var positionsAmounts = 0;
+var tempModalBody = "";
 
 function closeModal(modalId){
 	$('#'+modalId).modal('hide');
@@ -1028,13 +1029,20 @@ function setBoard(boardId){
 	var boardSignId = document.getElementById('boardSignId'+boardId).innerHTML;
 	var boardThicknessId = document.getElementById('boardThicknessId'+boardId).innerHTML;
 	var boardSymbolId = document.getElementById('boardSymbolId'+boardId).innerHTML;
+	var otherBoardSymbol = document.getElementById('otherBoardSymbol'+boardId).innerHTML;
 	
 	var newBoardSignId = document.getElementById('boardSign').value;
 	var newBoardThicknessId = document.getElementById('boardThickness').value;
 	var newBoardSymbolId = document.getElementById('boardSymbol').value;
+	var newOtherBoardSymbol = "";
+	
+	if(newBoardSymbolId == '0'){
+		newOtherBoardSymbol = $("#boardSymbol option:selected").text();
+		newBoardSymbolId = '1';
+	}
 	
 	
-	if(boardSignId == newBoardSignId && boardThicknessId == newBoardThicknessId && boardSymbolId == newBoardSymbolId){
+	if(boardSignId == newBoardSignId && boardThicknessId == newBoardThicknessId && newOtherBoardSymbol == otherBoardSymbol && boardSymbolId == newBoardSymbolId){
 		message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Pozycja pozostaje bez zmian";
 		showMessage(message);
 		setTimeout(function(){closeModal('updatingOrderDataModal');}, 1000);
@@ -1046,6 +1054,7 @@ function setBoard(boardId){
 				'boardSignId' : newBoardSignId,
 				'boardThicknessId' : newBoardThicknessId,
 				'boardSymbolId' : newBoardSymbolId,
+				'otherBoardSymbol' : newOtherBoardSymbol,
 				'boardId' : boardId
 			}
 		});
@@ -1058,7 +1067,12 @@ function setBoard(boardId){
 					document.getElementById('boardThicknessId'+boardId).innerHTML = newBoardThicknessId;
 					document.getElementById('boardThickness'+boardId).innerHTML = parseFloat($("#boardThickness option:selected").text());
 					document.getElementById('boardSymbolId'+boardId).innerHTML = newBoardSymbolId;
-					document.getElementById('boardSymbol'+boardId).innerHTML = $("#boardSymbol option:selected").text();
+					if(newOtherBoardSymbol == ""){
+						document.getElementById('boardSymbol'+boardId).innerHTML = $("#boardSymbol option:selected").text();
+					}else{
+						document.getElementById('boardSymbol'+boardId).innerHTML = "";
+					}
+					document.getElementById('otherBoardSymbol'+boardId).innerHTML = newOtherBoardSymbol;
 					break;
 				case 'FORM_DATA_MISSING': 
 				case 'ACTION_FAILED': 
@@ -1078,6 +1092,7 @@ function setBoard(boardId){
 		 });
 		 
 		ajaxRequest.always(function(){
+			tempModalBody = "";
 			showMessage(message);
 			setTimeout(function(){
 				closeModal('updatingOrderDataModal');}, 1000);
@@ -1085,11 +1100,47 @@ function setBoard(boardId){
 	}
 }
 
+function addBoardSymbolToSelect(){
+	var newSymbol = document.getElementById('newBoardSymbol').value;
+	newSymbol = newSymbol.trim();
+	
+	if(newSymbol != ""){
+		newSymbol = newSymbol.toUpperCase();
+		document.getElementById('updatingOrderDataModalBody').innerHTML = tempModalBody;
+		
+		if($("#boardSymbol option[value='0']").length == 0){
+			var option = document.createElement("option");
+			option.value = '0';
+			option.text = newSymbol;
+			option.setAttribute('selected', 'selected');
+			document.getElementById('boardSymbol').add(option);
+		}else{
+			$('#boardSymbol').find('option[value="0"]').text(newSymbol);
+		}
+		tempModalBody = document.getElementById('updatingOrderDataModalBody').innerHTML;
+	}else{
+		document.getElementById('updatingOrderDataModalBody').innerHTML = "Symbol płyty nie może być pusty";
+		setTimeout(function(){ 
+			document.getElementById('updatingOrderDataModalBody').innerHTML = tempModalBody;
+		}, 1200);
+	}
+}
+
+function closeAddingOtherSymbolForm(){
+	document.getElementById('updatingOrderDataModalBody').innerHTML = tempModalBody;
+}
+
+function addOtherBoardSymbolIfNeeded(){
+	 if(document.getElementById('boardSymbol').value == '-1'){	
+		document.getElementById('updatingOrderDataModalBody').innerHTML = "<h4>Podaj symbol płyty:</h4><div style='margin-top: 20px;'><input class='form-control text-center text-uppercase' type='text' id='newBoardSymbol' maxlength='15' required/></div><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick='addBoardSymbolToSelect();'><span class=\"glyphicon glyphicon-ok\"></span> Dodaj</div><div class='btn btn-default btn-block' onclick='closeAddingOtherSymbolForm();'><span class=\"glyphicon glyphicon-remove\"></span>Anuluj</div>";
+	 }
+}
 
 function updateBoard(boardId){
 	var boardSignId = document.getElementById('boardSignId'+boardId).innerHTML;
 	var boardThicknessId = document.getElementById('boardThicknessId'+boardId).innerHTML;
 	var boardSymbolId = document.getElementById('boardSymbolId'+boardId).innerHTML;
+	var otherBoardSymbol = document.getElementById('otherBoardSymbol'+boardId).innerHTML;
 	
 	
 	var updatingOrderDataModalBody = "<h3>Zmiana płyty</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-4'><label for='boardSign'>rodzaj</label><select id='boardSign' class='form-control textCenterSelect'>";
@@ -1109,7 +1160,7 @@ function updateBoard(boardId){
 		}
 		updatingOrderDataModalBody += "><?=$boardThickness->thickness?></option>";
 		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-4'><label for='boardSymbol'>symbol</label><select id='boardSymbol' class='form-control textCenterSelect'>";
+		updatingOrderDataModalBody += "</select></div><div class='col-sm-4'><label for='boardSymbol'>symbol</label><select id='boardSymbol' onchange='addOtherBoardSymbolIfNeeded();' class='form-control textCenterSelect'>";
 		<?PHP foreach($boardsSymbols as $boardSymbol):?>
 		updatingOrderDataModalBody += "<option value='<?=$boardSymbol->id?>'";
 		if(<?=$boardSymbol->id?> == boardSymbolId){
@@ -1117,9 +1168,14 @@ function updateBoard(boardId){
 		}			
 		updatingOrderDataModalBody += "><?=$boardSymbol->symbol?></option>";
 		<?PHP endforeach; ?>
+		updatingOrderDataModalBody += "<option value='-1'>+inny</option>";
+		if(boardSymbolId == '1' && otherBoardSymbol != ""){
+			updatingOrderDataModalBody += "<option value='0' selected>" + otherBoardSymbol + "</option>";
+		}
 		updatingOrderDataModalBody += "</select></div></div><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick=\"setBoard('"+boardId+"');\"><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
 	
 	document.getElementById('updatingOrderDataModalBody').innerHTML = updatingOrderDataModalBody;
+	tempModalBody = updatingOrderDataModalBody;
 		
 	$('#updatingOrderDataModal').modal('show');
 }
@@ -1234,8 +1290,8 @@ function addNewEdgeBanding(boardId){
 		updatingOrderDataModalBody += "<option value='<?=$edgeBandType->id?>'><?=$edgeBandType->type?></option>";
 		<?PHP endforeach; ?>
 		updatingOrderDataModalBody += "</select></div><div class='col-sm-2 smallerPadding'><label for='eBSymbol'>symbol</label><select id='eBSymbol' class='form-control textCenterSelect'>";
-		<?PHP foreach($edgeBandSymbols as $edgeBandSymbols):?>
-		updatingOrderDataModalBody += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
+		<?PHP foreach($edgeBandSymbols as $edgeBandSymbol):?>
+		updatingOrderDataModalBody += "<option value='<?=$edgeBandSymbol->id?>'><?=$edgeBandSymbol->symbol?></option>";
 		<?PHP endforeach; ?>
 		updatingOrderDataModalBody += "</select></div><div class='col-sm-2 smallerPadding'><label for='eBSticker'>naklejki</label><select id='eBSticker' class='form-control textCenterSelect'>";
 		<?PHP foreach($edgeBandStickerSymbols as $edgeBandStickerSymbol):?>
@@ -1309,6 +1365,14 @@ function setNewBoard(){
 	var boardSymbolId = document.getElementById('boardSymbol').value;
 	var boardAmount = document.getElementById('amount').value;
 	var cuttingMetters = document.getElementById('cuttingMetters').value;
+	var boardSymbol = $("#boardSymbol option:selected").text();
+	var otherBoardSymbol = "";
+	
+	if(boardSymbolId == '0'){
+		otherBoardSymbol = boardSymbol;
+		boardSymbol = "";
+		boardSymbolId = '1';
+	}
 	
 	boardAmount = boardAmount.replace(",", ".");
 	cuttingMetters = cuttingMetters.replace(",", ".");
@@ -1332,6 +1396,7 @@ function setNewBoard(){
 				'boardSymbolId' : boardSymbolId,
 				'boardAmount' : boardAmount,
 				'cuttingMetters' : cuttingMetters,
+				'otherBoardSymbol' : otherBoardSymbol,
 				'orderId' : orderId
 			}
 		});
@@ -1341,7 +1406,7 @@ function setNewBoard(){
 				positionsAmounts++;
 				message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
 				
-				var newBoardContent = "<tr class='board"+response+"' id='"+response+"'><td class='text-center' style='vertical-align: middle; border-top: 2px solid white;'><h3 class='noPadding noMargin' style='float: left; margin-top: 0px;'><span id='boardSignId"+response+"' style='display: none;'>"+boardSignId+"</span><span id='boardThicknessId"+response+"' style='display: none;'>"+boardThicknessId+"</span><span id='boardSymbolId"+response+"' style='display: none;'>"+boardSymbolId+"</span><span style='margin-left: 20px;' id='boardSign"+response+"'>"+$("#boardSign option:selected").text()+"</span><span id='boardThickness"+response+"'>"+parseFloat($("#boardThickness option:selected").text())+"</span> - <span id='boardSymbol"+response+"'>"+$("#boardSymbol option:selected").text()+"</span></h3><div class='noPadding noMargin' style='float: right;'><span onclick='removePosition("+response+");' style='cursor: pointer; font-size: 10px; padding:4px 8px;' class='glyphicon glyphicon-remove btn btn-default'></span><span onclick='updateBoard("+response+");' style='cursor: pointer; font-size: 10px; padding:4px 8px;' class='glyphicon glyphicon-pencil top btn btn-default'></span></div><div style='clear: both;'></div></td><td style='border-top: 2px solid white; padding-bottom: 0px; border-bottom: 1px solid transparent!important;'><div style='padding-bottom: 6px;'><div style='float: left;'>ilość: <span id='amount"+response+"'>"+(parseFloat(boardAmount)).toString()+"</span> [szt.]</div><div class='text-right noPadding'><span onclick='updateBoardAmount("+response+");' style='font-size: 10px; cursor: pointer; padding:4px 8px;' class='glyphicon glyphicon-pencil btn btn-default noMargin'></span></div></div><div style='border-top: 1px solid #aaa; padding-top: 7px; padding-bottom: 6px;'><div style='float: left;'>cięcie: <span id='cuttingMetters"+response+"'>"+(parseFloat(cuttingMetters)).toString()+"</span> [mb]</div><div class='text-right noPadding'><span onclick='updateCuttingMetters("+response+");' style='font-size: 10px; cursor: pointer; padding:4px 8px;' class='glyphicon glyphicon-pencil btn btn-default noMargin'></span></div></div><div style='margin: 0px auto 3px auto; padding:4px 8px;' class='btn btn-default btn-block' onclick='addNewEdgeBanding("+response+");'><span style='font-size: 10px;' class='glyphicon glyphicon-plus'></span> Oklejanie</div></td></tr>";
+				var newBoardContent = "<tr class='board"+response+"' id='"+response+"'><td class='text-center' style='vertical-align: middle; border-top: 2px solid white;'><h3 class='noPadding noMargin' style='float: left; margin-top: 0px; margin-left: 10%;'><span id='boardSignId"+response+"' style='display: none;'>"+boardSignId+"</span><span id='boardThicknessId"+response+"' style='display: none;'>"+boardThicknessId+"</span><span id='boardSymbolId"+response+"' style='display: none;'>"+boardSymbolId+"</span><span style='margin-left: 20px;' id='boardSign"+response+"'>"+$("#boardSign option:selected").text()+"</span><span id='boardThickness"+response+"'>"+parseFloat($("#boardThickness option:selected").text())+"</span> - <span id='boardSymbol"+response+"'>"+boardSymbol+"</span><span class='text-uppercase' id='otherBoardSymbol"+response+"'>"+otherBoardSymbol+"</span></h3><div class='noPadding noMargin' style='float: right;'><span onclick='removePosition("+response+");' style='cursor: pointer; font-size: 10px; padding:4px 8px;' class='glyphicon glyphicon-remove btn btn-default'></span><span onclick='updateBoard("+response+");' style='cursor: pointer; font-size: 10px; padding:4px 8px;' class='glyphicon glyphicon-pencil top btn btn-default'></span></div><div style='clear: both;'></div></td><td style='border-top: 2px solid white; padding-bottom: 0px; border-bottom: 1px solid transparent!important;'><div style='padding-bottom: 6px;'><div style='float: left;'>ilość: <span id='amount"+response+"'>"+(parseFloat(boardAmount)).toString()+"</span> [szt.]</div><div class='text-right noPadding'><span onclick='updateBoardAmount("+response+");' style='font-size: 10px; cursor: pointer; padding:4px 8px;' class='glyphicon glyphicon-pencil btn btn-default noMargin'></span></div></div><div style='border-top: 1px solid #aaa; padding-top: 7px; padding-bottom: 6px;'><div style='float: left;'>cięcie: <span id='cuttingMetters"+response+"'>"+(parseFloat(cuttingMetters)).toString()+"</span> [mb]</div><div class='text-right noPadding'><span onclick='updateCuttingMetters("+response+");' style='font-size: 10px; cursor: pointer; padding:4px 8px;' class='glyphicon glyphicon-pencil btn btn-default noMargin'></span></div></div><div style='margin: 0px auto 3px auto; padding:4px 8px;' class='btn btn-default btn-block' onclick='addNewEdgeBanding("+response+");'><span style='font-size: 10px;' class='glyphicon glyphicon-plus'></span> Oklejanie</div></td></tr>";
 				
 				document.getElementById('newPositionAddingButton').insertAdjacentHTML("beforebegin", newBoardContent);
 
@@ -1365,30 +1430,30 @@ function setNewBoard(){
 
 function addNewBoard(){
 	var updatingOrderDataModalBody = "<h3>Dodaj nową pozycję</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-1'></div><div class='col-sm-2 smallerPadding'><label for='boardSign'>rodzaj</label><select id='boardSign' class='form-control textCenterSelect'>";
-		<?PHP foreach($boardsSigns as $boardSign):?>
-		updatingOrderDataModalBody += "<option value='<?=$boardSign->id?>'";
+	<?PHP foreach($boardsSigns as $boardSign):?>
+	updatingOrderDataModalBody += "<option value='<?=$boardSign->id?>'";
 
-		if('<?=$boardSign -> sign?>' == 'L'){
-			updatingOrderDataModalBody += " selected";
-		}	
-		updatingOrderDataModalBody += "><?=$boardSign->sign?></option>";
-		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-2 smallerPadding'><label for='boardThickness'>grubość</label><select id='boardThickness' class='form-control textCenterSelect'>";
-		<?PHP foreach($boardsThickness as $boardThickness):?>
-		updatingOrderDataModalBody += "<option value='<?=$boardThickness->id?>'";
-		if('<?=$boardThickness -> thickness?>' == '18.0'){
-			updatingOrderDataModalBody += " selected";
-		}
-		updatingOrderDataModalBody += "><?=$boardThickness->thickness?></option>";
-		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-2 smallerPadding'><label for='boardSymbol'>symbol</label><select id='boardSymbol' class='form-control textCenterSelect'>";
-		<?PHP foreach($boardsSymbols as $boardSymbol):?>
-		updatingOrderDataModalBody += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
-		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-2 smallerPadding'><label for='amount'>ilość [szt.]</label><div><input type='text' id='amount' name='amount' class='form-control text-center' min='0.5' max='1000' step='0.5' /></div></div><div class='col-sm-2 smallerPadding'><label for='cuttingMetters'>cięcie [mb]</label><div><input type='text' id='cuttingMetters' name='cuttingMetters' class='form-control text-center' min='0.5' max='10000' step='0.5' /></div></div></div><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick='setNewBoard();'><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
-	
+	if('<?=$boardSign -> sign?>' == 'L'){
+		updatingOrderDataModalBody += " selected";
+	}	
+	updatingOrderDataModalBody += "><?=$boardSign->sign?></option>";
+	<?PHP endforeach; ?>
+	updatingOrderDataModalBody += "</select></div><div class='col-sm-2 smallerPadding'><label for='boardThickness'>grubość</label><select id='boardThickness' class='form-control textCenterSelect'>";
+	<?PHP foreach($boardsThickness as $boardThickness):?>
+	updatingOrderDataModalBody += "<option value='<?=$boardThickness->id?>'";
+	if('<?=$boardThickness -> thickness?>' == '18.0'){
+		updatingOrderDataModalBody += " selected";
+	}
+	updatingOrderDataModalBody += "><?=$boardThickness->thickness?></option>";
+	<?PHP endforeach; ?>
+	updatingOrderDataModalBody += "</select></div><div class='col-sm-2 smallerPadding'><label for='boardSymbol'>symbol</label><select id='boardSymbol' onchange='addOtherBoardSymbolIfNeeded();' class='form-control textCenterSelect'>";
+	<?PHP foreach($boardsSymbols as $boardSymbol):?>
+	updatingOrderDataModalBody += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
+	<?PHP endforeach; ?>
+	updatingOrderDataModalBody += "<option value='-1'>+inny</option></select></div><div class='col-sm-2 smallerPadding'><label for='amount'>ilość [szt.]</label><div><input type='text' id='amount' name='amount' class='form-control text-center' min='0.5' max='1000' step='0.5' /></div></div><div class='col-sm-2 smallerPadding'><label for='cuttingMetters'>cięcie [mb]</label><div><input type='text' id='cuttingMetters' name='cuttingMetters' class='form-control text-center' min='0.5' max='10000' step='0.5' /></div></div></div><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick='setNewBoard();'><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
+
 	document.getElementById('updatingOrderDataModalBody').innerHTML = updatingOrderDataModalBody;
-		
+	tempModalBody = updatingOrderDataModalBody;
 	$('#updatingOrderDataModal').modal('show');
 }
 

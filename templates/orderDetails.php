@@ -45,7 +45,7 @@
 			<tr class="board<?=$position -> boardId?>" id="<?=$position -> boardId?>">
 				<td class="text-center" style="vertical-align: middle; border-top: 2px solid white;">
 					<h3 class="noPadding noMargin" style="float: left; margin-top: 0px;">
-						<span style="margin-left: 20px;" id="boardSign<?=$position -> boardId?>"><?=$position -> boardSign?></span><span id="boardThickness<?=$position -> boardId?>"><?=($position -> thickness)+0?></span> - <span id="boardSymbol<?=$position -> boardId?>"><?=$position -> boardSymbol?></span>
+						<span style="margin-left: 20px;" id="boardSign<?=$position -> boardId?>"><?=$position -> boardSign?></span><span id="boardThickness<?=$position -> boardId?>"><?=($position -> thickness)+0?></span><?PHP if($position -> boardSymbol != '' || $position -> otherSymbol): ?> - <?PHP endif; ?><span id="boardSymbol<?=$position -> boardId?>"><?=$position -> boardSymbol?></span><span class="text-uppercase" id="otherBoardSymbol<?=$position -> boardId?>"><?=$position -> otherSymbol?></span>
 					</h3>
 					<div class="noPadding noMargin" style="float: right;">
 					</div>

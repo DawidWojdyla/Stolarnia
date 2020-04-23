@@ -9,7 +9,7 @@ class Stands
 
 	function returnStandsList(){
 		$standsList = array();
-		if($result = $this -> dbo -> query("SELECT `id`, `name` FROM stands")){
+		if($result = $this -> dbo -> query("SELECT `id`, `name` FROM stands ORDER BY `id`")){
 			$standsList = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $standsList;

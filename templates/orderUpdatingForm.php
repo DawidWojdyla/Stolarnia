@@ -48,7 +48,7 @@
 						<span id="boardSignId<?=$position -> boardId?>" style="display: none;"><?=$position -> boardSignId?></span>
 						<span id="boardThicknessId<?=$position -> boardId?>" style="display: none;"><?=$position -> boardThicknessId?></span>
 						<span id="boardSymbolId<?=$position -> boardId?>" style="display: none;"><?=$position -> boardSymbolId?></span>
-						<span style="margin-left: 20px;" id="boardSign<?=$position -> boardId?>"><?=$position -> boardSign?></span><span id="boardThickness<?=$position -> boardId?>"><?=($position -> thickness)+0?></span> - <span id="boardSymbol<?=$position -> boardId?>"><?=$position -> boardSymbol?></span>
+						<span style="margin-left: 20px;" id="boardSign<?=$position -> boardId?>"><?=$position -> boardSign?></span><span id="boardThickness<?=$position -> boardId?>"><?=($position -> thickness)+0?></span><?PHP if($position -> boardSymbolId != '1' || $position -> otherSymbol): ?> - <?PHP endif; ?><span id="boardSymbol<?=$position -> boardId?>"><?=$position -> boardSymbol?></span><span class="text-uppercase" id="otherBoardSymbol<?=$position -> boardId?>"><?=$position -> otherSymbol?></span>
 					</h3>
 					<div class="noPadding noMargin" style="float: right;">
 						<span onclick="removePosition('<?=$position -> boardId?>');" style="cursor: pointer; font-size: 10px; padding:4px 8px;" class='glyphicon glyphicon-remove btn btn-default'></span>

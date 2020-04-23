@@ -68,12 +68,12 @@ class Orders
 			}
 		}
 		foreach($_SESSION['positions'] as $position){
-			$query  = $this->dbo -> prepare ("INSERT INTO `orders_boards` VALUES (NULL, @orderId, :boardSignId, :boardSymbolId, :boardThicknessId, :amount, :cuttingMetters, NULL)");		
+			$query  = $this -> dbo -> prepare ("INSERT INTO `orders_boards` VALUES (NULL, @orderId, :boardSignId, :boardSymbolId, :boardThicknessId, :amount, :cuttingMetters, NULL)");		
 			$query -> bindValue (':boardSignId', $position['boardSignId'], PDO::PARAM_INT);
-			if(!isset($position['boardSymbolId'])){ 
+			if(!isset($position['boardSymbolId']) || $position['boardSymbolId'] == '0'){ 
 				$query -> bindValue (':boardSymbolId', 1, PDO::PARAM_INT);
-				}
-			else{
+				
+			}else{
 				$query -> bindValue (':boardSymbolId', $position['boardSymbolId'], PDO::PARAM_INT);
 			}
 			
@@ -85,12 +85,22 @@ class Orders
 				return SERVER_ERROR;
 			}
 			
-			if ($edgeBandsAmount = count($position['edgeBandTypesId'])){
-				if(!$this -> dbo -> query("SET @ordersBoardsId=LAST_INSERT_ID()")){
+			if(!$this -> dbo -> query("SET @ordersBoardsId=LAST_INSERT_ID()")){
+					return SERVER_ERROR;
+			}
+			
+			if($position['boardSymbolId'] == '0' && isset($position['otherBoardSymbol']) && $position['otherBoardSymbol'] != ""){
+				$query  = $this -> dbo -> prepare ("INSERT INTO `other_boards_symbols` VALUES (@ordersBoardsId, :symbol)");		
+				$query -> bindValue (':symbol', $position['otherBoardSymbol'], PDO::PARAM_STR);
+				if(!$query -> execute()){
 					return SERVER_ERROR;
 				}
+			}
+			
+			if ($edgeBandsAmount = count($position['edgeBandTypesId'])){
+				
 				for($i = 0; $i < $edgeBandsAmount; $i++){
-					$query  = $this->dbo -> prepare ("INSERT INTO `edge_banding` VALUES (NULL, @ordersBoardsId, :edgeBandStickerSymbolId, :edgeBandTypeId, :edgeBandingBoardSymbolId, :edgeBandingMettersWz, 0, NULL)");
+					$query  = $this -> dbo -> prepare ("INSERT INTO `edge_banding` VALUES (NULL, @ordersBoardsId, :edgeBandStickerSymbolId, :edgeBandTypeId, :edgeBandingBoardSymbolId, :edgeBandingMettersWz, 0, NULL)");
 					$query -> bindValue (':edgeBandStickerSymbolId', $position['edgeBandsStickersId'][$i], PDO::PARAM_INT);
 					$query -> bindValue (':edgeBandTypeId', $position['edgeBandTypesId'][$i], PDO::PARAM_INT);
 					$query -> bindValue (':edgeBandingMettersWz', $position['edgeBandingMetters'][$i], PDO::PARAM_STR);	
@@ -182,10 +192,16 @@ class Orders
 		foreach($_POST['positions'] as $position){
 			foreach($position as $key => $value){
 				switch($key){
-					case 'boardSignId':
 					case 'boardSymbolId':
+						if($value = '-1'){
+							$value = '1';
+						}else if($value == '' || (int)$value < 0){
+							$isAllOk = false;
+						}
+						break;
+					case 'boardSignId':
 					case 'boardThicknessId':
-						if($value=='' || (int)$value < 1){
+						if($value == '' || (int)$value < 1){
 							$isAllOk = false;
 						}
 						break;
@@ -218,7 +234,7 @@ class Orders
 	
 		if (!$isAllOk){ return FORM_DATA_MISSING;}
 		
-		return $this->addNewOrderToTheDatabase();
+		return $this -> addNewOrderToTheDatabase();
 	}
 	
 	function deleteEdgeBandCommentsHavingOrderId($orderId){
@@ -634,7 +650,7 @@ class Orders
 	}
 	
 	function addNewBoard(){
-		if (!isset($_POST['orderId']) || $_POST['orderId'] == '' || ((int)($_POST['orderId'])) < 1 || !isset($_POST['boardSignId']) || $_POST['boardSignId'] == '' || !isset($_POST['boardThicknessId']) || $_POST['boardThicknessId'] == '' || !isset($_POST['boardSymbolId']) || $_POST['boardSymbolId'] == '' || !isset($_POST['boardAmount']) || $_POST['boardAmount'] == ''  || !isset($_POST['cuttingMetters']) || $_POST['cuttingMetters'] == ''){
+		if (!isset($_POST['orderId']) || $_POST['orderId'] == '' || ((int)($_POST['orderId'])) < 1 || !isset($_POST['boardSignId']) || $_POST['boardSignId'] == '' || !isset($_POST['boardThicknessId']) || $_POST['boardThicknessId'] == '' || !isset($_POST['boardSymbolId']) || $_POST['boardSymbolId'] == '' || !isset($_POST['boardAmount']) || $_POST['boardAmount'] == ''  || !isset($_POST['cuttingMetters']) || $_POST['cuttingMetters'] == '' || !isset($_POST['otherBoardSymbol'])){
 			return "ACTION_FAILED";
 		}
 		
@@ -648,6 +664,12 @@ class Orders
 		
 		if(!$boardId = $this -> dbo -> lastInsertId()){
 			return "ACTION_FAILED";
+		}
+		
+		if($_POST['otherBoardSymbol'] != ""){
+			if($this -> addOtherBoardSymbol($boardId, $_POST['otherBoardSymbol'] ) != ACTION_OK ){
+				return "ACTION_FAILED";
+			}
 		}
 		
 		if(!$this -> dbo -> commit()){
@@ -709,6 +731,10 @@ class Orders
 			return ACTION_FAILED;
 		}
 		
+		if($this -> deleteOtherBoardSymbol($_POST['boardId']) != ACTION_OK ){
+				return ACTION_FAILED;
+		}
+		
 		if ($this -> deleteBoard($_POST['boardId']) != ACTION_OK ){
 			return ACTION_FAILED;
 		}
@@ -717,6 +743,20 @@ class Orders
 			return SERVER_ERROR;
 		}
 		return ACTION_OK;
+	}
+	
+		
+	function addOtherBoardSymbol($boardId, $otherBoardSymbol){
+		if(!$this->dbo){
+			return SERVER_ERROR;
+		}
+		$query  = $this -> dbo -> prepare ("REPLACE INTO `other_boards_symbols` VALUES (:boardId, :symbol)");
+		$query -> bindValue (':boardId', $boardId, PDO::PARAM_INT);
+		$query -> bindValue (':symbol', $otherBoardSymbol, PDO::PARAM_STR);
+		if(!$query -> execute()){
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;	
 	}
 	
 	function setTheBoard($boardId, $boardSignId, $boardThicknessId, $boardSymbolId){
@@ -736,14 +776,46 @@ class Orders
 		return ACTION_OK;	
 	}
 	
-	function updateBoard(){
-		if(!isset($_POST['boardId']) || $_POST['boardId'] == '' || ((int)($_POST['boardId'])) < 1 || !isset($_POST['boardSignId']) || $_POST['boardSignId'] == '' || !isset($_POST['boardThicknessId']) || $_POST['boardThicknessId'] == '' || !isset($_POST['boardSymbolId']) || $_POST['boardSymbolId'] == ''){
-			return FORM_DATA_MISSING;
+	function deleteOtherBoardSymbol($boardId){
+		if( !$this->dbo){
+			return SERVER_ERROR;
 		}
-			
-		return $this -> setTheBoard($_POST['boardId'], $_POST['boardSignId'], $_POST['boardThicknessId'], $_POST['boardSymbolId']);
+		$query = $this -> dbo -> prepare ("DELETE FROM `other_boards_symbols` WHERE `orders_boards_id`=:boardId");
+		$query -> bindValue (':boardId', $boardId, PDO::PARAM_INT);
+		if (!$query -> execute()){ 
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;
 	}
 	
+	function updateBoard(){
+		if(!isset($_POST['boardId']) || $_POST['boardId'] == '' || ((int)($_POST['boardId'])) < 1 || !isset($_POST['boardSignId']) || $_POST['boardSignId'] == '' || !isset($_POST['boardThicknessId']) || $_POST['boardThicknessId'] == '' || !isset($_POST['boardSymbolId']) || $_POST['boardSymbolId'] == '' ||  !isset($_POST['otherBoardSymbol'])){
+			return FORM_DATA_MISSING;
+		}
+		
+		if(!$this -> dbo -> beginTransaction()){
+				return SERVER_ERROR;
+		}
+		
+		if($this -> setTheBoard($_POST['boardId'], $_POST['boardSignId'], $_POST['boardThicknessId'], $_POST['boardSymbolId']) != ACTION_OK ){
+				return ACTION_FAILED;
+		}
+			
+		if($_POST['otherBoardSymbol'] != ""){
+			if($this -> addOtherBoardSymbol($_POST['boardId'], $_POST['otherBoardSymbol'] ) != ACTION_OK ){
+				return ACTION_FAILED;
+			}
+		}else{
+			if($this -> deleteOtherBoardSymbol($_POST['boardId']) != ACTION_OK ){
+				return ACTION_FAILED;
+			}
+		}
+			
+		if(!$this -> dbo -> commit()){
+			return SERVER_ERROR;
+		}
+		return ACTION_OK;
+	}
 	
 	function setBoardAmount($boardId, $amount){
 		
@@ -955,7 +1027,7 @@ class Orders
 	
 	function returnBoardsSymbols(){
 		$boardsSymbols = array();
-		if($result = $this -> dbo -> query ("SELECT `id`, `symbol` FROM boards_symbols")){
+		if($result = $this -> dbo -> query ("SELECT `id`, `symbol` FROM boards_symbols ORDER BY `symbol` ASC")){
 			$boardsSymbols = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $boardsSymbols;
@@ -1068,7 +1140,7 @@ class Orders
 	
 	function returnOrderDetailsForUpdatingForm($orderId){
 		$orderDetails = array();
-		if($result = $this -> dbo -> query("SELECT ob.`id` as boardId, `boards_signs`.`sign` as boardSign, `boards_signs`.`id` as boardSignId, boardSymbols.`symbol` as boardSymbol, boardSymbols.`id` as boardSymbolId, `boards_thickness`.`thickness`, `boards_thickness`.`id` as boardThicknessId, ob.`amount`, ob.`cutting_metters`, ob.`cutting_completion_date`, ebQuery.edgeBandingId as edgeBandingId, ebQuery.stickerSymbol, ebQuery.stickerSymbolId, ebQuery.edgeBandType, ebQuery.edgeBandTypeId, ebQuery.edgeBandSymbol, ebQuery.edgeBandSymbolId, ebQuery.wzMetters, ebQuery.edgeBandComment FROM `orders_boards` ob LEFT JOIN (SELECT eb.`orders_boards_id` as ebObId, eb.`id` as edgeBandingId, `edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_sticker_symbols`.`id` as stickerSymbolId, `edge_band_types`.`type` as edgeBandType, `edge_band_types`.`id` as edgeBandTypeId, edgeBandSymbols.`symbol` as edgeBandSymbol, edgeBandSymbols.`id` as edgeBandSymbolId, `eb`.`edge_banding_metters_wz` as wzMetters, `edge_band_comments`.`comments` as edgeBandComment FROM `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types` WHERE `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id`) as ebQuery ON ebQuery.ebObId=ob.`id` LEFT JOIN `boards_symbols` as boardSymbols on boardSymbols.`id`=`ob`.`board_symbol_id`, `boards_signs`, `boards_thickness` WHERE ob.`order_id`={$orderId} AND ob.`board_sign_id`=`boards_signs`.`id` AND ob.`board_thickness_id`=`boards_thickness`.`id` GROUP BY boardId, ebQuery.edgeBandingId")){
+		if($result = $this -> dbo -> query("SELECT ob.`id` as boardId, `boards_signs`.`sign` as boardSign, `boards_signs`.`id` as boardSignId, boardSymbols.`symbol` as boardSymbol, boardSymbols.`id` as boardSymbolId, `boards_thickness`.`thickness`, `boards_thickness`.`id` as boardThicknessId, `other_boards_symbols`.`symbol` as otherSymbol, ob.`amount`, ob.`cutting_metters`, ob.`cutting_completion_date`, ebQuery.edgeBandingId as edgeBandingId, ebQuery.stickerSymbol, ebQuery.stickerSymbolId, ebQuery.edgeBandType, ebQuery.edgeBandTypeId, ebQuery.edgeBandSymbol, ebQuery.edgeBandSymbolId, ebQuery.wzMetters, ebQuery.edgeBandComment FROM `orders_boards` ob LEFT JOIN `other_boards_symbols` ON `other_boards_symbols`.`orders_boards_id`=ob.`id` LEFT JOIN (SELECT eb.`orders_boards_id` as ebObId, eb.`id` as edgeBandingId, `edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_sticker_symbols`.`id` as stickerSymbolId, `edge_band_types`.`type` as edgeBandType, `edge_band_types`.`id` as edgeBandTypeId, edgeBandSymbols.`symbol` as edgeBandSymbol, edgeBandSymbols.`id` as edgeBandSymbolId, `eb`.`edge_banding_metters_wz` as wzMetters, `edge_band_comments`.`comments` as edgeBandComment FROM `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types` WHERE `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id`) as ebQuery ON ebQuery.ebObId=ob.`id` LEFT JOIN `boards_symbols` as boardSymbols on boardSymbols.`id`=`ob`.`board_symbol_id`, `boards_signs`, `boards_thickness` WHERE ob.`order_id`={$orderId} AND ob.`board_sign_id`=`boards_signs`.`id` AND ob.`board_thickness_id`=`boards_thickness`.`id` GROUP BY boardId, ebQuery.edgeBandingId")){
 			$orderDetails = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $orderDetails;
@@ -1076,7 +1148,7 @@ class Orders
 	
 	function returnOrderDetails($orderId){
 		$orderDetails = array();
-		if($result = $this -> dbo -> query("SELECT ob.`id` as boardId, `boards_signs`.`sign` as boardSign, boardSymbols.`symbol` as boardSymbol, `boards_thickness`.`thickness`, ob.`amount`, ob.`cutting_metters`, DATE_FORMAT(ob.`cutting_completion_date`, '%d-%m-%Y') as cuttingDate, DATE_FORMAT(ob.`cutting_completion_date`, '%H:%i') as cuttingTime, `cutting_comments`.`comment` as cuttingComment, GROUP_CONCAT(DISTINCT CONCAT_WS(' ', cuttingWorkers.`name`, cuttingWorkers.`surname`) SEPARATOR ',</br>') as cuttingWorkersNames, ebQuery.edgeBandingId as edgeBandingId, ebQuery.stickerSymbol, ebQuery.edgeBandType, ebQuery.edgeBandSymbol, ebQuery.wzMetters, ebQuery.machineMetters, ebQuery.edgeBandingDate, ebQuery.edgeBandingTime, ebQuery.edgeBandComment, ebQuery.edgeBandingComment, ebQuery.eBWorkers FROM `orders_boards` ob LEFT JOIN (SELECT eb.`orders_boards_id` as ebObId, eb.`id` as edgeBandingId, `edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_types`.`type` as edgeBandType, edgeBandSymbols.`symbol` as edgeBandSymbol, `eb`.`edge_banding_metters_wz` as wzMetters, `eb`.`edge_banding_metters_machine` as machineMetters, DATE_FORMAT(eb.`edge_banding_completion_date`, '%d-%m-%Y') as edgeBandingDate, DATE_FORMAT(eb.`edge_banding_completion_date`, '%H:%i') as edgeBandingTime,`edge_band_comments`.`comments` as edgeBandComment, `edge_banding_comments`.`comments` as edgeBandingComment, GROUP_CONCAT(DISTINCT CONCAT_WS(' ', edgeBandingWorkers.`name`, edgeBandingWorkers.`surname`) SEPARATOR ',</br>') as eBWorkers FROM `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_banding_workers` ebw ON ebw.`edge_banding_id`=eb.`id` LEFT JOIN `workers` as edgeBandingWorkers on edgeBandingWorkers.`id`=ebw.`worker_id` LEFT JOIN `edge_banding_comments` ON eb.`id`=`edge_banding_comments`.`edge_banding_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types` WHERE `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id` GROUP BY edgeBandingId) as ebQuery ON ebQuery.ebObId=ob.`id` LEFT JOIN `boards_symbols` as boardSymbols on boardSymbols.`id`=`ob`.`board_symbol_id` LEFT JOIN `cutting_workers` cw on cw.`orders_boards_id`=ob.`id` LEFT JOIN `workers` as cuttingWorkers ON cuttingWorkers.`id`=cw.`worker_id` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=ob.`id`, `boards_signs`, `boards_thickness` WHERE ob.`order_id`={$orderId} AND ob.`board_sign_id`=`boards_signs`.`id` AND ob.`board_thickness_id`=`boards_thickness`.`id` GROUP BY boardId, ebQuery.edgeBandingId")){
+		if($result = $this -> dbo -> query("SELECT ob.`id` as boardId, `boards_signs`.`sign` as boardSign, boardSymbols.`symbol` as boardSymbol, `other_boards_symbols`.`symbol` as otherSymbol, `boards_thickness`.`thickness`, ob.`amount`, ob.`cutting_metters`, DATE_FORMAT(ob.`cutting_completion_date`, '%d-%m-%Y') as cuttingDate, DATE_FORMAT(ob.`cutting_completion_date`, '%H:%i') as cuttingTime, `cutting_comments`.`comment` as cuttingComment, GROUP_CONCAT(DISTINCT CONCAT_WS(' ', cuttingWorkers.`name`, cuttingWorkers.`surname`) SEPARATOR ',</br>') as cuttingWorkersNames, ebQuery.edgeBandingId as edgeBandingId, ebQuery.stickerSymbol, ebQuery.edgeBandType, ebQuery.edgeBandSymbol, ebQuery.wzMetters, ebQuery.machineMetters, ebQuery.edgeBandingDate, ebQuery.edgeBandingTime, ebQuery.edgeBandComment, ebQuery.edgeBandingComment, ebQuery.eBWorkers FROM `orders_boards` ob LEFT JOIN `other_boards_symbols` ON `other_boards_symbols`.`orders_boards_id`=ob.`id` LEFT JOIN (SELECT eb.`orders_boards_id` as ebObId, eb.`id` as edgeBandingId, `edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_types`.`type` as edgeBandType, edgeBandSymbols.`symbol` as edgeBandSymbol, `eb`.`edge_banding_metters_wz` as wzMetters, `eb`.`edge_banding_metters_machine` as machineMetters, DATE_FORMAT(eb.`edge_banding_completion_date`, '%d-%m-%Y') as edgeBandingDate, DATE_FORMAT(eb.`edge_banding_completion_date`, '%H:%i') as edgeBandingTime,`edge_band_comments`.`comments` as edgeBandComment, `edge_banding_comments`.`comments` as edgeBandingComment, GROUP_CONCAT(DISTINCT CONCAT_WS(' ', edgeBandingWorkers.`name`, edgeBandingWorkers.`surname`) SEPARATOR ',</br>') as eBWorkers FROM `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_banding_workers` ebw ON ebw.`edge_banding_id`=eb.`id` LEFT JOIN `workers` as edgeBandingWorkers on edgeBandingWorkers.`id`=ebw.`worker_id` LEFT JOIN `edge_banding_comments` ON eb.`id`=`edge_banding_comments`.`edge_banding_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types` WHERE `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id` GROUP BY edgeBandingId) as ebQuery ON ebQuery.ebObId=ob.`id` LEFT JOIN `boards_symbols` as boardSymbols on boardSymbols.`id`=`ob`.`board_symbol_id` LEFT JOIN `cutting_workers` cw on cw.`orders_boards_id`=ob.`id` LEFT JOIN `workers` as cuttingWorkers ON cuttingWorkers.`id`=cw.`worker_id` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=ob.`id`, `boards_signs`, `boards_thickness` WHERE ob.`order_id`={$orderId} AND ob.`board_sign_id`=`boards_signs`.`id` AND ob.`board_thickness_id`=`boards_thickness`.`id` GROUP BY boardId, ebQuery.edgeBandingId")){
 			$orderDetails = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $orderDetails;

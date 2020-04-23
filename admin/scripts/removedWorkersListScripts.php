@@ -18,7 +18,6 @@ function restoreWorker(id){
 	
 	document.getElementById('modalBody').innerHTML = "<h4>Czy napewno przywrócić wybranego pracownika?</h4><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick=\"removeWorkerFromRemovedWorkersList('"+id+"');\"><span class=\"glyphicon glyphicon-ok\"></span> Tak</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
 		
-	$('#modal').modal('show');
 }
 
 function removeWorkerFromRemovedWorkersList(workerId){
@@ -33,7 +32,6 @@ function removeWorkerFromRemovedWorkersList(workerId){
 	});
 			
 	ajaxRequest.done(function (response){
-		alert(response);
 		switch(response){
 			case 'ACTION_OK': 
 				message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Wybrany pracownik został przywrócony";

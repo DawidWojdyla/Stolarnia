@@ -164,7 +164,7 @@
 					</td>
 				</tr>
 				<?PHP if (isset($_SESSION['positions'])): $edgeBandingNumber = 0; $positionNumber = 0;?>
-				<script>positionsAmount =<?=count($_SESSION['positions']);?>; lastPositionId = positionsAmount;</script>
+				<script>positionsAmount=<?=count($_SESSION['positions']);?>; lastPositionId = positionsAmount;</script>
 				<?PHP foreach($_SESSION['positions'] as $position): $positionNumber++;?>
 				<tr id='position<?=$positionNumber?>'>
 					<td style='border-color: transparent!important; padding:0px;' colspan='2'>
@@ -190,7 +190,7 @@
 									</div>
 									<div class='col-sm-2 smallerPadding'>
 										<label class='addingFormSmallLabel textShadow'>grubość</label>
-										<select class='form-control textCenterSelect' name='positions[position<?=$positionNumber?>][boardThicknessId]'>
+										<select class='form-control textCenterSelect' id='boardThickness<?=$positionNumber?>' name='positions[position<?=$positionNumber?>][boardThicknessId]'>
 										<?PHP foreach($boardsThickness as $boardThickness):?>
 										<option value='<?=$boardThickness->id?>' <?PHP if($boardThickness->id == intval($position['boardThicknessId'])): ?>selected<?PHP endif; ?>><?=$boardThickness->thickness?></option>
 										<?PHP endforeach; ?>
@@ -198,12 +198,17 @@
 									</div>
 									<div class='col-sm-2 smallerPadding'>
 										<label class='addingFormSmallLabel textShadow'>symbol</label>
-										<select class='form-control textCenterSelect' id='boardSymbol<?=$positionNumber?>' name='positions[position<?=$positionNumber?>][boardSymbolId]'>
-										<?PHP foreach($boardsSymbols as $boardSymbol):?>
-										<option value='<?=$boardSymbol->id?>' 
-										<?PHP if(isset($position['boardSymbolId']) && $boardSymbol->id == intval($position['boardSymbolId'])): ?>selected<?PHP endif; ?>><?=$boardSymbol->symbol?></option>
-										<?PHP endforeach; ?>
+										<select class='form-control textCenterSelect' id='boardSymbol<?=$positionNumber?>' name='positions[position<?=$positionNumber?>][boardSymbolId]' onchange="addOtherBoardSymbolIfNeeded('<?=$positionNumber?>');">
+											<?PHP foreach($boardsSymbols as $boardSymbol):?>
+											<option value='<?=$boardSymbol->id?>' 
+											<?PHP if(isset($position['boardSymbolId']) && $boardSymbol->id == intval($position['boardSymbolId'])): ?>selected<?PHP endif; ?>><?=$boardSymbol->symbol?></option>
+											<?PHP endforeach; ?>
+											<option value='-1'>+ inny</option>
+											<?PHP if(isset($position['otherBoardSymbol']) && $position['otherBoardSymbol'] != ""): ?>
+											<option value="0" <?PHP if($position['boardSymbolId'] == '0'): ?> selected<?PHP endif; ?>><?=$position['otherBoardSymbol']?></option>
+											<?PHP endif; ?>
 										</select>
+										<input type='hidden' id='otherBoardSymbol<?=$positionNumber?>' name='positions[position<?=$positionNumber?>][otherBoardSymbol]' value='<?PHP if(isset($position['otherBoardSymbol'])):?><?=$position['otherBoardSymbol']?><?PHP endif; ?>'/>
 									</div>
 									<div class='col-sm-2 smallerPadding'>
 										<label class='addingFormSmallLabel textShadow'>ilość [szt.]</label>
@@ -294,4 +299,14 @@
 			</table>
 		</div>
 	</form>
+</div>
+<div class="modal fade" id="modal" role="dialog">
+	<div class="modal-dialog">
+		<div class="contentContainer">
+		<div class="modal-content">
+				<div class="modal-body" id='modalBody'>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
