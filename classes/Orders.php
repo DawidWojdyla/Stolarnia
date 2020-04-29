@@ -1017,53 +1017,6 @@ class Orders
 		return ACTION_OK;
 	}
 	
-	function returnBoardsSigns(){
-		$boardsSigns = array();
-		if($result = $this -> dbo -> query("SELECT `id`, `sign` FROM boards_signs ORDER BY CASE WHEN `id`<10 then `id` ELSE `sign` end")){
-			$boardsSigns = $result -> fetchAll(PDO::FETCH_OBJ);
-		}
-		return $boardsSigns;
-	}
-	
-	function returnBoardsSymbols(){
-		$boardsSymbols = array();
-		if($result = $this -> dbo -> query ("SELECT `id`, `symbol` FROM boards_symbols ORDER BY `symbol` ASC")){
-			$boardsSymbols = $result -> fetchAll(PDO::FETCH_OBJ);
-		}
-		return $boardsSymbols;
-	}
-	
-	function returnEdgeBandSymbols(){
-		$edgeBandSymbols = array();
-		if($result = $this -> dbo -> query("SELECT `id`, `symbol` FROM `boards_symbols` WHERE `id` NOT IN (SELECT `board_symbol_id` FROM `no_edge_band_boards_symbols`)")){
-			$edgeBandSymbols = $result -> fetchAll(PDO::FETCH_OBJ);
-		}
-		return $edgeBandSymbols;
-	}
-	
-	function returnBoardsThickness(){
-		$boardsThickness = array();
-		if($result = $this -> dbo -> query("SELECT `id`, `thickness` FROM boards_thickness")){
-			$boardsThickness = $result -> fetchAll(PDO::FETCH_OBJ);
-		}
-		return $boardsThickness;
-	}
-	
-	function returnEdgeBandStickerSymbols(){
-		$edgeBandStickerSymbols = array();
-		if($result = $this -> dbo -> query("SELECT `id`, `symbol` FROM edge_band_sticker_symbols")){
-			$edgeBandStickerSymbols = $result -> fetchAll(PDO::FETCH_OBJ);
-		}
-		return $edgeBandStickerSymbols;
-	}
-	
-	function returnEdgeBandTypes(){
-		$edgeBandTypes = array();
-		if($result = $this -> dbo -> query("SELECT `id`, `type` FROM edge_band_types ORDER BY `id`<10 DESC, `type`")){
-			$edgeBandTypes = $result -> fetchAll(PDO::FETCH_OBJ);
-		}
-		return $edgeBandTypes;
-	}
 	
 	function returnBoardsAmoutPerDay($sawNumber, $date){
 		$boardsAmount = 0;
@@ -1198,13 +1151,15 @@ class Orders
 		
 		//$boardsAmount = $this -> returnBoardsAmoutPerDay(1, $potentialOrderCompletionDates[1]);
 		
-		$boardsSigns = $this -> returnBoardsSigns();
-		$boardsSymbols = $this -> returnBoardsSymbols();
-		$boardsThickness = $this -> returnBoardsThickness();
+		$positions = new Positions($this -> dbo);
 		
-		$edgeBandStickerSymbols = $this -> returnEdgeBandStickerSymbols();
-		$edgeBandTypes = $this -> returnEdgeBandTypes();
-		$edgeBandSymbols = $this -> returnEdgeBandSymbols();
+		$boardsSigns = $positions -> returnBoardsSigns();
+		$boardsSymbols = $positions -> returnBoardsSymbols();
+		$boardsThickness = $positions -> returnBoardsThickness();
+		
+		$edgeBandStickerSymbols = $positions -> returnEdgeBandStickerSymbols();
+		$edgeBandTypes = $positions -> returnEdgeBandTypes();
+		$edgeBandSymbols = $positions -> returnEdgeBandSymbols();
 		//$lastOrderCompletionDate = $this -> returnLastOrderCompletionDate();
 		
 		include 'scripts/orderAddingFormScripts.php';
@@ -1333,12 +1288,14 @@ class Orders
 		$workers = new Workers($this -> dbo);
 		$sellers = $workers -> returnSellers();
 		
-		$boardsSigns = $this -> returnBoardsSigns();
-		$boardsSymbols = $this -> returnBoardsSymbols();
-		$boardsThickness = $this -> returnBoardsThickness();
+		$positions = new Positions($this -> dbo);
 		
-		$edgeBandStickerSymbols = $this -> returnEdgeBandStickerSymbols();
-		$edgeBandTypes = $this -> returnEdgeBandTypes();
+		$boardsSigns = $positions -> returnBoardsSigns();
+		$boardsSymbols = $positions -> returnBoardsSymbols();
+		$boardsThickness = $positions -> returnBoardsThickness();
+		
+		$edgeBandStickerSymbols = $positions -> returnEdgeBandStickerSymbols();
+		$edgeBandTypes = $positions -> returnEdgeBandTypes();
 		
 		
 		
@@ -1372,13 +1329,15 @@ class Orders
 		$workers = new Workers($this -> dbo);
 		$sellers = $workers -> returnSellers();
 		
-		$boardsSigns = $this -> returnBoardsSigns();
-		$boardsSymbols = $this -> returnBoardsSymbols();
-		$boardsThickness = $this -> returnBoardsThickness();
+		$positions = new Positions($this -> dbo);
 		
-		$edgeBandStickerSymbols = $this -> returnEdgeBandStickerSymbols();
-		$edgeBandTypes = $this -> returnEdgeBandTypes();
-		$edgeBandSymbols = $this -> returnEdgeBandSymbols();
+		$boardsSigns = $positions -> returnBoardsSigns();
+		$boardsSymbols = $positions -> returnBoardsSymbols();
+		$boardsThickness = $positions -> returnBoardsThickness();
+		
+		$edgeBandStickerSymbols = $positions -> returnEdgeBandStickerSymbols();
+		$edgeBandTypes = $positions -> returnEdgeBandTypes();
+		$edgeBandSymbols = $positions -> returnEdgeBandSymbols();
 
 		$orderId = intval($_POST['orderId']);
 		

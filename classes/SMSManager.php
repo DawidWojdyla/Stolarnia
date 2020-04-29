@@ -93,7 +93,7 @@ class SMSManager
 	
 	function addNewSMSContent(){
 		if (!isset($_POST['sms']) || trim($_POST['sms']) =='' ){
-			return FORM_DATA_MISSING;
+			return 'ACTION_FAILED';
 		}
 		
 		$sms = str_replace(' ', '%20', $_POST['sms']);

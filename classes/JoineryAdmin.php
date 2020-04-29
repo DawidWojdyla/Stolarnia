@@ -201,7 +201,18 @@ class JoineryAdmin extends MyDB
 			
 		$workers = new Workers($this -> dbo);
 		return $workers -> restoreWorker();
-	}	
+	}
+	
+	
+	function showBoardsSignsUpdatingForm(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+			
+		$positions = new Positions($this -> dbo);
+		return $positions -> showBoardsSignsUpdatingForm();
+	}
+	
+	
 	
 	function showLimitsUpdatingForm(){
 		if(!$this->dbo) { return SERVER_ERROR; }
@@ -281,11 +292,53 @@ class JoineryAdmin extends MyDB
 		return $smsManager -> removeSMSContent();
 	}
 	
+	function removeSign(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> removeSign();
+	}
+	
+	function updateSignName(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> updateSignName();
+	}
+	
+	function removeDefaultThickness(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> removeDefaultThickness();
+	}
+	
+	function setDefaultThickness(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> setDefaultThickness();
+	}
+	
+	function updateSignPriority(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> updateSignPriority();
+	}
+	
 	function addNewSMSContent(){
 		if(!$this -> dbo){ return "ACTION_FAILED"; }
 		if (!$this -> loggedAdmin){ return "ACTION_FAILED"; }
 		$smsManager = new SMSManager ($this -> dbo);
 		return $smsManager -> addNewSMSContent();
+	}
+	
+	function addNewSign(){
+		if(!$this -> dbo){ return "ACTION_FAILED"; }
+		if (!$this -> loggedAdmin){ return "ACTION_FAILED"; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> addNewSign();
 	}
 }
 ?>
