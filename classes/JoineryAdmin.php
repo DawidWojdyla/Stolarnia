@@ -203,7 +203,6 @@ class JoineryAdmin extends MyDB
 		return $workers -> restoreWorker();
 	}
 	
-	
 	function showBoardsSignsUpdatingForm(){
 		if(!$this->dbo){ return SERVER_ERROR; }
 		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
@@ -212,7 +211,37 @@ class JoineryAdmin extends MyDB
 		return $positions -> showBoardsSignsUpdatingForm();
 	}
 	
+	function showBoardsThicknessUpdatingForm(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+			
+		$positions = new Positions($this -> dbo);
+		return $positions -> showBoardsThicknessUpdatingForm();
+	}
 	
+	function showBoardsSymbolsUpdatingForm(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+			
+		$positions = new Positions($this -> dbo);
+		return $positions -> showBoardsSymbolsUpdatingForm();
+	}
+	
+	function showEdgeBandTypesUpdatingForm(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+			
+		$positions = new Positions($this -> dbo);
+		return $positions -> showEdgeBandTypesUpdatingForm();
+	}
+	
+	function showEdgeBandStickerSymbolsUpdatingForm(){
+		if(!$this->dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+			
+		$positions = new Positions($this -> dbo);
+		return $positions -> showEdgeBandStickerSymbolsUpdatingForm();
+	}
 	
 	function showLimitsUpdatingForm(){
 		if(!$this->dbo) { return SERVER_ERROR; }
@@ -326,6 +355,125 @@ class JoineryAdmin extends MyDB
 		$positions = new Positions ($this -> dbo);
 		return $positions -> updateSignPriority();
 	}
+
+	function blockAddingSymbols(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> blockAddingSymbols();
+	}
+	
+	function unblockAddingSymbols(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> unblockAddingSymbols();
+	}
+	
+	function hideSign(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> hideSign();
+	}
+	
+	function removeSignFromHidden(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> removeSignFromHidden();
+	}
+	
+	function hideThickness(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> hideThickness();
+	}
+	
+	function removeThicknessFromHidden(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> removeThicknessFromHidden();
+	}
+	
+	function removeThickness(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> removeThickness();
+	}
+	
+	function hideSymbol(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> hideSymbol();
+	}
+	
+	function removeSymbolFromHidden(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> removeSymbolFromHidden();
+	}
+	
+	function removeSymbol(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> removeSymbol();
+	}
+	
+	function hideEdgeBandType(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> hideEdgeBandType();
+	}
+	
+	function removeEdgeBandTypeFromHidden(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> removeEdgeBandTypeFromHidden();
+	}
+	
+	function removeEdgeBandType(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> removeEdgeBandType();
+	}
+	
+	function updateDefaultEdgeBandType(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> updateDefaultEdgeBandType();
+	}
+		
+	function hideEdgeBandStickerSymbol(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> hideEdgeBandStickerSymbol();
+	}
+	
+	function removeEdgeBandStickerSymbolFromHidden(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> removeEdgeBandStickerSymbolFromHidden();
+	}
+	
+	function removeEdgeBandStickerSymbol(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> removeEdgeBandStickerSymbol();
+	}
 	
 	function addNewSMSContent(){
 		if(!$this -> dbo){ return "ACTION_FAILED"; }
@@ -339,6 +487,34 @@ class JoineryAdmin extends MyDB
 		if (!$this -> loggedAdmin){ return "ACTION_FAILED"; }
 		$positions = new Positions ($this -> dbo);
 		return $positions -> addNewSign();
+	}
+	
+	function addNewThickness(){
+		if(!$this -> dbo){ return "ACTION_FAILED"; }
+		if (!$this -> loggedAdmin){ return "ACTION_FAILED"; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> addNewThickness();
+	}
+	
+	function addNewSymbol(){
+		if(!$this -> dbo){ return "ACTION_FAILED"; }
+		if (!$this -> loggedAdmin){ return "ACTION_FAILED"; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> addNewSymbol();
+	}
+	
+	function addNewEdgeBandType(){
+		if(!$this -> dbo){ return "ACTION_FAILED"; }
+		if (!$this -> loggedAdmin){ return "ACTION_FAILED"; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> addNewEdgeBandType();
+	}
+	
+	function addNewEdgeBandStickerSymbol(){
+		if(!$this -> dbo){ return "ACTION_FAILED"; }
+		if (!$this -> loggedAdmin){ return "ACTION_FAILED"; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> addNewEdgeBandStickerSymbol();
 	}
 }
 ?>

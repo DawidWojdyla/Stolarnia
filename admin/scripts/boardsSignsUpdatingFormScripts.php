@@ -1,11 +1,190 @@
 <script>
 
 function showOptions(id){
-
-	document.getElementById('modalBody').innerHTML = "<div class='btn btn-default btn-block' onclick='showNameUpdatingForm("+id+");'><span class=\"glyphicon glyphicon-edit\"></span> Nazwa</div><div class='btn btn-default btn-block' onclick='showDefaultThicknessUpdatingForm("+id+");'><span class=\"glyphicon glyphicon-resize-vertical\"></span> Standardowa grubość</div><div class='btn btn-default btn-block' onclick='showPriorityUpdatingForm("+id+");'><span class=\"glyphicon glyphicon-sort-by-order\"></span> Priorytet</div><div class='btn btn-default btn-block' onclick=\"askIfRemove('"+id+"');\"><span class=\"glyphicon glyphicon-trash\"></span> Usuń</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-menu-left\"></span> Powrót</div>";
-
+	
+	var modalBody = "<div class='btn btn-default btn-block' onclick='showNameUpdatingForm("+id+");'><span class=\"glyphicon glyphicon-edit\"></span> Nazwa</div><div class='btn btn-default btn-block' onclick='showDefaultThicknessUpdatingForm("+id+");'><span class=\"glyphicon glyphicon-resize-vertical\"></span> Standardowa grubość</div>";
+	
+	if(document.getElementById('symbol'+id).innerHTML == "<span class=\"glyphicon glyphicon-ban-circle\"></span>"){
+		modalBody += "<div class='btn btn-default btn-block' onclick='askIfUnblockAddingSymbols("+id+");'><span class=\"glyphicon glyphicon-ok-circle\"></span> Odblokuj symbole</div>";
+	}else{
+		modalBody += "<div class='btn btn-default btn-block' onclick='askIfBlockAddingSymbols("+id+");'><span class=\"glyphicon glyphicon-ban-circle\"></span> Zablokuj symbole</div>";
+	}
+	modalBody += "<div class='btn btn-default btn-block' onclick='showPriorityUpdatingForm("+id+");'><span class=\"glyphicon glyphicon-sort-by-order\"></span> Priorytet</div>";
+	
+	if(document.getElementById('hidden'+id).innerHTML == ""){
+		modalBody += "<div class='btn btn-default btn-block' onclick='askIfHide("+id+");'><span class=\"glyphicon glyphicon-eye-close\"></span> Ukryj</div>";
+	}else{
+		modalBody += "<div class='btn btn-default btn-block' onclick='askIfShow("+id+");'><span class=\"glyphicon glyphicon-eye-open\"></span> Włącz widoczność</div>";
+	}
+	
+	modalBody += "<div class='btn btn-default btn-block' onclick=\"askIfRemove('"+id+"');\"><span class=\"glyphicon glyphicon-trash\"></span> Usuń</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-menu-left\"></span> Powrót</div>";
+	
+	document.getElementById('modalBody').innerHTML = modalBody;
 	$('#modal').modal('show');
 }
+
+
+function removeFromHidden(id){
+		var ajaxRequest = $.ajax({
+			url: "index.php?action=removeSignFromHidden",
+			type: "post",
+			data: { 'signId' : id }
+		});
+		ajaxRequest.done(function (response){
+			switch(response){
+				case 'ACTION_OK': 
+					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
+					document.getElementById('hidden'+id).innerHTML = "";
+					break;
+				case 'FORM_DATA_MISSING': 
+				case 'ACTION_FAILED': 
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+					break;
+				case 'NO_PERMISSION': 
+					message = "Brak uprawnień";
+					break;
+				default:
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zapisanie zmian jest niemożliwe";
+					break;
+			}
+		});
+		
+		ajaxRequest.fail(function (){
+		  message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+		 });
+		 
+		ajaxRequest.always(function(){
+			document.getElementById('modalBody').innerHTML = message;
+			setTimeout(function(){
+				$('#modal').modal('hide');}, 1200);
+		});
+}
+
+function askIfShow(id){
+	document.getElementById('modalBody').innerHTML = "<h4>Czy napewno chcesz włączyć widoczność wybranego rodzaju?</h4><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick='removeFromHidden("+id+");'><span class=\"glyphicon glyphicon-eye-open\"></span> Włącz widoczność</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
+}
+
+function hideSign(id){
+		var ajaxRequest = $.ajax({
+			url: "index.php?action=hideSign",
+			type: "post",
+			data: { 'signId' : id }
+		});
+		ajaxRequest.done(function (response){
+			switch(response){
+				case 'ACTION_OK': 
+					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
+					document.getElementById('hidden'+id).innerHTML = "<span class=\"glyphicon glyphicon-eye-close\"></span>";
+					break;
+				case 'FORM_DATA_MISSING': 
+				case 'ACTION_FAILED': 
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+					break;
+				case 'NO_PERMISSION': 
+					message = "Brak uprawnień";
+					break;
+				default:
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zapisanie zmian jest niemożliwe";
+					break;
+			}
+		});
+		
+		ajaxRequest.fail(function (){
+		  message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+		 });
+		 
+		ajaxRequest.always(function(){
+			document.getElementById('modalBody').innerHTML = message;
+			setTimeout(function(){
+				$('#modal').modal('hide');}, 1200);
+		});
+}
+
+function askIfHide(id){
+	document.getElementById('modalBody').innerHTML = "<h4>Czy napewno chcesz ukryć wybrany rodzaj?</h4><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick='hideSign("+id+");'><span class=\"glyphicon glyphicon-eye-close\"></span> Ukryj</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
+}
+
+
+function unblockAddingSymbols(id){
+		var ajaxRequest = $.ajax({
+			url: "index.php?action=unblockAddingSymbols",
+			type: "post",
+			data: { 'signId' : id }
+		});
+		ajaxRequest.done(function (response){
+			switch(response){
+				case 'ACTION_OK': 
+					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
+					document.getElementById('symbol'+id).innerHTML = "<span class=\"glyphicon glyphicon-ok\"></span>";
+					break;
+				case 'FORM_DATA_MISSING': 
+				case 'ACTION_FAILED': 
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+					break;
+				case 'NO_PERMISSION': 
+					message = "Brak uprawnień";
+					break;
+				default:
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zapisanie zmian jest niemożliwe";
+					break;
+			}
+		});
+		
+		ajaxRequest.fail(function (){
+		  message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+		 });
+		 
+		ajaxRequest.always(function(){
+			document.getElementById('modalBody').innerHTML = message;
+			setTimeout(function(){
+				$('#modal').modal('hide');}, 1200);
+		});
+}
+
+function askIfUnblockAddingSymbols(id){
+	document.getElementById('modalBody').innerHTML = "<h4>Czy napewno chcesz odblokować możliwość dodawania symboli?</h4><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick='unblockAddingSymbols("+id+");'><span class=\"glyphicon glyphicon-ok\"></span> Odblokuj</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
+}
+
+function blockAddingSymbols(id){
+		var ajaxRequest = $.ajax({
+			url: "index.php?action=blockAddingSymbols",
+			type: "post",
+			data: { 'signId' : id }
+		});
+		ajaxRequest.done(function (response){
+			switch(response){
+				case 'ACTION_OK': 
+					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
+					document.getElementById('symbol'+id).innerHTML = "<span class=\"glyphicon glyphicon-ban-circle\"></span>";
+					break;
+				case 'FORM_DATA_MISSING': 
+				case 'ACTION_FAILED': 
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+					break;
+				case 'NO_PERMISSION': 
+					message = "Brak uprawnień";
+					break;
+				default:
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zapisanie zmian jest niemożliwe";
+					break;
+			}
+		});
+		
+		ajaxRequest.fail(function (){
+		  message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+		 });
+		 
+		ajaxRequest.always(function(){
+			document.getElementById('modalBody').innerHTML = message;
+			setTimeout(function(){
+				$('#modal').modal('hide');}, 1200);
+		});
+}
+
+function askIfBlockAddingSymbols(id){
+	document.getElementById('modalBody').innerHTML = "<h4>Czy napewno chcesz zablokować możliwość dodawania symboli?</h4><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick='blockAddingSymbols("+id+");'><span class=\"glyphicon glyphicon-ban-circle\"></span> Zablokuj</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
+}
+
 
 function setDefaultThickness(id){
 	var message = "";
@@ -250,7 +429,7 @@ function setNewSign(){
 			ajaxRequest.done(function (response){
 				if(response != 'ACTION_FAILED'){
 					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
-					document.getElementById('lastRow').insertAdjacentHTML("beforebegin", "<tr id='"+response+"' class='pointer' onclick=\"showOptions('"+response+"');\"><td><label><span class='signs' id='sign"+response+"'>"+newSign+"</span></label></td><td><span id='thickness"+response+"'>-</span></td><td><span id='symbol"+response+"'><span class='glyphicon glyphicon-ok'></span></td><td><span id='priority"+response+"'>-</span></td></tr>");
+					document.getElementById('lastRow').insertAdjacentHTML("beforebegin", "<tr id='"+response+"' class='pointer' onclick=\"showOptions('"+response+"');\"><td><label><span class='signs' id='sign"+response+"'>"+newSign+"</span></label></td><td><span id='thickness"+response+"'>-</span><span style='display: none;' id='thicknessId"+response+"'></span></td><td id='symbol"+response+"'><span class='glyphicon glyphicon-ok'></span></td><td><span id='priority"+response+"'>-</span></td></tr>");
 				}else{
 					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
 				}
@@ -332,7 +511,7 @@ function updatePriority(id){
 function showPriorityUpdatingForm(id){
 	var priority = document.getElementById('priority' + id).innerHTML;
 
-	var modalBody = "<h4>Priorytet</h4><select id='prioritySelect' class='form-control text-center' style='margin-top: 20px;' ><option value='-'";
+	var modalBody = "<h4>Priorytet</h4><select id='prioritySelect' class='form-control' style='margin-top: 20px; text-align-last: center;'><option value='-'";
 	if(priority == "-"){
 		modalBody += " selected";
 	}

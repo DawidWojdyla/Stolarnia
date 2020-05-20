@@ -1159,6 +1159,7 @@ class Orders
 		
 		$edgeBandStickerSymbols = $positions -> returnEdgeBandStickerSymbols();
 		$edgeBandTypes = $positions -> returnEdgeBandTypes();
+		$edgeBandDefaultTypes = $positions -> returnEdgeBandDefaultThickness();
 		$edgeBandSymbols = $positions -> returnEdgeBandSymbols();
 		//$lastOrderCompletionDate = $this -> returnLastOrderCompletionDate();
 		
