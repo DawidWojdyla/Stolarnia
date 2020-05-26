@@ -1169,8 +1169,6 @@ class Orders
 	
 	function setOrderListPeriod(){
 		$today = date('Y-m-d');
-		//$threeDaysAgo = date('Y-m-d', strtotime($today. '-3 days'));
-		//$dayAfterTomorrow = date('Y-m-d', strtotime($today. '+2 days'));
 		$threeDaysAgo = date('Y-m-d', strtotime($today. '-3 weekdays'));
 		$inThreeDays = date('Y-m-d', strtotime($today. '+3 weekdays'));
 		$_SESSION['dateFrom'] = $threeDaysAgo;
@@ -1187,11 +1185,7 @@ class Orders
 	
 	function showOrderList(){
 		$orderLists = array();
-		//funkcja odpowiedzialna za wyświetlenie listy zleceń
 		$this->setOrderListPeriod();
-		//$orderLists[0] = $this -> returnNotCutOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
-		//$orderLists[1]  = $this -> returnCutButNotCompletedOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
-		//$orderLists[2] = $this -> returnCompletedOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
 		$orderList = $this -> returnOrdersOfPeriod($_SESSION['dateFrom'], $_SESSION['dateTo']);
 		
 		include 'scripts/orderListForShopScripts.php';
@@ -1240,7 +1234,6 @@ class Orders
 		}
 		else{
 			if($orders = $this -> findOrders($conditions)){
-				//$boards = $this -> returnOrderDetails($order -> orderId);
 				include 'scripts/orderSearchResultScripts.php';
 				include 'templates/orderSearchResult.php';
 			}
@@ -1262,8 +1255,6 @@ class Orders
 		
 		$jsonAmounts = json_encode($amounts);
 		return $jsonAmounts;
-		//return $this -> returnBoardsAmoutPerDay(1, '2020-01-25');
-		//return $_POST['date'];
 	}
 	
 	function showOrderDetails(){
@@ -1339,6 +1330,7 @@ class Orders
 		$edgeBandStickerSymbols = $positions -> returnEdgeBandStickerSymbols();
 		$edgeBandTypes = $positions -> returnEdgeBandTypes();
 		$edgeBandSymbols = $positions -> returnEdgeBandSymbols();
+		$edgeBandDefaultTypes = $positions -> returnEdgeBandDefaultThickness();
 
 		$orderId = intval($_POST['orderId']);
 		

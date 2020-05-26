@@ -1136,19 +1136,50 @@ function addOtherBoardSymbolIfNeeded(){
 	 }
 }
 
+function setBoardSelectDefaultOptions(){
+	var signId = document.getElementById('boardSign').value;
+	var thicknessSelect = document.getElementById('boardThickness');
+	var symbolSelect = document.getElementById('boardSymbol');
+	
+	symbolSelect.value = '1';
+	
+	<?PHP foreach($boardsSigns as $sign): ?>
+		
+		if(signId == "<?=$sign -> id?>"){
+			<?PHP if ($sign -> thicknessId): ?>
+				thicknessSelect.value =  "<?=$sign -> thicknessId?>";
+			<?PHP else: ?>
+				thicknessSelect.value =  "8";
+			<?PHP endif; ?>
+			
+			<?PHP if ($sign -> noSymbolSignId): ?>
+				symbolSelect.disabled = true;
+			<?PHP else: ?>
+				symbolSelect.disabled = false;
+			<?PHP endif; ?>
+		}
+		
+	<?PHP endforeach; ?>
+
+}
+
 function updateBoard(boardId){
 	var boardSignId = document.getElementById('boardSignId'+boardId).innerHTML;
 	var boardThicknessId = document.getElementById('boardThicknessId'+boardId).innerHTML;
 	var boardSymbolId = document.getElementById('boardSymbolId'+boardId).innerHTML;
 	var otherBoardSymbol = document.getElementById('otherBoardSymbol'+boardId).innerHTML;
+	var isNoSymbolSignId = false;
 	
 	
-	var updatingOrderDataModalBody = "<h3>Zmiana płyty</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-4'><label for='boardSign'>rodzaj</label><select id='boardSign' class='form-control textCenterSelect'>";
+	var updatingOrderDataModalBody = "<h3>Zmiana płyty</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-4'><label for='boardSign'>rodzaj</label><select id='boardSign' onchange='setBoardSelectDefaultOptions();' class='form-control textCenterSelect'>";
 		<?PHP foreach($boardsSigns as $boardSign):?>
 		updatingOrderDataModalBody += "<option value='<?=$boardSign->id?>'";
 
-		if(<?=$boardSign->id?> == boardSignId){
+		if(<?=$boardSign -> id?> == boardSignId){
 			updatingOrderDataModalBody += " selected";
+			<?PHP if ($boardSign -> noSymbolSignId): ?>
+				isNoSymbolSignId = true;
+			<?PHP endif; ?>
 		}	
 		updatingOrderDataModalBody += "><?=$boardSign->sign?></option>";
 		<?PHP endforeach; ?>
@@ -1160,7 +1191,12 @@ function updateBoard(boardId){
 		}
 		updatingOrderDataModalBody += "><?=$boardThickness->thickness?></option>";
 		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-4'><label for='boardSymbol'>symbol</label><select id='boardSymbol' onchange='addOtherBoardSymbolIfNeeded();' class='form-control textCenterSelect'>";
+		updatingOrderDataModalBody += "</select></div><div class='col-sm-4'><label for='boardSymbol'>symbol</label><select id='boardSymbol' onchange='addOtherBoardSymbolIfNeeded();' class='form-control textCenterSelect'";
+		
+		if(isNoSymbolSignId){
+			updatingOrderDataModalBody += " disabled";
+		}
+		updatingOrderDataModalBody += ">";
 		<?PHP foreach($boardsSymbols as $boardSymbol):?>
 		updatingOrderDataModalBody += "<option value='<?=$boardSymbol->id?>'";
 		if(<?=$boardSymbol->id?> == boardSymbolId){
@@ -1284,24 +1320,54 @@ function setNewEdgeBanding(boardId){
 	}
 }
 
+function returnDefaultEdgeBandTypeId(thickness){
+	var defaultEdgeBandTypeId = null;
+	<?PHP $i = 0; foreach($edgeBandDefaultTypes as $defaultEdgeBand): ?>
+			<?PHP if($i): ?>else <?PHP endif; ?>if(thickness <= <?=$defaultEdgeBand -> max_thickness?>){
+			defaultEdgeBandTypeId = '<?=$defaultEdgeBand -> edge_band_type_id?>';
+		}
+		<?PHP $i++; endforeach; ?>
+	return defaultEdgeBandTypeId;
+}
+
 function addNewEdgeBanding(boardId){
-	var updatingOrderDataModalBody = "<h3>Dodaj oklejanie</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-2'></div><div class='col-sm-2 smallerPadding'><label for='eBType'>typ</label><select id='eBType' class='form-control textCenterSelect'>";
-		<?PHP foreach($edgeBandTypes as $edgeBandType):?>
-		updatingOrderDataModalBody += "<option value='<?=$edgeBandType->id?>'><?=$edgeBandType->type?></option>";
-		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-2 smallerPadding'><label for='eBSymbol'>symbol</label><select id='eBSymbol' class='form-control textCenterSelect'>";
-		<?PHP foreach($edgeBandSymbols as $edgeBandSymbol):?>
-		updatingOrderDataModalBody += "<option value='<?=$edgeBandSymbol->id?>'><?=$edgeBandSymbol->symbol?></option>";
-		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-2 smallerPadding'><label for='eBSticker'>naklejki</label><select id='eBSticker' class='form-control textCenterSelect'>";
-		<?PHP foreach($edgeBandStickerSymbols as $edgeBandStickerSymbol):?>
-		updatingOrderDataModalBody += "<option value='<?=$edgeBandStickerSymbol->id?>'><?=$edgeBandStickerSymbol->symbol?></option>";
-		<?PHP endforeach; ?>
-		updatingOrderDataModalBody += "</select></div><div class='col-sm-2 smallerPadding'><label for='eBWzMetters'>metry</label><div><input id='eBWzMetters' class='form-control text-center' type='text' min='0.5' max='10000' step='0.5' required /></div></div><div class='col-sm-2'></div></div><div style='margin-top: 10px;' class='row'><div class='col-sm-2'></div><div class='col-sm-2'><label for='newEBComment'>uwagi:</label></div><div class='col-sm-6 smallerPadding'><input id='eBComment' type='text' class='form-control text-center' /></div><div class='col-sm-2'></div></div><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick=\"setNewEdgeBanding('"+boardId+"');\"><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
-	
-	document.getElementById('updatingOrderDataModalBody').innerHTML = updatingOrderDataModalBody;
+	var thickness = document.getElementById("boardThickness"+boardId).innerHTML;
+	thickness = parseInt(thickness);
+	if(thickness < 8){
+		document.getElementById('updatingOrderDataModalBody').innerHTML = "<h4><span class='glyphicon glyphicon-ban-circle'></span> Aby okleić grubość płyty musi być co najmniej 8mm!</h4>";
+		$('#updatingOrderDataModal').modal('show');
+		setTimeout(function(){ $('#updatingOrderDataModal').modal('hide'); }, 3000);
 		
-	$('#updatingOrderDataModal').modal('show');
+	}else{
+		var defaultEdgeBandTypeId = returnDefaultEdgeBandTypeId(thickness);
+		var boardSymbolId = document.getElementById("boardSymbolId"+boardId).innerHTML;
+		var updatingOrderDataModalBody = "<h3>Dodaj oklejanie</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-2'></div><div class='col-sm-2 smallerPadding'><label for='eBType'>typ</label><select id='eBType' class='form-control textCenterSelect'>";
+			<?PHP foreach($edgeBandTypes as $edgeBandType):?>
+			updatingOrderDataModalBody += "<option value='<?=$edgeBandType->id?>'";
+			if(defaultEdgeBandTypeId == <?=$edgeBandType->id?>){
+				updatingOrderDataModalBody += " selected";
+			}
+			updatingOrderDataModalBody += "><?=$edgeBandType->type?></option>";
+			<?PHP endforeach; ?>
+			updatingOrderDataModalBody += "</select></div><div class='col-sm-2 smallerPadding'><label for='eBSymbol'>symbol</label><select id='eBSymbol' class='form-control textCenterSelect'>";
+			<?PHP foreach($edgeBandSymbols as $edgeBandSymbol):?>
+			updatingOrderDataModalBody += "<option value='<?=$edgeBandSymbol->id?>'";
+			if(boardSymbolId == '<?=$edgeBandSymbol->id?>'){
+				updatingOrderDataModalBody += " selected";
+			}
+			updatingOrderDataModalBody += "><?=$edgeBandSymbol->symbol?></option>";
+			<?PHP endforeach; ?>
+			updatingOrderDataModalBody += "</select></div><div class='col-sm-2 smallerPadding'><label for='eBSticker'>naklejki</label><select id='eBSticker' class='form-control textCenterSelect'>";
+			<?PHP foreach($edgeBandStickerSymbols as $edgeBandStickerSymbol):?>
+			updatingOrderDataModalBody += "<option value='<?=$edgeBandStickerSymbol->id?>'><?=$edgeBandStickerSymbol->symbol?></option>";
+			<?PHP endforeach; ?>
+			updatingOrderDataModalBody += "</select></div><div class='col-sm-2 smallerPadding'><label for='eBWzMetters'>metry</label><div><input id='eBWzMetters' class='form-control text-center' type='text' min='0.5' max='10000' step='0.5' required /></div></div><div class='col-sm-2'></div></div><div style='margin-top: 10px;' class='row'><div class='col-sm-2'></div><div class='col-sm-2'><label for='newEBComment'>uwagi:</label></div><div class='col-sm-6 smallerPadding'><input id='eBComment' type='text' class='form-control text-center' /></div><div class='col-sm-2'></div></div><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick=\"setNewEdgeBanding('"+boardId+"');\"><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
+		
+		document.getElementById('updatingOrderDataModalBody').innerHTML = updatingOrderDataModalBody;
+			
+		$('#updatingOrderDataModal').modal('show');
+		
+	}	
 }
 
 function removeBoardPosition(boardId){
