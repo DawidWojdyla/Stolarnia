@@ -1495,7 +1495,7 @@ function setNewBoard(){
 }
 
 function addNewBoard(){
-	var updatingOrderDataModalBody = "<h3>Dodaj nową pozycję</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-1'></div><div class='col-sm-2 smallerPadding'><label for='boardSign'>rodzaj</label><select id='boardSign' class='form-control textCenterSelect'>";
+	var updatingOrderDataModalBody = "<h3>Dodaj nową pozycję</h3><div style='margin-top: 20px;' class='row text-center'><div class='col-sm-1'></div><div class='col-sm-2 smallerPadding'><label for='boardSign'>rodzaj</label><select id='boardSign' onchange='setBoardSelectDefaultOptions();' class='form-control textCenterSelect'>";
 	<?PHP foreach($boardsSigns as $boardSign):?>
 	updatingOrderDataModalBody += "<option value='<?=$boardSign->id?>'";
 

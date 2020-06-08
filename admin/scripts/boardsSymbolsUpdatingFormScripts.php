@@ -118,7 +118,7 @@ function removeSymbol(id){
 					message = "Brak uprawnień";
 					break;
 				default:
-					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie można usunąć grubości, które są w użyciu";
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie można usunąć symboli, które są w użyciu";
 					break;
 			}
 		});

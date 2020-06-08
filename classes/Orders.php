@@ -1034,9 +1034,9 @@ class Orders
 		return ($cuttingMetters[0]+0);
 	}
 	
-	function returnEdgeBandingMettersPerDay($sawNumber, $date){
+	function returnEdgeBandingMettersPerDay($date){
 		$edgeBandingMetters = 0;
-		if($result = $this -> dbo -> query("SELECT COALESCE (SUM(`edge_banding_metters_wz`), 0) FROM `edge_banding` WHERE `orders_boards_id` IN (SELECT `id` FROM `orders_boards` WHERE `order_id` IN (SELECT `id` FROM `orders` WHERE `order_completion_date`='{$date}' AND `saw_number`={$sawNumber}))")){
+		if($result = $this -> dbo -> query("SELECT COALESCE (SUM(`edge_banding_metters_wz`), 0) FROM `edge_banding` WHERE `orders_boards_id` IN (SELECT `id` FROM `orders_boards` WHERE `order_id` IN (SELECT `id` FROM `orders` WHERE `order_completion_date`='{$date}'))")){
 			$edgeBandingMetters = $result -> fetch(PDO::FETCH_NUM);
 		}
 		return ($edgeBandingMetters[0]+0);
@@ -1247,11 +1247,10 @@ class Orders
 		if (!isset($_POST['sawNumber']) || $_POST['sawNumber'] =='' || !isset($_POST['date']) || $_POST['date'] == ''){
 			return 'Brak danych';
 		}
-		//$date = date('Y-m-d',  strtotime($_POST['date']));
 		$amounts = array();
 		$amounts['boardsAmount'] = $this -> returnBoardsAmoutPerDay($_POST['sawNumber'], $_POST['date']);
 		$amounts['cuttingMetters'] = $this -> returnCuttingMettersPerDay($_POST['sawNumber'], $_POST['date']);
-		$amounts['edgeBandingMetters'] = $this -> returnEdgeBandingMettersPerDay($_POST['sawNumber'], $_POST['date']);		
+		$amounts['edgeBandingMetters'] = $this -> returnEdgeBandingMettersPerDay($_POST['date']);		
 		
 		$jsonAmounts = json_encode($amounts);
 		return $jsonAmounts;
