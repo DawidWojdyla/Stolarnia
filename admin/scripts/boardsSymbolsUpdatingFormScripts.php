@@ -1,8 +1,16 @@
 <script>
 
 function showOptions(id){
+	var modalBody ="";
 	
-	var modalBody = "";
+	if(document.getElementById('edgeBand'+id).innerHTML == ""){
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"addToNoEdgeBandSymbols('"+id+"');\"><span class=\"glyphicon glyphicon-remove\"></span> Usuń z oklein</div>";
+	}
+	else{
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"removeFromNoEdgeBandSymbols('"+id+"');\"><span class=\"glyphicon glyphicon-cd\"></span> Dodaj do oklein</div>";
+	}
+	
+	modalBody += "<div class='btn btn-default btn-block' onclick=\"manageTypes('"+id+"');\"><span class=\"glyphicon glyphicon-link\"></span> Zarządzaj typami</div>";
 	
 	if(document.getElementById('hidden'+id).innerHTML == ""){
 		modalBody += "<div class='btn btn-default btn-block' onclick='askIfHide("+id+");'><span class=\"glyphicon glyphicon-eye-close\"></span> Ukryj</div>";
@@ -16,6 +24,276 @@ function showOptions(id){
 	$('#modal').modal('show');
 }
 
+
+function manageTypes(id){
+	var modalBody ="";
+	if(document.getElementById('melamine'+id).innerHTML == ""){
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"addToMelanines('"+id+"');\"><span class=\"glyphicon glyphicon-plus\"></span> Dodaj do laminowanych</div>";
+	}
+	else{
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"removeFromMelanines('"+id+"');\"><span class=\"glyphicon glyphicon-remove\"></span> Usuń z laminowanych</div>";
+	}
+	if(document.getElementById('worktops'+id).innerHTML == ""){
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"addToWorktops('"+id+"');\"><span class=\"glyphicon glyphicon-plus\"></span> Dodaj do blatów</div>";
+	}
+	else{
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"removeFromWorktops('"+id+"');\"><span class=\"glyphicon glyphicon-remove\"></span> Usuń z blatów</div>";
+	}
+	if(document.getElementById('hdf'+id).innerHTML == ""){
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"addToHDFs('"+id+"');\"><span class=\"glyphicon glyphicon-plus\"></span> Dodaj do HDFów</div>";
+	}
+	else{
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"removeFromHDFs('"+id+"');\"><span class=\"glyphicon glyphicon-remove\"></span> Usuń z HDFów</div>";
+	}
+	if(document.getElementById('mdf'+id).innerHTML == ""){
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"addToMDFs('"+id+"');\"><span class=\"glyphicon glyphicon-plus\"></span> Dodaj do MDFów</div>";
+	}
+	else{
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"removeFromMDFs('"+id+"');\"><span class=\"glyphicon glyphicon-remove\"></span> Usuń z MDFów</div>";
+	}
+	if(document.getElementById('acrylic'+id).innerHTML == ""){
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"addToAcrylics('"+id+"');\"><span class=\"glyphicon glyphicon-plus\"></span> Dodaj do akryli</div>";
+	}
+	else{
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"removeFromAcrylics('"+id+"');\"><span class=\"glyphicon glyphicon-remove\"></span> Usuń z akryli</div>";
+	}
+	if(document.getElementById('glossy'+id).innerHTML == ""){
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"addToGlossys('"+id+"');\"><span class=\"glyphicon glyphicon-plus\"></span> Dodaj do połysków</div>";
+	}
+	else{
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"removeFromGlossys('"+id+"');\"><span class=\"glyphicon glyphicon-remove\"></span> Usuń z połysków</div>";
+	}
+	if(document.getElementById('veneer'+id).innerHTML == ""){
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"addToVeneers('"+id+"');\"><span class=\"glyphicon glyphicon-plus\"></span> Dodaj do fornirów</div>";
+	}
+	else{
+		modalBody += "<div class='btn btn-default btn-block' onclick=\"removeFromVeneers('"+id+"');\"><span class=\"glyphicon glyphicon-remove\"></span> Usuń z fornirów</div>";
+	}
+	modalBody += "<div class='btn btn-default btn-block' onclick='showOptions("+id+");'><span class=\"glyphicon glyphicon-menu-left\"></span> Powrót</div>";
+	document.getElementById('modalBody').innerHTML = modalBody;
+}
+
+function addToMelanines(id){
+	assignSymbolToTheType(id, '1');
+}
+function addToWorktops(id){
+	assignSymbolToTheType(id, '2');
+}
+function addToHDFs(id){
+	assignSymbolToTheType(id, '4');
+}
+function addToMDFs(id){
+	assignSymbolToTheType(id, '3');
+}
+function addToAcrylics(id){
+	assignSymbolToTheType(id, '6');
+}
+function addToGlossys(id){
+	assignSymbolToTheType(id, '7');
+}
+function addToVeneers(id){
+	assignSymbolToTheType(id, '5');
+}
+
+
+function removeFromMelanines(id){
+	removeSymbolFromTheTypeList(id, '1');
+}
+
+function removeFromWorktops(id){
+	removeSymbolFromTheTypeList(id, '2');
+}
+function removeFromHDFs(id){
+	removeSymbolFromTheTypeList(id, '4');
+}
+function removeFromMDFs(id){
+	removeSymbolFromTheTypeList(id, '3');
+}
+function removeFromAcrylics(id){
+	removeSymbolFromTheTypeList(id, '6');
+}
+function removeFromGlossys(id){
+	removeSymbolFromTheTypeList(id, '7');
+}
+function removeFromVeneers(id){
+	removeSymbolFromTheTypeList(id, '5');
+}
+
+function returnTypeName(typeNumber){
+	var typeName = "";
+	switch(typeNumber){
+		case '1': 
+			typeName = "melamine";
+			break;
+		case '2': 
+			typeName = "worktops";
+			break;
+		case '3': 
+			typeName = "mdf";
+			break;
+		case '4': 
+			typeName = "hdf";
+			break;
+		case '5': 
+			typeName = "veneer";
+			break;
+		case '6': 
+			typeName = "acrylic";
+			break;
+		case '7': 
+			typeName = "glossy";
+			break;	
+	}
+	return typeName;
+}
+
+function assignSymbolToTheType(id, typeNumber){
+	var ajaxRequest = $.ajax({
+		url: "index.php?action=assignSymbolToTheType",
+		type: "post",
+		data: { 'symbolId' : id,
+					'typeNumber': typeNumber
+				}
+	});
+	ajaxRequest.done(function (response){
+		switch(response){
+			case 'ACTION_OK': 
+				message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany"; 			
+				document.getElementById(returnTypeName(typeNumber)+id).innerHTML = "<span class='glyphicon glyphicon-ok'></span>";
+				break;
+			case 'FORM_DATA_MISSING': 
+			case 'ACTION_FAILED': 
+				message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+				break;
+			case 'NO_PERMISSION': 
+				message = "Brak uprawnień";
+				break;
+			default:
+				message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zapisanie zmian jest niemożliwe";
+				break;
+		}
+	});
+	
+	ajaxRequest.fail(function (){
+	  message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+	 });
+	 
+	ajaxRequest.always(function(){
+		document.getElementById('modalBody').innerHTML = message;
+		setTimeout(function(){
+			$('#modal').modal('hide');}, 1200);
+	});
+}
+
+function removeSymbolFromTheTypeList(id, typeNumber){
+	var ajaxRequest = $.ajax({
+		url: "index.php?action=removeSymbolFromAssignedTypeList",
+		type: "post",
+		data: { 'symbolId' : id,
+					'typeNumber': typeNumber
+				}
+	});
+	ajaxRequest.done(function (response){
+		switch(response){
+			case 'ACTION_OK': 
+				message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany"; 			
+				document.getElementById(returnTypeName(typeNumber)+id).innerHTML = "";
+				break;
+			case 'FORM_DATA_MISSING': 
+			case 'ACTION_FAILED': 
+				message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+				break;
+			case 'NO_PERMISSION': 
+				message = "Brak uprawnień";
+				break;
+			default:
+				message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zapisanie zmian jest niemożliwe";
+				break;
+		}
+	});
+	
+	ajaxRequest.fail(function (){
+	  message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+	 });
+	 
+	ajaxRequest.always(function(){
+		document.getElementById('modalBody').innerHTML = message;
+		setTimeout(function(){
+			$('#modal').modal('hide');}, 1200);
+	});
+}
+
+function addToNoEdgeBandSymbols(id){
+		var ajaxRequest = $.ajax({
+			url: "index.php?action=addToNoEdgeBandSymbols",
+			type: "post",
+			data: { 'symbolId' : id }
+		});
+		ajaxRequest.done(function (response){
+			switch(response){
+				case 'ACTION_OK': 
+					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
+					document.getElementById('edgeBand'+id).innerHTML = "<span class='glyphicon glyphicon-remove'></span>";
+					break;
+				case 'FORM_DATA_MISSING': 
+				case 'ACTION_FAILED': 
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+					break;
+				case 'NO_PERMISSION': 
+					message = "Brak uprawnień";
+					break;
+				default:
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zapisanie zmian jest niemożliwe";
+					break;
+			}
+		});
+		
+		ajaxRequest.fail(function (){
+		  message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+		 });
+		 
+		ajaxRequest.always(function(){
+			document.getElementById('modalBody').innerHTML = message;
+			setTimeout(function(){
+				$('#modal').modal('hide');}, 1200);
+		});
+}
+
+function removeFromNoEdgeBandSymbols(id){
+		var ajaxRequest = $.ajax({
+			url: "index.php?action=removeSymbolFromNoEdgeBand",
+			type: "post",
+			data: { 'symbolId' : id }
+		});
+		ajaxRequest.done(function (response){
+			switch(response){
+				case 'ACTION_OK': 
+					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
+					document.getElementById('edgeBand'+id).innerHTML = "";
+					break;
+				case 'FORM_DATA_MISSING': 
+				case 'ACTION_FAILED': 
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+					break;
+				case 'NO_PERMISSION': 
+					message = "Brak uprawnień";
+					break;
+				default:
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zapisanie zmian jest niemożliwe";
+					break;
+			}
+		});
+		
+		ajaxRequest.fail(function (){
+		  message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+		 });
+		 
+		ajaxRequest.always(function(){
+			document.getElementById('modalBody').innerHTML = message;
+			setTimeout(function(){
+				$('#modal').modal('hide');}, 1200);
+		});
+}
 
 function removeFromHidden(id){
 		var ajaxRequest = $.ajax({
@@ -173,7 +451,7 @@ function setNewSymbol(){
 			ajaxRequest.done(function (response){
 				if(response != 'ACTION_FAILED'){
 					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
-					document.getElementById('lastRow').insertAdjacentHTML("beforebegin", "<tr id='"+response+"' class='pointer' onclick=\"showOptions('"+response+"');\"><td><label><span class='symbols' id='symbol"+response+"'>"+newSymbol+"</span></label></td><td id='hidden"+response+"'></td></tr>");
+					document.getElementById('lastRow').insertAdjacentHTML("beforebegin", "<tr id='"+response+"' class='pointer' onclick=\"showOptions('"+response+"');\"><td><label><span class='symbols' id='symbol"+response+"'>"+newSymbol+"</span></label></td><td id='edgeBand"+response+"'></td><td id='melamine"+response+"'></td><td id='worktops"+response+"'></td><td id='hdf"+response+"'></td><td id='mdf"+response+"'></td><td id='acrylic"+response+"'></td><td id='glossy"+response+"'></td><td id='veneer"+response+"'></td><td id='hidden"+response+"'></td></tr>");
 				}else{
 					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
 				}

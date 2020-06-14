@@ -2,7 +2,7 @@
 
 function showOptions(id){
 	
-	var modalBody = "<div class='btn btn-default btn-block' onclick='showNameUpdatingForm("+id+");'><span class=\"glyphicon glyphicon-edit\"></span> Nazwa</div><div class='btn btn-default btn-block' onclick='showDefaultThicknessUpdatingForm("+id+");'><span class=\"glyphicon glyphicon-resize-vertical\"></span> Standardowa grubość</div>";
+	var modalBody = "<div class='btn btn-default btn-block' onclick='showNameUpdatingForm("+id+");'><span class=\"glyphicon glyphicon-edit\"></span> Nazwa</div><div class='btn btn-default btn-block' onclick='showTypeUpdatingForm("+id+");'><span class=\"glyphicon glyphicon-tag\"></span> Typ</div><div class='btn btn-default btn-block' onclick='showDefaultThicknessUpdatingForm("+id+");'><span class=\"glyphicon glyphicon-resize-vertical\"></span> Standardowa grubość</div>";
 	
 	if(document.getElementById('symbol'+id).innerHTML == "<span class=\"glyphicon glyphicon-ban-circle\"></span>"){
 		modalBody += "<div class='btn btn-default btn-block' onclick='askIfUnblockAddingSymbols("+id+");'><span class=\"glyphicon glyphicon-ok-circle\"></span> Odblokuj symbole</div>";
@@ -21,6 +21,72 @@ function showOptions(id){
 	
 	document.getElementById('modalBody').innerHTML = modalBody;
 	$('#modal').modal('show');
+}
+
+function setSignType(id){
+	var message = "";
+	var oldTypeId = document.getElementById('typeId'+id).innerHTML;
+	var newTypeId = document.getElementById('typeSelect').value;
+	if(oldTypeId == newTypeId){
+		message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Typ symboli pozostaje bez zmian";
+		document.getElementById('modalBody').innerHTML = message;
+		setTimeout(function(){$('#modal').modal('hide');}, 1200);
+	}else{
+		var ajaxRequest = $.ajax({
+			url: "index.php?action=updateSignType",
+			type: "post",
+			data: {
+				'typeId' : newTypeId,
+				'signId' : id
+			}
+		});
+		ajaxRequest.done(function (response){
+			switch(response){
+				case 'ACTION_OK': 
+					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
+					document.getElementById('type'+id).innerHTML = $("#typeSelect option:selected").text();
+					document.getElementById('typeId'+id).innerHTML = newTypeId;
+					break;
+				case 'FORM_DATA_MISSING': 
+				case 'ACTION_FAILED': 
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+					break;
+				case 'NO_PERMISSION': 
+					message = "Brak uprawnień";
+					break;
+				default:
+					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zapisanie zmian jest niemożliwe";
+					break;
+			}
+		});
+		
+		ajaxRequest.fail(function (){
+		  message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+		 });
+		 
+		ajaxRequest.always(function(){
+			document.getElementById('modalBody').innerHTML = message;
+			setTimeout(function(){
+				$('#modal').modal('hide');}, 1000);
+		});
+	}
+}
+
+
+function showTypeUpdatingForm(id){
+	var typeId = document.getElementById("typeId"+id).innerHTML;
+	
+	var modalBody ="<h4>Wybierz typ symboli:</h4><div style='margin-top: 20px;'><select style='text-align-last: center;' id='typeSelect' class='form-control'><option value=''";
+	if (typeId == ''){
+		modalBody += "selected";
+	}
+	modalBody += "></option><?PHP foreach ($signTypes as $type):?><option value='<?=$type -> id?>'";
+	if(typeId == "<?=$type -> id?>"){
+		modalBody += " selected";
+	}
+	modalBody += "><?=$type -> type?></option><?PHP endforeach; ?></select><div style='margin-top: 20px;' class='btn btn-default btn-block' onclick=\"setSignType('"+id+"');\"><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
+	document.getElementById('modalBody').innerHTML = modalBody;
+	
 }
 
 
@@ -429,7 +495,7 @@ function setNewSign(){
 			ajaxRequest.done(function (response){
 				if(response != 'ACTION_FAILED'){
 					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
-					document.getElementById('lastRow').insertAdjacentHTML("beforebegin", "<tr id='"+response+"' class='pointer' onclick=\"showOptions('"+response+"');\"><td><label><span class='signs' id='sign"+response+"'>"+newSign+"</span></label></td><td><span id='thickness"+response+"'>-</span><span style='display: none;' id='thicknessId"+response+"'></span></td><td id='symbol"+response+"'><span class='glyphicon glyphicon-ok'></span></td><td><span id='priority"+response+"'>-</span></td></tr>");
+					document.getElementById('lastRow').insertAdjacentHTML("beforebegin", "<tr id='"+response+"' class='pointer' onclick=\"showOptions('"+response+"');\"><td><label><span class='signs' id='sign"+response+"'>"+newSign+"</span></label></td><td><span id='type"+response+"'></span></td><td><span id='thickness"+response+"'>-</span><span style='display: none;' id='thicknessId"+response+"'></span></td><td id='symbol"+response+"'><span class='glyphicon glyphicon-ok'></span></td><td><span id='priority"+response+"'>-</span></td><td><span id='hidden"+response+"'></span></td></tr>");
 				}else{
 					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
 				}

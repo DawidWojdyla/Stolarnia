@@ -335,6 +335,13 @@ class JoineryAdmin extends MyDB
 		return $positions -> updateSignName();
 	}
 	
+	function updateSignType(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> updateSignType();
+	}
+	
 	function removeDefaultThickness(){
 		if(!$this -> dbo){ return SERVER_ERROR; }
 		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
@@ -403,6 +410,34 @@ class JoineryAdmin extends MyDB
 		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
 		$positions = new Positions ($this -> dbo);
 		return $positions -> removeThickness();
+	}
+	
+	function addToNoEdgeBandSymbols(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> addToNoEdgeBandSymbols();
+	}
+	
+	function removeSymbolFromNoEdgeBand(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> removeSymbolFromNoEdgeBand();
+	}
+	
+	function assignSymbolToTheType(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> assignSymbolToTheType();
+	}
+	
+	function removeSymbolFromAssignedTypeList(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
+		$positions = new Positions ($this -> dbo);
+		return $positions -> removeSymbolFromAssignedTypeList();
 	}
 	
 	function hideSymbol(){

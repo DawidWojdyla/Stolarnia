@@ -3,12 +3,15 @@
 	<div class="text-center header">Rodzaje płyt</div>
 	<table class='table orderListTable'>
 		<tr>
-			<th>rodzaj</th><th>standardowa grubość</th><th>symbole</th><th>priorytet</th><th>ukryty</th>
+			<th>rodzaj</th><th>typ</th><th>standardowa grubość</th><th>symbole</th><th>priorytet</th><th>ukryty</th>
 		</tr>
 	<?PHP foreach($boardsSigns as $sign):?>
 		<tr id='<?=$sign -> id?>' class="pointer" onclick="showOptions('<?=$sign -> id?>');">
 			<td>
 				<label><span class='signs' id='sign<?=$sign -> id?>'><?=$sign -> sign?></span></label>
+			</td>
+			<td>
+				<span id='type<?=$sign -> id?>'><?=$sign -> signType?></span><span style="display: none;" id='typeId<?=$sign -> id?>'><?=$sign -> typeId?></span>
 			</td>
 			<td><span id='thickness<?=$sign -> id?>'><?PHP if($sign -> thicknessId): ?><?=$sign -> thickness?><?PHP else: ?>-<?PHP endif;?></span>
 				<span style="display: none;" id='thicknessId<?=$sign -> id?>'><?=$sign -> thicknessId?></span>

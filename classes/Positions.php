@@ -9,7 +9,7 @@ class Positions
 	
 	function returnBoardsSigns(){
 		$boardsSigns = array();
-		if($result = $this -> dbo -> query("SELECT `id`, `sign`, `boards_signs_default_thickness`.`board_thickness_id` as thicknessId, `boards_signs_having_no_symbol`.`board_sign_id` as noSymbolSignId FROM `boards_signs` LEFT JOIN `boards_signs_having_no_symbol` ON `boards_signs_having_no_symbol`.`board_sign_id`= `boards_signs`.`id` LEFT JOIN `boards_signs_default_thickness` ON `boards_signs_default_thickness`.`board_sign_id`=`boards_signs`.`id` WHERE `id` NOT IN (SELECT `board_sign_id` FROM `boards_signs_hidden`) ORDER BY CASE WHEN `priority`<> '0' THEN CONCAT(`priority`,', ',`sign`) ELSE `sign` END")){
+		if($result = $this -> dbo -> query("SELECT `id`, `sign`, `type_id`, `boards_signs_default_thickness`.`board_thickness_id` as thicknessId, `boards_signs_having_no_symbol`.`board_sign_id` as noSymbolSignId FROM `boards_signs` LEFT JOIN `boards_signs_having_no_symbol` ON `boards_signs_having_no_symbol`.`board_sign_id`= `boards_signs`.`id` LEFT JOIN `boards_signs_default_thickness` ON `boards_signs_default_thickness`.`board_sign_id`=`boards_signs`.`id` WHERE `id` NOT IN (SELECT `board_sign_id` FROM `boards_signs_hidden`) ORDER BY CASE WHEN `priority`<> '0' THEN CONCAT(`priority`,', ',`sign`) ELSE `sign` END")){
 			$boardsSigns = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $boardsSigns;
@@ -17,13 +17,29 @@ class Positions
 	
 	function returnBoardsSignsForUpdatingForm(){
 		$boardsSigns = array();
-		if($result = $this -> dbo -> query("SELECT `id`, `sign`, `priority`, `boards_signs_having_no_symbol`.`board_sign_id` as noSymbolNeeded, thicknessQuery.thicknessId, thicknessQuery.thickness, `boards_signs_hidden`.`board_sign_id` as hidden FROM `boards_signs` LEFT JOIN `boards_signs_having_no_symbol` ON `boards_signs_having_no_symbol`.`board_sign_id`=`boards_signs`.`id` LEFT JOIN `boards_signs_hidden` ON `boards_signs_hidden`.`board_sign_id`=`boards_signs`.`id` LEFT JOIN (SELECT `thickness`, `boards_signs_default_thickness`.`board_thickness_id` as thicknessId, `boards_signs_default_thickness`.`board_sign_id` as signId  FROM `boards_thickness`, `boards_signs_default_thickness` WHERE `boards_thickness`.`id`=`boards_signs_default_thickness`.`board_thickness_id`) as thicknessQuery ON thicknessQuery.signId=`id` ORDER BY `sign`")){
+		if($result = $this -> dbo -> query("SELECT `id`, `sign`, signTypesQuery.typeId, signTypesQuery.type as signType, `priority`, `boards_signs_having_no_symbol`.`board_sign_id` as noSymbolNeeded, thicknessQuery.thicknessId, thicknessQuery.thickness, `boards_signs_hidden`.`board_sign_id` as hidden FROM `boards_signs` LEFT JOIN (SELECT `id` as typeId, `type` FROM `boards_sign_types`) as signTypesQuery ON signTypesQuery.typeId=`boards_signs`.`type_id` LEFT JOIN `boards_signs_having_no_symbol` ON `boards_signs_having_no_symbol`.`board_sign_id`=`boards_signs`.`id` LEFT JOIN `boards_signs_hidden` ON `boards_signs_hidden`.`board_sign_id`=`boards_signs`.`id` LEFT JOIN (SELECT `thickness`, `boards_signs_default_thickness`.`board_thickness_id` as thicknessId, `boards_signs_default_thickness`.`board_sign_id` as signId  FROM `boards_thickness`, `boards_signs_default_thickness` WHERE `boards_thickness`.`id`=`boards_signs_default_thickness`.`board_thickness_id`) as thicknessQuery ON thicknessQuery.signId=`id` ORDER BY `sign`")){
 			$boardsSigns = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $boardsSigns;
 	}
 	
+	function returnSignTypesList(){
+		$signTypes = array();
+		if($result = $this -> dbo -> query ("SELECT `id`, `type` FROM `boards_sign_types`")){
+			$signTypes = $result -> fetchAll(PDO::FETCH_OBJ);
+		}
+		return $signTypes;
+	}
+	
 	function returnBoardsSymbols(){
+		$boardsSymbols = array();
+		if($result = $this -> dbo -> query ("SELECT `id`, `symbol`, `melamine_symbols`.`board_symbol_id` as melamine, `worktops_symbols`.`board_symbol_id` as worktops, `mdf_symbols`.`board_symbol_id` as mdf, `hdf_symbols`.`board_symbol_id` as hdf, `veneer_symbols`.`board_symbol_id` as veneer, `glossy_symbols`.`board_symbol_id` as glossy, `acrylic_symbols`.`board_symbol_id` as acrylic FROM boards_symbols LEFT JOIN `melamine_symbols` ON `melamine_symbols`.`board_symbol_id`=`id` LEFT JOIN `worktops_symbols` ON `worktops_symbols`.`board_symbol_id`=`id` LEFT JOIN `mdf_symbols` ON `mdf_symbols`.`board_symbol_id`=`id` LEFT JOIN `hdf_symbols` ON `hdf_symbols`.`board_symbol_id`=`id` LEFT JOIN `veneer_symbols` ON `veneer_symbols`.`board_symbol_id`=`id` LEFT JOIN `glossy_symbols` ON `glossy_symbols`.`board_symbol_id`=`id` LEFT JOIN `acrylic_symbols` ON `acrylic_symbols`.`board_symbol_id`=`id` WHERE `id` NOT IN (SELECT `board_symbol_id` FROM `boards_symbols_hidden`) ORDER BY `symbol` ASC")){
+			$boardsSymbols = $result -> fetchAll(PDO::FETCH_OBJ);
+		}
+		return $boardsSymbols;
+	}
+	
+	function returnBoardsSymbols2(){
 		$boardsSymbols = array();
 		if($result = $this -> dbo -> query ("SELECT `id`, `symbol` FROM boards_symbols WHERE `id` NOT IN (SELECT `board_symbol_id` FROM `boards_symbols_hidden`) ORDER BY `symbol` ASC")){
 			$boardsSymbols = $result -> fetchAll(PDO::FETCH_OBJ);
@@ -33,7 +49,7 @@ class Positions
 	
 	function returnBoardsSymbolsForUpdatingForm(){
 		$boardsSymbols = array();
-		if($result = $this -> dbo -> query ("SELECT `id`, `symbol`, `boards_symbols_hidden`.`board_symbol_id` as hidden  FROM boards_symbols LEFT JOIN `boards_symbols_hidden` ON `boards_symbols_hidden`.`board_symbol_id`=`boards_symbols`.`id` WHERE `id` <> '1' ORDER BY `symbol` ASC")){
+		if($result = $this -> dbo -> query ("SELECT `id`, `symbol`, `no_edge_band_boards_symbols`.`board_symbol_id` as noEdgeBand, `boards_symbols_hidden`.`board_symbol_id` as hidden, `melamine_symbols`.`board_symbol_id` as melamine, `worktops_symbols`.`board_symbol_id` as worktops, `mdf_symbols`.`board_symbol_id` as mdf, `hdf_symbols`.`board_symbol_id` as hdf, `veneer_symbols`.`board_symbol_id` as veneer, `glossy_symbols`.`board_symbol_id` as glossy ,`acrylic_symbols`.`board_symbol_id` as acrylic FROM boards_symbols LEFT JOIN `no_edge_band_boards_symbols` ON `no_edge_band_boards_symbols`.`board_symbol_id`=`boards_symbols`.`id` LEFT JOIN `melamine_symbols` ON `melamine_symbols`.`board_symbol_id`=`boards_symbols`.`id` LEFT JOIN `worktops_symbols` ON `worktops_symbols`.`board_symbol_id`=`boards_symbols`.`id` LEFT JOIN `mdf_symbols` ON `mdf_symbols`.`board_symbol_id`=`boards_symbols`.`id` LEFT JOIN `hdf_symbols` ON `hdf_symbols`.`board_symbol_id`=`boards_symbols`.`id` LEFT JOIN `veneer_symbols` ON `veneer_symbols`.`board_symbol_id`=`boards_symbols`.`id` LEFT JOIN `glossy_symbols` ON `glossy_symbols`.`board_symbol_id`=`boards_symbols`.`id` LEFT JOIN `acrylic_symbols` ON `acrylic_symbols`.`board_symbol_id`=`boards_symbols`.`id` LEFT JOIN `boards_symbols_hidden` ON `boards_symbols_hidden`.`board_symbol_id`=`boards_symbols`.`id` WHERE `id` <> '1' ORDER BY `symbol` ASC")){
 			$boardsSymbols = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $boardsSymbols;
@@ -116,7 +132,7 @@ class Positions
 		if(!$this -> dbo){
 			return SERVER_ERROR;
 		}
-		$query = $this -> dbo -> prepare ("INSERT INTO `boards_signs` VALUES (NULL, :sign, 0)");
+		$query = $this -> dbo -> prepare ("INSERT INTO `boards_signs` VALUES (NULL, :sign, NULL, 0)");
 		$query -> bindValue (':sign', $sign, PDO::PARAM_STR);
 		if(!$query -> execute()){
 			return ACTION_FAILED;
@@ -197,6 +213,32 @@ class Positions
 		
 		return $this -> setNewSignName($_POST['id'], $_POST['sign']);
 	}
+	
+		
+	function setSignType($signId, $typeId){
+		if(!$this -> dbo){
+			return SERVER_ERROR;
+		}
+		$query = $this -> dbo -> prepare ("UPDATE `boards_signs` SET `type_id`=:typeId WHERE `id`=:signId");
+		$query -> bindValue (':signId', $signId, PDO::PARAM_INT);
+		if($typeId == ""){
+			$typeId = null;
+		}
+		$query -> bindValue (':typeId', $typeId, PDO::PARAM_INT);
+		if(!$query -> execute()){
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;
+	}
+	
+	function updateSignType(){
+		if (!isset($_POST['signId']) || $_POST['signId'] =='' || (int)$_POST['signId'] < 1 || !isset($_POST['typeId'])){
+			return FORM_DATA_MISSING;
+		}
+		
+		return $this -> setSignType($_POST['signId'], $_POST['typeId']);
+	}
+	
 	
 	function removeDefaultThicknessFromDatabase($id){
 		if(!$this -> dbo){
@@ -338,6 +380,7 @@ class Positions
 	function showBoardsSignsUpdatingForm(){
 		$boardsSigns = $this -> returnBoardsSignsForUpdatingForm();
 		$boardsThickness = $this -> returnBoardsThickness();
+		$signTypes = $this -> returnSignTypesList();
 		
 		include 'scripts/boardsSignsUpdatingFormScripts.php';
 		include 'templates/boardsSignsUpdatingForm.php';
@@ -449,6 +492,44 @@ class Positions
 		include 'templates/boardsThicknessUpdatingForm.php';
 	}
 	
+	function	addSymbolToNoEdgeBandList($symbolId){
+		if(!$this -> dbo){
+			return SERVER_ERROR;
+		}
+		$query = $this -> dbo -> prepare ("INSERT INTO `no_edge_band_boards_symbols` VALUES (:symbolId)");
+		$query -> bindValue (':symbolId', $symbolId, PDO::PARAM_INT);
+		if(!$query -> execute()){
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;
+	}
+	
+	function addToNoEdgeBandSymbols(){
+		if (!isset($_POST['symbolId']) || $_POST['symbolId'] =='' || (int)$_POST['symbolId'] < 1){
+			return FORM_DATA_MISSING;
+		}
+		return $this -> addSymbolToNoEdgeBandList($_POST['symbolId']);
+	}
+	
+	function removeSymbolIdFromNoEdgeBandList($id){
+		if(!$this -> dbo){
+			return SERVER_ERROR;
+		}
+		$query = $this -> dbo -> prepare ("DELETE FROM `no_edge_band_boards_symbols` WHERE `board_symbol_id`=:id");
+		$query -> bindValue (':id', $id, PDO::PARAM_INT);
+		if(!$query -> execute()){
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;
+	}
+	
+	function removeSymbolFromNoEdgeBand(){
+		if (!isset($_POST['symbolId']) || $_POST['symbolId'] =='' || (int)$_POST['symbolId'] < 1){
+			return FORM_DATA_MISSING;
+		}
+		return $this -> removeSymbolIdFromNoEdgeBandList($_POST['symbolId']);
+	}
+	
 	function removeSymbolIdFromHiddenList($id){
 		if(!$this -> dbo){
 			return SERVER_ERROR;
@@ -466,6 +547,84 @@ class Positions
 			return FORM_DATA_MISSING;
 		}
 		return $this -> removeSymbolIdFromHiddenList($_POST['symbolId']);
+	}
+	
+	function returnSymbolTypeName($typeNumber){
+		$typeName = "";
+		switch($typeNumber){
+			case '1': 
+				$typeName = "melamine_symbols";
+				break;
+			case '2': 
+				$typeName = "worktops_symbols";
+				break;
+			case '3': 
+				$typeName = "mdf_symbols";
+				break;
+			case '4': 
+				$typeName = "hdf_symbols";
+				break;
+			case '5': 
+				$typeName = "veneer_symbols";
+				break;
+			case '6': 
+				$typeName = "acrylic_symbols";
+				break;
+			case '7': 
+				$typeName = "glossy_symbols";
+				break;	
+		}
+		return $typeName;
+	}
+	
+	function	addSymbolToChosenTypeList($symbolId, $typeNumber){
+		if(!$this -> dbo){
+			return SERVER_ERROR;
+		}
+		$typeName = $this -> returnSymbolTypeName($typeNumber);
+		
+		if($typeName == ""){
+			return ACTION_FAILED;
+		}
+		$query = "INSERT INTO `" . $typeName . "` VALUES (:symbolId)";
+		$query = $this -> dbo -> prepare ($query);
+		$query -> bindValue (':symbolId', $symbolId, PDO::PARAM_INT);
+		if(!$query -> execute()){
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;
+	}
+	
+	function assignSymbolToTheType(){
+		if (!isset($_POST['symbolId']) || $_POST['symbolId'] =='' || (int)$_POST['symbolId'] < 1 || !isset($_POST['typeNumber']) || $_POST['typeNumber'] =='' || (int)$_POST['typeNumber'] < 1 || (int)$_POST['typeNumber'] > 7){
+			return FORM_DATA_MISSING;
+		}
+		return $this -> addSymbolToChosenTypeList($_POST['symbolId'], $_POST['typeNumber']);
+	}
+	
+		function	removeSymbolFromChosenTypeList($symbolId, $typeNumber){
+		if(!$this -> dbo){
+			return SERVER_ERROR;
+		}
+		$typeName = $this -> returnSymbolTypeName($typeNumber);
+		
+		if($typeName == ""){
+			return ACTION_FAILED;
+		}
+		$query = "DELETE FROM `" . $typeName . "` WHERE `board_symbol_id`=:symbolId";
+		$query = $this -> dbo -> prepare ($query);
+		$query -> bindValue (':symbolId', $symbolId, PDO::PARAM_INT);
+		if(!$query -> execute()){
+			return ACTION_FAILED;
+		}
+		return ACTION_OK;
+	}
+	
+	function removeSymbolFromAssignedTypeList(){
+		if (!isset($_POST['symbolId']) || $_POST['symbolId'] =='' || (int)$_POST['symbolId'] < 1 || !isset($_POST['typeNumber']) || $_POST['typeNumber'] =='' || (int)$_POST['typeNumber'] < 1 || (int)$_POST['typeNumber'] > 7){
+			return FORM_DATA_MISSING;
+		}
+		return $this -> removeSymbolFromChosenTypeList($_POST['symbolId'], $_POST['typeNumber']);
 	}
 	
 	function	addSymbolToHiddenList($symbolId){
@@ -487,7 +646,7 @@ class Positions
 		return $this -> addSymbolToHiddenList($_POST['symbolId']);
 	}
 	
-		function removeSymbolFromDatabase($id){
+	function removeSymbolFromDatabase($id){
 		if(!$this -> dbo){
 			return SERVER_ERROR;
 		}
