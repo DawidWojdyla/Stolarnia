@@ -144,9 +144,6 @@ function setBoardSelectDefaultOptions(id){
 	var signId = document.getElementById('boardSign'+id).value;
 	var thicknessSelect = document.getElementById('boardThickness'+id);
 	var symbolSelect = document.getElementById('boardSymbol'+id);
-	var isSymbolSelectEnabled = true;
-	
-	symbolSelect.value = '1';
 	
 	<?PHP foreach($boardsSigns as $sign): ?>
 		
@@ -159,15 +156,15 @@ function setBoardSelectDefaultOptions(id){
 			<?PHP endif; ?>
 			
 			<?PHP if ($sign -> noSymbolSignId): ?>
+				symbolSelect.value = '1';
 				symbolSelect.disabled = true;
-				isSymbolSelectEnabled = false;
 			<?PHP else: ?>
 				symbolSelect.disabled = false;
 			<?PHP endif; ?>
 		}
 		
 	<?PHP endforeach; ?>
-	if(isSymbolSelectEnabled){
+	if(!symbolSelect.disabled){
 		setSymbolSelectOptionsAccordingToSignType(id, signType);
 	}
 
