@@ -67,6 +67,8 @@ function resetTheBoardCutting(id){
 			case 'ACTION_OK': 
 				message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zresetowano cięcie płyty";
 				document.getElementById('s'+id).innerHTML = "niepocięta";
+				document.getElementById(id).classList.add("danger");
+				document.getElementById(id).classList.remove("success");
 				document.getElementById('c'+id).innerHTML = "";
 				itemsToDo++;
 				if(document.getElementById('sms').style.display != 'none'){
@@ -164,6 +166,8 @@ function sendBoardCuttingForm(id){
 				case 'ACTION_OK': 
 					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zmieniono status płyty";
 					document.getElementById('s'+id).innerHTML = "pocięta";
+					document.getElementById(id).classList.add("success");
+					document.getElementById(id).classList.remove("danger");
 					document.getElementById('c'+id).innerHTML = cuttingComment;
 					itemsToDo--;
 					if(itemsToDo < 1){

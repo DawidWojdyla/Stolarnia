@@ -38,6 +38,26 @@ function showMoreInfo(id){
 	}
 }
 
+function setBackgroundColorOfElement(id, color){
+	document.getElementById("board"+id).style.backgroundColor = color;
+}
+
+function areAllEdgeBandingDone(id){
+	var boards = document.getElementsByClassName("boards" + id);
+	for (var i = 0; i < boards.length; i++) {
+		if(boards[i].innerHTML == '0.00'){
+			return false;
+		}
+	}
+	return true;
+}
+
+function setBackgroundColorAssignedToBoardEdgeBandingStatus(id){
+	if(areAllEdgeBandingDone(id)){
+		setBackgroundColorOfElement(id, "#dff0d8");
+	}
+}
+
 function showAddingEdgeBandingForm(edgeBandingId){
 		document.getElementById('edgeBandingModalBody').innerHTML = "<form id='edgeBandingForm' method='post'><input type='hidden' name='edgeBandingId' value="+edgeBandingId+"><table class='table table-condensed edgeBandingModalTable'><tr><td colspan='2' style='border-top: none'><label for='newM"+edgeBandingId+"'>Maszyna [mb]:</label><input class='form-control text-center' type='number' min='0.01' max='10000' step='0.01' lang='en' id='newM"+edgeBandingId+"' name='edgeBandingMachineMetters' required/></td></tr><tr><td colspan='2'><label for='workers'>Pracownicy:</label><select class='form-control' id='workers' name='workers[]' multiple required><?PHP foreach ($workers as $worker): ?><option value='<?=$worker->id?>'><?=$worker->name?></option><?PHP endforeach; ?></select></td></tr><tr><td colspan='2'><label for='newC"+edgeBandingId+"'>Uwagi (opcjonalnie):</label><textarea id='newC"+edgeBandingId+"' class='form-control' name='edgeBandingComment' rows='3' cols='25' maxlength='250' form='edgeBandingForm'>"+document.getElementById('c'+edgeBandingId).innerHTML+"</textarea></div></td></tr><tr><td colspan='2'><div class='btn btn-default btn-block' onclick='sendEdgeBandingForm("+edgeBandingId+");'><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><button id='sendingButton' type='submit' style='display:none;'></button><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class='glyphicon glyphicon-remove'></span> Anuluj</div></td></tr></table></form>";
 }
@@ -88,6 +108,8 @@ function resetEdgeBanding(id){
 			case 'ACTION_OK': 
 				document.getElementById('m'+id).innerHTML = '0.00';
 				document.getElementById('c'+id).innerHTML = '';
+				var boardId = document.getElementById("boardId" + id).innerHTML;
+				setBackgroundColorOfElement(boardId, "#f2dede");
 				message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zresetowano oklejanie";
 				break;
 			case 'FORM_DATA_MISSING': 
@@ -235,6 +257,8 @@ function sendEdgeBandingForm(id){
 					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano oklejanie";
 					document.getElementById('m'+id).innerHTML = parseFloat(machineMetters).toFixed(2);	
 					document.getElementById('c'+id).innerHTML = edgeBandingComment;
+					var boardId = document.getElementById("boardId" + id).innerHTML;
+					setBackgroundColorAssignedToBoardEdgeBandingStatus(boardId);
 					break;
 				case 'ACTION_FAILED': 
 					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać oklejania";

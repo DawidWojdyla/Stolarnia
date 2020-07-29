@@ -11,9 +11,9 @@ function sendDatesOfOrderList(){
 		var diffTime = Math.abs(dateTo - dateFrom);
 		var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
 		
-		if(diffDays > 30){
+		if(diffDays > 60){
 			//document.getElementById('dateError').innerHTML = "Zakres dat nie może być większy od 30 dni";
-			alert( "Zakres dat nie może być większy od 30 dni");
+			alert( "Zakres dat nie może być większy od 60 dni");
 		}
 		else{
 			document.getElementById('orderListDatesForm').submit();

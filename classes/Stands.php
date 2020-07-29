@@ -4,7 +4,7 @@ class Stands
 	private $dbo = null;
 	
 	function __construct($dbo){
-		$this->dbo = $dbo;
+		$this -> dbo = $dbo;
 	}
 
 	function returnStandsList(){

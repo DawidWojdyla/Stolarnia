@@ -77,9 +77,6 @@ class JoineryAdmin extends MyDB
 		 if(!password_verify($password, $result[0])){
 			return ACTION_FAILED;
 		 }
-		 //if($password != $result[0]){
-			// return ACTION_FAILED;
-		 //}
 		 
 		$_SESSION['loggedAdmin'] = $login;
 		

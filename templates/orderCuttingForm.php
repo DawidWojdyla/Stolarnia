@@ -13,7 +13,7 @@
 		<?PHP if($board -> edgeBandingAmount > 0): ?>
 		<script>isEdgeBanding = true;</script>
 		<?PHP endif; ?>
-		<tr class="btn btn-default btn-block cuttingButton" style="display: table-row;" id="<?=$board->boardId?>" onclick="showCuttingModal(<?=$board->boardId?>);">
+		<tr class="btn btn-default btn-block cuttingButton <?PHP if($board -> cutting_completion_date): ?>success<?PHP else: ?>danger<?PHP endif; ?>" style="display: table-row;" id="<?=$board->boardId?>" onclick="showCuttingModal(<?=$board->boardId?>);">
 			<td id='board<?=$board->boardId?>' class="text-center"><?=$board->sign?><?=($board->thickness+0)?><?PHP if($board -> symbol != '' || $board -> otherSymbol): ?> - <?PHP endif; ?><?=$board->symbol?><?=$board->otherSymbol?></td><td class="text-center"><?=($board->amount+0)?></td><td class="text-center"><?=($board->cutting_metters+0)?></td><td class="text-center"><?=$board -> edgeBandingAmount?></td><td class="text-center" id="s<?=$board->boardId?>"><?PHP if($board->cutting_completion_date == NULL): ?>niepocięta<script>itemsToDo++;</script><?PHP else: ?>pocięta<?PHP endif; ?></td></tr>
 			<tr style="display:none;"><td id="c<?=$board->boardId?>"><?=$board->cuttingComment?></td></tr>
 		<?PHP endforeach; ?>

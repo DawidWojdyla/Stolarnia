@@ -1020,64 +1020,108 @@ class Orders
 	
 	function returnBoardsAmoutPerDay($sawNumber, $date){
 		$boardsAmount = 0;
-		if($result = $this -> dbo -> query("SELECT COALESCE (SUM(`amount`), 0) FROM orders_boards WHERE `order_id` IN (SELECT `id` FROM `orders` WHERE `order_completion_date`='{$date}' AND `saw_number`={$sawNumber})")){
-			$boardsAmount = $result -> fetch(PDO::FETCH_NUM);
+		if($query = $this -> dbo -> prepare("SELECT COALESCE (SUM(`amount`), 0) FROM orders_boards WHERE `order_id` IN (SELECT `id` FROM `orders` WHERE `order_completion_date`=:date AND `saw_number`=:sawNumber)")){
+			$query -> bindValue (':sawNumber', $sawNumber, PDO::PARAM_INT);
+			$query -> bindValue (':date', $date, PDO::PARAM_STR);
+			if($query -> execute()){
+				$boardsAmount = $query -> fetch(PDO::FETCH_NUM);
+			}
 		}
 		return ($boardsAmount[0]+0);
 	}
 	
 	function returnCuttingMettersPerDay($sawNumber, $date){
 		$cuttingMetters = 0;
-		if($result = $this -> dbo -> query("SELECT COALESCE (SUM(`cutting_metters`), 0) FROM orders_boards WHERE `order_id` IN (SELECT `id` FROM `orders` WHERE `order_completion_date`='{$date}' AND `saw_number`={$sawNumber})")){
-			$cuttingMetters = $result -> fetch(PDO::FETCH_NUM);
+		if($query = $this -> dbo -> prepare("SELECT COALESCE (SUM(`cutting_metters`), 0) FROM orders_boards WHERE `order_id` IN (SELECT `id` FROM `orders` WHERE `order_completion_date`=:date AND `saw_number`=:sawNumber)")){
+			$query -> bindValue (':sawNumber', $sawNumber, PDO::PARAM_INT);
+			$query -> bindValue (':date', $date, PDO::PARAM_STR);
+			if($query -> execute()){
+				$cuttingMetters = $query -> fetch(PDO::FETCH_NUM);
+			}
 		}
 		return ($cuttingMetters[0]+0);
 	}
 	
 	function returnEdgeBandingMettersPerDay($date){
 		$edgeBandingMetters = 0;
-		if($result = $this -> dbo -> query("SELECT COALESCE (SUM(`edge_banding_metters_wz`), 0) FROM `edge_banding` WHERE `orders_boards_id` IN (SELECT `id` FROM `orders_boards` WHERE `order_id` IN (SELECT `id` FROM `orders` WHERE `order_completion_date`='{$date}'))")){
-			$edgeBandingMetters = $result -> fetch(PDO::FETCH_NUM);
+		if($query = $this -> dbo -> prepare("SELECT COALESCE (SUM(`edge_banding_metters_wz`), 0) FROM `edge_banding` WHERE `orders_boards_id` IN (SELECT `id` FROM `orders_boards` WHERE `order_id` IN (SELECT `id` FROM `orders` WHERE `order_completion_date`=:date))")){
+			$query -> bindValue (':date', $date, PDO::PARAM_STR);
+			if($query -> execute()){
+				$edgeBandingMetters = $query -> fetch(PDO::FETCH_NUM);
+			}
 		}
 		return ($edgeBandingMetters[0]+0);
 	}
-	
-	
+
 	function returnLastOrderCompletionDate($sawNumber){
-		if($result = $this -> dbo -> query("SELECT `order_completion_date` FROM orders WHERE id=(SELECT `id` FROM `orders` WHERE `saw_number`={$sawNumber} ORDER BY `id` DESC LIMIT 1)")){
-			$lastOrderCompletionDate = $result -> fetch(PDO::FETCH_NUM);
-		}
+		$lastOrderCompletionDate = array();
+		if($query = $this -> dbo -> prepare("SELECT `order_completion_date` FROM orders WHERE id=(SELECT `id` FROM `orders` WHERE `saw_number`=:sawNumber ORDER BY `id` DESC LIMIT 1)")){
+			$query -> bindValue (':sawNumber', $sawNumber, PDO::PARAM_INT);
+			if($query -> execute()){
+				$lastOrderCompletionDate = $query -> fetch(PDO::FETCH_NUM);
+			}
+		}	
 		return $lastOrderCompletionDate[0];
+	}
+	
+	function returnNumberOfOrders($completionDateFrom, $completionDateTo){
+		if($result = $this -> dbo -> query("SELECT COUNT(`orders`.`id`) FROM `orders` WHERE `orders`.`order_completion_date` BETWEEN '{$completionDateFrom}' AND '{$completionDateTo}'")){
+			$numberOfOrders = $result -> fetch(PDO::FETCH_NUM);
+		}
+		return $numberOfOrders[0];
+	}
+	
+	function returnNumberOfCompletedOrders($completionDateFrom, $completionDateTo){
+		if($result = $this -> dbo -> query("SELECT COUNT(`orders`.`id`) FROM `orders` WHERE `orders`.`order_completion_date` BETWEEN '{$completionDateFrom}' AND '{$completionDateTo}' AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `cutting_completion_date` IS NULL OR `edge_banding`.`edge_banding_metters_machine`='0')")){
+			$numberOfOrders = $result -> fetch(PDO::FETCH_NUM);
+		}
+		return $numberOfOrders[0];
 	}
 	
 	function returnOrdersOfPeriod($dateFrom, $dateTo){
 		$orders = array();
-		if($result = $this -> dbo -> query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `orders`.`worker_id` as sellerId, CONCAT_WS(' ', workers.`name`, workers.`surname`) as sellerName,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, DATE_FORMAT(`orders`.`order_completion_date`, '%d.%m') as completionDate, `orders_comments`.`comments` as orderComment, CASE WHEN `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL) THEN 'niepocięte' WHEN `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `cutting_completion_date` IS NULL OR `edge_banding`.`edge_banding_metters_machine`='0') THEN 'gotowe' ELSE 'pocięte' END as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `orders`.`customer_id`=`customers`.`id` AND `workers`.`id`=`orders`.`worker_id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') ORDER BY `order_completion_date`")){
-			$orders = $result -> fetchAll(PDO::FETCH_OBJ);
+		if($query = $this -> dbo -> prepare("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `orders`.`worker_id` as sellerId, CONCAT_WS(' ', workers.`name`, workers.`surname`) as sellerName,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, DATE_FORMAT(`orders`.`order_completion_date`, '%d.%m') as completionDate, `orders_comments`.`comments` as orderComment, CASE WHEN `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL) THEN 'niepocięte' WHEN `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `cutting_completion_date` IS NULL OR `edge_banding`.`edge_banding_metters_machine`='0') THEN 'gotowe' ELSE 'pocięte' END as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `orders`.`customer_id`=`customers`.`id` AND `workers`.`id`=`orders`.`worker_id` AND (`orders`.`order_completion_date` BETWEEN :dateFrom AND :dateTo) ORDER BY `order_completion_date`")){
+			$query -> bindValue (':dateFrom', $dateFrom, PDO::PARAM_STR);
+			$query -> bindValue (':dateTo', $dateTo, PDO::PARAM_STR);
+			if($query -> execute()){
+				$orders = $query -> fetchAll(PDO::FETCH_OBJ);
+			}
 		}
 		return $orders;
 	}
 	
 	function returnNotCutOrdersOfPeriod($dateFrom, $dateTo){
 		$orders = array();
-		if($result = $this -> dbo -> query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `orders`.`worker_id` as sellerId, CONCAT_WS(' ', workers.`name`, workers.`surname`) as sellerName,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'niepocięte' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `orders`.`customer_id`=`customers`.`id` AND `workers`.`id`=`orders`.`worker_id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL) ORDER BY `order_completion_date`")){
-			$orders = $result -> fetchAll(PDO::FETCH_OBJ);
+		if($query = $this -> dbo -> prepare("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, `orders`.`worker_id` as sellerId, CONCAT_WS(' ', workers.`name`, workers.`surname`) as sellerName,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'niepocięte' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `orders`.`customer_id`=`customers`.`id` AND `workers`.`id`=`orders`.`worker_id` AND (`orders`.`order_completion_date` BETWEEN :dateFrom AND :dateTo) AND `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL) ORDER BY `order_completion_date`")){
+			$query -> bindValue (':dateFrom', $dateFrom, PDO::PARAM_STR);
+			$query -> bindValue (':dateTo', $dateTo, PDO::PARAM_STR);
+			if($query -> execute()){
+				$orders = $query -> fetchAll(PDO::FETCH_OBJ);
+			}
 		}
 		return $orders;
 	}
 	
 	function returnCutButNotCompletedOrdersOfPeriod($dateFrom, $dateTo){
 		$orders = array();
-		if($result = $this -> dbo -> query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`worker_id` as sellerId, CONCAT_WS(' ', workers.`name`, workers.`surname`) as sellerName, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'pocięte' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `orders`.`customer_id`=`customers`.`id` AND `workers`.`id`=`orders`.`worker_id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` WHERE `orders_boards`.`cutting_completion_date` IS NULL) AND `orders`.`id` IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `edge_banding`.`edge_banding_metters_machine`='0') ORDER BY `order_completion_date`")){
-			$orders = $result -> fetchAll(PDO::FETCH_OBJ);
+		if($query = $this -> dbo -> prepare("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`worker_id` as sellerId, CONCAT_WS(' ', workers.`name`, workers.`surname`) as sellerName, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'pocięte' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `orders`.`customer_id`=`customers`.`id` AND `workers`.`id`=`orders`.`worker_id` AND (`orders`.`order_completion_date` BETWEEN :dateFrom AND :dateTo) AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` WHERE `orders_boards`.`cutting_completion_date` IS NULL) AND `orders`.`id` IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `edge_banding`.`edge_banding_metters_machine`='0') ORDER BY `order_completion_date`")){
+			$query -> bindValue (':dateFrom', $dateFrom, PDO::PARAM_STR);
+			$query -> bindValue (':dateTo', $dateTo, PDO::PARAM_STR);
+			if($query -> execute()){
+				$orders = $query -> fetchAll(PDO::FETCH_OBJ);
+			}
 		}
 		return $orders;
 	}
 	
 	function returnCompletedOrdersOfPeriod($dateFrom, $dateTo){
 		$orders = array();
-		if($result = $this -> dbo -> query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`worker_id` as sellerId, CONCAT_WS(' ', workers.`name`, workers.`surname`) as sellerName, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'gotowe' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `orders`.`customer_id`=`customers`.`id` AND `workers`.`id`=`orders`.`worker_id` AND (`orders`.`order_completion_date` BETWEEN '{$dateFrom}' AND '{$dateTo}') AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `cutting_completion_date` IS NULL OR `edge_banding`.`edge_banding_metters_machine`='0') ORDER BY `order_completion_date`")){
-			$orders = $result -> fetchAll(PDO::FETCH_OBJ);
+		if($query = $this -> dbo -> prepare("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`worker_id` as sellerId, CONCAT_WS(' ', workers.`name`, workers.`surname`) as sellerName, `orders`.`customer_id`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders`.`saw_number`, `orders`.`admission_date`, `orders`.`order_completion_date`, `orders_comments`.`comments` as orderComment, 'gotowe' as state FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers`, `workers` WHERE `orders`.`customer_id`=`customers`.`id` AND `workers`.`id`=`orders`.`worker_id` AND (`orders`.`order_completion_date` BETWEEN :dateFrom AND :dateTo) AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `cutting_completion_date` IS NULL OR `edge_banding`.`edge_banding_metters_machine`='0') ORDER BY `order_completion_date`")){
+			$query -> bindValue (':dateFrom', $dateFrom, PDO::PARAM_STR);
+			$query -> bindValue (':dateTo', $dateTo, PDO::PARAM_STR);
+			if($query -> execute()){
+				$orders = $query -> fetchAll(PDO::FETCH_OBJ);
+			}
 		}
 		return $orders;
 	}
@@ -1091,18 +1135,32 @@ class Orders
 		return $orders;
 	}	
 	
+	function returnLastMadeOrder(){
+		
+		if($result = $this -> dbo -> query("SELECT GREATEST(`orders_boards`.`cutting_completion_date`, COALESCE(`edge_banding`.`edge_banding_completion_date`, 0)) as lastDate, `orders`.`document_number`, `customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as customerPhone, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone,`orders`.`order_completion_date` FROM `orders` LEFT JOIN `orders_boards` ON `orders`.`id`=`orders_boards`.`order_id` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`id` NOT IN (SELECT `orders_boards`.`order_id` FROM `orders_boards` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` WHERE `cutting_completion_date` IS NULL OR `edge_banding`.`edge_banding_metters_machine`='0') GROUP BY `orders`.`id` ORDER BY lastDate DESC LIMIT 1")){
+			$order = $result -> fetch(PDO::FETCH_OBJ);
+		}
+		return $order;
+	}
+	
 	function returnOrderDetailsForUpdatingForm($orderId){
 		$orderDetails = array();
-		if($result = $this -> dbo -> query("SELECT ob.`id` as boardId, `boards_signs`.`sign` as boardSign, `boards_signs`.`id` as boardSignId, boardSymbols.`symbol` as boardSymbol, boardSymbols.`id` as boardSymbolId, `boards_thickness`.`thickness`, `boards_thickness`.`id` as boardThicknessId, `other_boards_symbols`.`symbol` as otherSymbol, ob.`amount`, ob.`cutting_metters`, ob.`cutting_completion_date`, ebQuery.edgeBandingId as edgeBandingId, ebQuery.stickerSymbol, ebQuery.stickerSymbolId, ebQuery.edgeBandType, ebQuery.edgeBandTypeId, ebQuery.edgeBandSymbol, ebQuery.edgeBandSymbolId, ebQuery.wzMetters, ebQuery.edgeBandComment FROM `orders_boards` ob LEFT JOIN `other_boards_symbols` ON `other_boards_symbols`.`orders_boards_id`=ob.`id` LEFT JOIN (SELECT eb.`orders_boards_id` as ebObId, eb.`id` as edgeBandingId, `edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_sticker_symbols`.`id` as stickerSymbolId, `edge_band_types`.`type` as edgeBandType, `edge_band_types`.`id` as edgeBandTypeId, edgeBandSymbols.`symbol` as edgeBandSymbol, edgeBandSymbols.`id` as edgeBandSymbolId, `eb`.`edge_banding_metters_wz` as wzMetters, `edge_band_comments`.`comments` as edgeBandComment FROM `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types` WHERE `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id`) as ebQuery ON ebQuery.ebObId=ob.`id` LEFT JOIN `boards_symbols` as boardSymbols on boardSymbols.`id`=`ob`.`board_symbol_id`, `boards_signs`, `boards_thickness` WHERE ob.`order_id`={$orderId} AND ob.`board_sign_id`=`boards_signs`.`id` AND ob.`board_thickness_id`=`boards_thickness`.`id` GROUP BY boardId, ebQuery.edgeBandingId")){
-			$orderDetails = $result -> fetchAll(PDO::FETCH_OBJ);
+		if($query = $this -> dbo -> prepare("SELECT ob.`id` as boardId, `boards_signs`.`sign` as boardSign, `boards_signs`.`id` as boardSignId, boardSymbols.`symbol` as boardSymbol, boardSymbols.`id` as boardSymbolId, `boards_thickness`.`thickness`, `boards_thickness`.`id` as boardThicknessId, `other_boards_symbols`.`symbol` as otherSymbol, ob.`amount`, ob.`cutting_metters`, ob.`cutting_completion_date`, ebQuery.edgeBandingId as edgeBandingId, ebQuery.stickerSymbol, ebQuery.stickerSymbolId, ebQuery.edgeBandType, ebQuery.edgeBandTypeId, ebQuery.edgeBandSymbol, ebQuery.edgeBandSymbolId, ebQuery.wzMetters, ebQuery.edgeBandComment FROM `orders_boards` ob LEFT JOIN `other_boards_symbols` ON `other_boards_symbols`.`orders_boards_id`=ob.`id` LEFT JOIN (SELECT eb.`orders_boards_id` as ebObId, eb.`id` as edgeBandingId, `edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_sticker_symbols`.`id` as stickerSymbolId, `edge_band_types`.`type` as edgeBandType, `edge_band_types`.`id` as edgeBandTypeId, edgeBandSymbols.`symbol` as edgeBandSymbol, edgeBandSymbols.`id` as edgeBandSymbolId, `eb`.`edge_banding_metters_wz` as wzMetters, `edge_band_comments`.`comments` as edgeBandComment FROM `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types` WHERE `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id`) as ebQuery ON ebQuery.ebObId=ob.`id` LEFT JOIN `boards_symbols` as boardSymbols on boardSymbols.`id`=`ob`.`board_symbol_id`, `boards_signs`, `boards_thickness` WHERE ob.`order_id`=:orderId AND ob.`board_sign_id`=`boards_signs`.`id` AND ob.`board_thickness_id`=`boards_thickness`.`id` GROUP BY boardId, ebQuery.edgeBandingId")){
+			$query -> bindValue (':orderId', $orderId, PDO::PARAM_INT);
+			if($query -> execute()){
+				$orderDetails = $query -> fetchAll(PDO::FETCH_OBJ);
+			}
 		}
 		return $orderDetails;
 	}
 	
 	function returnOrderDetails($orderId){
 		$orderDetails = array();
-		if($result = $this -> dbo -> query("SELECT ob.`id` as boardId, `boards_signs`.`sign` as boardSign, boardSymbols.`symbol` as boardSymbol, `other_boards_symbols`.`symbol` as otherSymbol, `boards_thickness`.`thickness`, ob.`amount`, ob.`cutting_metters`, DATE_FORMAT(ob.`cutting_completion_date`, '%d-%m-%Y') as cuttingDate, DATE_FORMAT(ob.`cutting_completion_date`, '%H:%i') as cuttingTime, `cutting_comments`.`comment` as cuttingComment, GROUP_CONCAT(DISTINCT CONCAT_WS(' ', cuttingWorkers.`name`, cuttingWorkers.`surname`) SEPARATOR ',</br>') as cuttingWorkersNames, ebQuery.edgeBandingId as edgeBandingId, ebQuery.stickerSymbol, ebQuery.edgeBandType, ebQuery.edgeBandSymbol, ebQuery.wzMetters, ebQuery.machineMetters, ebQuery.edgeBandingDate, ebQuery.edgeBandingTime, ebQuery.edgeBandComment, ebQuery.edgeBandingComment, ebQuery.eBWorkers FROM `orders_boards` ob LEFT JOIN `other_boards_symbols` ON `other_boards_symbols`.`orders_boards_id`=ob.`id` LEFT JOIN (SELECT eb.`orders_boards_id` as ebObId, eb.`id` as edgeBandingId, `edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_types`.`type` as edgeBandType, edgeBandSymbols.`symbol` as edgeBandSymbol, `eb`.`edge_banding_metters_wz` as wzMetters, `eb`.`edge_banding_metters_machine` as machineMetters, DATE_FORMAT(eb.`edge_banding_completion_date`, '%d-%m-%Y') as edgeBandingDate, DATE_FORMAT(eb.`edge_banding_completion_date`, '%H:%i') as edgeBandingTime,`edge_band_comments`.`comments` as edgeBandComment, `edge_banding_comments`.`comments` as edgeBandingComment, GROUP_CONCAT(DISTINCT CONCAT_WS(' ', edgeBandingWorkers.`name`, edgeBandingWorkers.`surname`) SEPARATOR ',</br>') as eBWorkers FROM `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_banding_workers` ebw ON ebw.`edge_banding_id`=eb.`id` LEFT JOIN `workers` as edgeBandingWorkers on edgeBandingWorkers.`id`=ebw.`worker_id` LEFT JOIN `edge_banding_comments` ON eb.`id`=`edge_banding_comments`.`edge_banding_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types` WHERE `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id` GROUP BY edgeBandingId) as ebQuery ON ebQuery.ebObId=ob.`id` LEFT JOIN `boards_symbols` as boardSymbols on boardSymbols.`id`=`ob`.`board_symbol_id` LEFT JOIN `cutting_workers` cw on cw.`orders_boards_id`=ob.`id` LEFT JOIN `workers` as cuttingWorkers ON cuttingWorkers.`id`=cw.`worker_id` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=ob.`id`, `boards_signs`, `boards_thickness` WHERE ob.`order_id`={$orderId} AND ob.`board_sign_id`=`boards_signs`.`id` AND ob.`board_thickness_id`=`boards_thickness`.`id` GROUP BY boardId, ebQuery.edgeBandingId")){
-			$orderDetails = $result -> fetchAll(PDO::FETCH_OBJ);
+		if($query = $this -> dbo -> prepare("SELECT ob.`id` as boardId, `boards_signs`.`sign` as boardSign, boardSymbols.`symbol` as boardSymbol, `other_boards_symbols`.`symbol` as otherSymbol, `boards_thickness`.`thickness`, ob.`amount`, ob.`cutting_metters`, DATE_FORMAT(ob.`cutting_completion_date`, '%d-%m-%Y') as cuttingDate, DATE_FORMAT(ob.`cutting_completion_date`, '%H:%i') as cuttingTime, `cutting_comments`.`comment` as cuttingComment, GROUP_CONCAT(DISTINCT CONCAT_WS(' ', cuttingWorkers.`name`, cuttingWorkers.`surname`) SEPARATOR ',</br>') as cuttingWorkersNames, ebQuery.edgeBandingId as edgeBandingId, ebQuery.stickerSymbol, ebQuery.edgeBandType, ebQuery.edgeBandSymbol, ebQuery.wzMetters, ebQuery.machineMetters, ebQuery.edgeBandingDate, ebQuery.edgeBandingTime, ebQuery.edgeBandComment, ebQuery.edgeBandingComment, ebQuery.eBWorkers FROM `orders_boards` ob LEFT JOIN `other_boards_symbols` ON `other_boards_symbols`.`orders_boards_id`=ob.`id` LEFT JOIN (SELECT eb.`orders_boards_id` as ebObId, eb.`id` as edgeBandingId, `edge_band_sticker_symbols`.`symbol` as stickerSymbol, `edge_band_types`.`type` as edgeBandType, edgeBandSymbols.`symbol` as edgeBandSymbol, `eb`.`edge_banding_metters_wz` as wzMetters, `eb`.`edge_banding_metters_machine` as machineMetters, DATE_FORMAT(eb.`edge_banding_completion_date`, '%d-%m-%Y') as edgeBandingDate, DATE_FORMAT(eb.`edge_banding_completion_date`, '%H:%i') as edgeBandingTime,`edge_band_comments`.`comments` as edgeBandComment, `edge_banding_comments`.`comments` as edgeBandingComment, GROUP_CONCAT(DISTINCT CONCAT_WS(' ', edgeBandingWorkers.`name`, edgeBandingWorkers.`surname`) SEPARATOR ',</br>') as eBWorkers FROM `edge_banding` eb LEFT JOIN `boards_symbols` as edgeBandSymbols on edgeBandSymbols.`id`=eb.`board_symbol_id` LEFT JOIN `edge_banding_workers` ebw ON ebw.`edge_banding_id`=eb.`id` LEFT JOIN `workers` as edgeBandingWorkers on edgeBandingWorkers.`id`=ebw.`worker_id` LEFT JOIN `edge_banding_comments` ON eb.`id`=`edge_banding_comments`.`edge_banding_id` LEFT JOIN `edge_band_comments` ON `edge_band_comments`.`edge_banding_id`=eb.`id`, `edge_band_sticker_symbols`, `edge_band_types` WHERE `eb`.`edge_band_sticker_symbol_id`=`edge_band_sticker_symbols`.`id` AND `eb`.`edge_band_type_id`=`edge_band_types`.`id` GROUP BY edgeBandingId) as ebQuery ON ebQuery.ebObId=ob.`id` LEFT JOIN `boards_symbols` as boardSymbols on boardSymbols.`id`=`ob`.`board_symbol_id` LEFT JOIN `cutting_workers` cw on cw.`orders_boards_id`=ob.`id` LEFT JOIN `workers` as cuttingWorkers ON cuttingWorkers.`id`=cw.`worker_id` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=ob.`id`, `boards_signs`, `boards_thickness` WHERE ob.`order_id`=:orderId AND ob.`board_sign_id`=`boards_signs`.`id` AND ob.`board_thickness_id`=`boards_thickness`.`id` GROUP BY boardId, ebQuery.edgeBandingId")){
+			$query -> bindValue (':orderId', $orderId, PDO::PARAM_INT);
+			if($query -> execute()){
+				$orderDetails = $query -> fetchAll(PDO::FETCH_OBJ);
+			}
 		}
 		return $orderDetails;
 	}
@@ -1149,8 +1207,6 @@ class Orders
 		$potentialOrderCompletionDates[1] = $this -> returnPotentialOrderCompletionDate(1, $limits -> boardsPerDay);
 		$potentialOrderCompletionDates[2] = $this -> returnPotentialOrderCompletionDate(2, $limits -> boardsPerDay);
 		
-		//$boardsAmount = $this -> returnBoardsAmoutPerDay(1, $potentialOrderCompletionDates[1]);
-		
 		$positions = new Positions($this -> dbo);
 		
 		$boardsSigns = $positions -> returnBoardsSigns();
@@ -1161,7 +1217,6 @@ class Orders
 		$edgeBandTypes = $positions -> returnEdgeBandTypes();
 		$edgeBandDefaultTypes = $positions -> returnEdgeBandDefaultThickness();
 		$edgeBandSymbols = $positions -> returnEdgeBandSymbols();
-		//$lastOrderCompletionDate = $this -> returnLastOrderCompletionDate();
 		
 		include 'scripts/orderAddingFormScripts.php';
 		include 'templates/orderAddingForm.php';

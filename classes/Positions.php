@@ -39,13 +39,13 @@ class Positions
 		return $boardsSymbols;
 	}
 	
-	function returnBoardsSymbols2(){
+	/*function returnBoardsSymbols2(){
 		$boardsSymbols = array();
 		if($result = $this -> dbo -> query ("SELECT `id`, `symbol` FROM boards_symbols WHERE `id` NOT IN (SELECT `board_symbol_id` FROM `boards_symbols_hidden`) ORDER BY `symbol` ASC")){
 			$boardsSymbols = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $boardsSymbols;
-	}
+	}*/
 	
 	function returnBoardsSymbolsForUpdatingForm(){
 		$boardsSymbols = array();
@@ -141,7 +141,7 @@ class Positions
 	}
 	
 	function addNewSign(){
-		if (!isset($_POST['newSign']) || trim($_POST['newSign']) ==''){
+		if (!isset($_POST['newSign']) || trim($_POST['newSign']) == ''){
 			return 'ACTION_FAILED';
 		}
 		

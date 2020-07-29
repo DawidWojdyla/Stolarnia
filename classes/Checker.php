@@ -44,8 +44,8 @@ class Checker
 		
 		$_SESSION['admissionDate'] = filter_input(INPUT_POST, 'admissionDate');
 		$dateDifference = (strtotime(date('Y-m-d')) - strtotime($_POST['admissionDate'])) / (60*60*24);
-		 if ($dateDifference > 14){
-			$_SESSION['admissionDateError'] = "Możesz dodać zamówienie maksymalnie sprzed 14 dni!";
+		 if ($dateDifference > 30){
+			$_SESSION['admissionDateError'] = "Możesz dodać zamówienie maksymalnie sprzed 30 dni!";
 			return false;
 		}  
 		else if ($_POST['admissionDate'] > date('Y-m-d')){
@@ -83,8 +83,8 @@ class Checker
 		}
 		$dateDifference = (strtotime($_POST['dateFrom'] ) - strtotime($_SESSION['dateTo'])) / (60*60*24);
 		
-		if($dateDifference > 30){
-			$_SESSION['orderListPeriodError'] = "Zakres dat nie może być dłuższy niż 30 dni";
+		if($dateDifference > 60){
+			$_SESSION['orderListPeriodError'] = "Zakres dat nie może być dłuższy niż 60 dni";
 			return false;
 		}
 		return true;
@@ -104,11 +104,11 @@ class Checker
 		$holiday=array('01-01', '01-06', '05-01', '05-03', '08-15', '11-01', '11-11', '12-24', '12-25', '12-26');
 	 
 		#dodanie listy swiat ruchomych
-		#wialkanoc
+		#wielkanoc
 		$easter = date('m-d', easter_date( $year ));
 		#poniedzialek wielkanocny
 		$easterSec = date('m-d', strtotime('+1 day', strtotime( $year . '-' . $easter) ));
-		#boze cialo
+		#Boze cialo
 		$cc = date('m-d', strtotime('+60 days', strtotime( $year . '-' . $easter) ));
 		#Zesłanie Ducha Świętego
 		$p = date('m-d', strtotime('+49 days', strtotime( $year . '-' . $easter) ));

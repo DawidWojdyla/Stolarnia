@@ -85,6 +85,7 @@ class Joinery extends MyDB
 		 }
 		 
 		$_SESSION['stand'] = new Stand($standId, $result[0]);
+		//$this -> stand = $this -> getActualStand();
 		
 		return ACTION_OK;
 	}
@@ -376,6 +377,29 @@ class Joinery extends MyDB
 		return $customers -> updateCustomerAddress();
 	}
 	
+	function showShopMain(){
+		if(!$this -> dbo){ return SERVER_ERROR; }
+		if ($this -> stand -> id != 4){ return NO_PERMISSION; }
+		
+		$orders = new Orders ($this -> dbo);
+		
+		$lastMadeOrder = $orders -> returnLastMadeOrder();
+		
+		$limits = new Limits($this -> dbo);
+		$limits = $limits -> returnLimits();
+		
+		$potentialOrderCompletionDates[1] = $orders -> returnPotentialOrderCompletionDate(1, $limits -> boardsPerDay);
+		$potentialOrderCompletionDates[2] = $orders -> returnPotentialOrderCompletionDate(2, $limits -> boardsPerDay);
+		$boardsAmount[1] = $orders -> returnBoardsAmoutPerDay(1, $potentialOrderCompletionDates[1]);
+		$boardsAmount[2] = $orders -> returnBoardsAmoutPerDay(2, $potentialOrderCompletionDates[2]);
+		$today = date('Y-m-d');
+		$fiveWorkingDaysAgo = date('Y-m-d', strtotime($today. '-5 weekdays'));
+		$numberOfOrders = $orders -> returnNumberOfOrders($fiveWorkingDaysAgo, $today);
+		$numberOfCompletedOrders = $orders -> returnNumberOfCompletedOrders($fiveWorkingDaysAgo, $today);
+		
+		include 'templates/shopMain.php';
+	}
+	
 	function showLastMadeOrders(){
 		if(!$this -> dbo){ return SERVER_ERROR; }
 		
@@ -418,16 +442,9 @@ class Joinery extends MyDB
 		if(!$this -> dbo){ return SERVER_ERROR; }
 		
 		switch ($this -> stand -> id){
-			//case 1: 
-			//case 2:
-				//$saw = new Saw ($this -> dbo, $this -> stand -> id);
-				//return $saw -> showOrderList();
 			case 3: 
 				$eBMachine = new EdgeBandingMachine($this -> dbo);
 				return $eBMachine -> showNotCutOrderList();
-			//case 4: 
-				//$orders = new Orders ($this -> dbo);
-				//return $orders->showOrderList();
 			Default: 
 			return NO_PERMISSION;
 		}

@@ -100,15 +100,18 @@ class Saw
 	function returnOutstandingOrdersOfTheSaw(){
 		$orders = array();
 		if($result = $this->dbo->query("SELECT `orders`.`id` as orderId, `orders`.`document_number`, `orders`.`customer_id`, DATE_FORMAT(`orders`.`order_completion_date`, '%d.%m') as completionDate, `customers`.`name` as customerName, `customers`.`surname` as customerSurname,  `customers`.`phone`, `customers_temp`.`name` as customerTempName, `customers_temp`.`phone` as customerTempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `orders`.`id` IN (SELECT `order_id` FROM `orders_boards` WHERE `cutting_completion_date` IS NULL) ORDER BY `order_completion_date`")){
-			$orders = $result->fetchAll(PDO::FETCH_OBJ);
+			$orders = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $orders;
 	}
 	
 	function returnOrderDetails($orderId){
 		$boards = array();
-		if($result = $this->dbo->query("SELECT `orders_boards`.`id` as boardId, `boards_signs`.`sign`, `boards_symbols`.`symbol`, `other_boards_symbols`.`symbol` as otherSymbol, `boards_thickness`.`thickness`, `orders_boards`.`amount`, `orders_boards`.`cutting_metters`, `orders_boards`.`cutting_completion_date`,`cutting_comments`.`comment` as cuttingComment, COUNT(`edge_banding`.`id`) as edgeBandingAmount FROM `orders_boards` LEFT JOIN `other_boards_symbols` ON `other_boards_symbols`.`orders_boards_id`=`orders_boards`.`id` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=`orders_boards`.`id`, `boards_signs`, `boards_symbols`, `boards_thickness` WHERE `orders_boards`.`order_id`={$orderId} AND `orders_boards`.`board_sign_id`=`boards_signs`.`id` AND `orders_boards`.`board_symbol_id`=`boards_symbols`.`id` AND `orders_boards`.`board_thickness_id`=`boards_thickness`.`id` GROUP BY boardId")){
-			$boards = $result->fetchAll(PDO::FETCH_OBJ);
+		if($query = $this -> dbo -> prepare("SELECT `orders_boards`.`id` as boardId, `boards_signs`.`sign`, `boards_symbols`.`symbol`, `other_boards_symbols`.`symbol` as otherSymbol, `boards_thickness`.`thickness`, `orders_boards`.`amount`, `orders_boards`.`cutting_metters`, `orders_boards`.`cutting_completion_date`,`cutting_comments`.`comment` as cuttingComment, COUNT(`edge_banding`.`id`) as edgeBandingAmount FROM `orders_boards` LEFT JOIN `other_boards_symbols` ON `other_boards_symbols`.`orders_boards_id`=`orders_boards`.`id` LEFT JOIN `edge_banding` ON `edge_banding`.`orders_boards_id`=`orders_boards`.`id` LEFT JOIN `cutting_comments` ON `cutting_comments`.`orders_boards_id`=`orders_boards`.`id`, `boards_signs`, `boards_symbols`, `boards_thickness` WHERE `orders_boards`.`order_id`=:orderId AND `orders_boards`.`board_sign_id`=`boards_signs`.`id` AND `orders_boards`.`board_symbol_id`=`boards_symbols`.`id` AND `orders_boards`.`board_thickness_id`=`boards_thickness`.`id` GROUP BY boardId")){
+			$query -> bindValue (':orderId', $orderId, PDO::PARAM_INT);
+			if($query -> execute()){
+				$boards = $query -> fetchAll(PDO::FETCH_OBJ);
+			}
 		}
 		return $boards;
 	}
@@ -189,13 +192,13 @@ class Saw
 	}
 	
 	function findOrderByDocumentNumber($documentNumber){
-		$query = $this -> dbo -> prepare ("SELECT `orders`.`id` as orderId, `customers`.`id` as customerId,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as phone,`customers_temp`.`name` as tempCustomerName, `customers_temp`.`phone` as tempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this->sawNumber} AND `document_number`=:documentNumber");
+		$query = $this -> dbo -> prepare ("SELECT `orders`.`id` as orderId, `customers`.`id` as customerId,`customers`.`name` as customerName, `customers`.`surname` as customerSurname, `customers`.`phone` as phone,`customers_temp`.`name` as tempCustomerName, `customers_temp`.`phone` as tempPhone, `orders_comments`.`comments` as orderComment FROM `orders` LEFT JOIN `customers_temp` ON `customers_temp`.`order_id`=`orders`.`id` LEFT JOIN `orders_comments` ON `orders_comments`.`order_id`=`orders`.`id`, `customers` WHERE `orders`.`customer_id`=`customers`.`id` AND `orders`.`saw_number`={$this -> sawNumber} AND `document_number`=:documentNumber ORDER BY orderId DESC LIMIT 1");
 		$query -> bindValue(':documentNumber', $documentNumber, PDO::PARAM_STR);
 		if(!$query->execute()){
 			return null;
 		}
 		
-		if(!$result = $query->fetch(PDO::FETCH_OBJ)){
+		if(!$result = $query -> fetch(PDO::FETCH_OBJ)){
 		  return null; 
 		}
 		return $result;
@@ -214,11 +217,10 @@ class Saw
 	}
 	
 	function showLastMadeOrders(){
-		//$this->setOrderListPeriod();
 		
-		$positionsAmount = 30;
+		$positionsNumber= 30;
 		
-		$orderList = $this -> showLastCutBoards($positionsAmount);
+		$orderList = $this -> showLastCutBoards($positionsNumber);
 		
 		include 'scripts/lastMadeOrdersForSawScript.php';
 		include 'templates/lastMadeOrdersForSaw.php';
@@ -272,14 +274,14 @@ class Saw
 		if($order = $this -> findOrderByDocumentNumber($documentNumber)){
 			$comment = $order ->orderComment;
 			if($order -> customerId != 1){
-				$customerName = $order->customerName . ' ' . $order->customerSurname;
-				$phone = $order->phone;
+				$customerName = $order -> customerName . ' ' . $order -> customerSurname;
+				$phone = $order -> phone;
 			}
 			else{
 				$customerName = $order -> tempCustomerName;
 				$phone = $order -> tempPhone;
 			}
-			$boards = $this -> returnOrderDetails($order->orderId);
+			$boards = $this -> returnOrderDetails($order -> orderId);
 			$workers = new Workers($this -> dbo);
 			$sawWorkers = $workers -> returnSawWorkers();
 			

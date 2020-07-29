@@ -23,15 +23,15 @@ try{
 	
 	switch($action){
 		case 'login' :
-			switch($joinery->login()){
+			switch($joinery -> login()){
 				case ACTION_OK :
-					$joinery->setMessage('Zalogowanie prawidłowe');
-					$joinery->setHidingMessageDelay(3000);
-					header('Location:index.php?action=showOrderList');
+					$joinery -> setMessage('Zalogowanie prawidłowe');
+					$joinery -> setHidingMessageDelay(3000);
+					header('Location:index.php?action=showMain');
 					return;
 				case NO_LOGIN_REQUIRED :
-					$joinery->setMessage('Najpierw proszę się wylogować.');
-					$joinery->setHidingMessageDelay(3000);
+					$joinery -> setMessage('Najpierw proszę się wylogować.');
+					$joinery -> setHidingMessageDelay(3000);
 					header('Location:index.php?action=showMain');
 					return;
 				case ACTION_FAILED :

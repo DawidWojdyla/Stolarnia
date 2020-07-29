@@ -10,10 +10,15 @@
 		</div>
 		<?PHP endif;?>
 		<?PHP if(empty($boards)): ?><h3 class='text-center'>Brak pociętych płyt do oklejenia</h3><?PHP endif; ?>
-		<?PHP $lastBoardId = 0; ?>
+		<?PHP $lastBoardId = 0; $ready = true; ?>
 		<table>
 		<?PHP foreach($boards as $board): ?>
 			<?PHP if($lastBoardId != $board -> boardId): ?>
+				<?PHP if($lastBoardId): ?>
+				<script>
+					document.getElementById("board<?=$lastBoardId?>").style.backgroundColor = "#<?PHP if($ready):?>dff0d8<?PHP else: ?>f2dede<?PHP endif;?>";
+				</script>
+				<?PHP $ready = true;  endif; ?>
 			<?PHP $lastBoardId = $board -> boardId; ?>
 		</table>
 		<div class='btn btn-default btn-block boardTitle' id='board<?=$board -> boardId?>' onclick="showBoardDetails('<?=$board -> boardId?>')"><?=$board -> boardSign?><?=($board -> thickness + 0)?><?PHP if($board -> boardSymbol != '' || $board -> otherSymbol): ?> - <?PHP endif; ?><?=$board->boardSymbol?><?=$board->otherSymbol?></div>
@@ -25,7 +30,8 @@
 				<td class='text-center' style="border-top: 1.5px solid white;"><div><?=$board -> edgeBandType?><?PHP if($board -> edgeBandSymbol != ''): ?> <?=$board -> edgeBandSymbol?><?PHP endif; ?></td>
 				<td class='text-center' style="border-top: 1.5px solid white;"><?=$board -> stickerSymbol?></td>
 				<td class='text-center' style="border-top: 1.5px solid white;"><?=($board -> wzMetters+0)?></td>
-				<td class='text-center' style="border-top: 1.5px solid white;" id="m<?=$board -> edgeBandingId?>"><?=($board -> machineMetters)?></td>
+				<td class='text-center boards<?=$board -> boardId?>' style="border-top: 1.5px solid white;" id="m<?=$board -> edgeBandingId?>"><?=($board -> machineMetters)?></td>
+				<td style="display: none;" id="boardId<?=$board -> edgeBandingId?>"><?=$board -> boardId?></td>
 			</tr>
 			<?PHP if($board -> edgeBandComment): ?>
 			<tr class="pointer" onclick="showEdgeBandingModal(<?=$board -> edgeBandingId?>);">
@@ -33,8 +39,12 @@
 			</tr>
 			<?PHP endif; ?>
 			<tr style="display:none;"><td id="c<?=$board -> edgeBandingId?>"><?PHP if($board -> edgeBandingComment): ?><?=$board -> edgeBandingComment?><?PHP endif; ?></td></tr>
+			<?PHP if($board -> machineMetters == "0.00") {$ready = false;}?>
 			<?PHP endforeach; ?>
 		</table>
+		<script>
+			document.getElementById("board<?=$lastBoardId?>").style.backgroundColor = "#<?PHP if($ready):?>dff0d8<?PHP else: ?>f2dede<?PHP endif;?>";
+		</script>
 		<div style="padding-bottom: 1px; margin-top: 20px; margin-bottom: 20px;">
 			<div id='sms' class='btn btn-default btn-block' onclick="sendSMS();"><span class="glyphicon glyphicon-earphone"></span> Wyślij SMS</div>
 		</div>

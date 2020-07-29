@@ -36,22 +36,22 @@
 				<div class="collapse navbar-collapse" id="myNavbar">
 					<ul class="nav navbar-nav">
 				<?PHP 
-						if($joinery->stand):
-							switch($joinery->stand->id): 
-								case '1':
-								case '2': include 'templates/sawMenu.php';
+						if($joinery -> stand):
+							switch($joinery -> stand -> id): 
+								case 1:
+								case 2: include 'templates/sawMenu.php';
 									break;
-								case '3': include 'templates/edgeBandingMenu.php';
+								case 3: include 'templates/edgeBandingMenu.php';
 									break;
-								case '4': include 'templates/shopMenu.php';
+								case 4: include 'templates/shopMenu.php';
 									break;
 							endswitch; ?>
 				<?PHP 
 						endif; ?>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						<?php if($joinery->stand): ?>
-						<li><a><span class="glyphicon glyphicon-map-marker"></span> Twoje stanowisko: <?=$joinery->stand->name?></a></li>
+						<?php if($joinery -> stand): ?>
+						<li><a href="index.php?action=showMain"><span class="glyphicon glyphicon-map-marker"></span> Twoje stanowisko: <?=$joinery -> stand -> name?></a></li>
 						<li><a href="index.php?action=logout"><span class="glyphicon glyphicon-log-out"></span> Wyloguj się</a></li>
 						<?php else: ?>
 						<li>Nie jesteś zalogowany.</li>
@@ -75,6 +75,20 @@
 						switch($action):
 							case 'showLoginForm' :
 								switch($joinery -> showLoginForm()):
+									case SERVER_ERROR:
+										$joinery -> setMessage('Błąd serwera!');
+										header('Location:index.php?action=showMain');
+										return;
+									default:
+										break;
+								endswitch;
+								break;
+							case 'showShopMain' :
+								switch($joinery -> showShopMain()):
+									case NO_PERMISSION:
+										$joinery -> setMessage('Brak uprawnień.');
+										header('Location:index.php?action=showMain');
+										return;
 									case SERVER_ERROR:
 										$joinery -> setMessage('Błąd serwera!');
 										header('Location:index.php?action=showMain');
@@ -332,6 +346,20 @@
 								endswitch;
 								break;
 							case 'showMain':
+								if(isset($joinery -> stand -> id)){
+									switch($joinery -> stand -> id):
+										case 1:
+										case 2:
+										case 3: 
+											header('Location:index.php?action=showOrderList');
+											return;
+										case 4:
+											header('Location:index.php?action=showShopMain');
+											return;
+										default:
+										 'templates/innerContentDiv.php';
+									endswitch;
+								}
 							default:
 							include 'templates/innerContentDiv.php';
 						endswitch;

@@ -18,7 +18,6 @@ class MyDB
 			$dbo = new PDO($dsn, $user, $password, $options);
 		}
 		catch (PDOException $e){
-			//echo 'Błąd podczas otwierania połączenia: ' . $e->getMessage();
 			exit;
 		}
 		return $dbo;

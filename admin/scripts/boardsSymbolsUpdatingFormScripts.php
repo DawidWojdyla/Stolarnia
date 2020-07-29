@@ -181,7 +181,9 @@ function assignSymbolToTheType(id, typeNumber){
 	ajaxRequest.always(function(){
 		document.getElementById('modalBody').innerHTML = message;
 		setTimeout(function(){
-			$('#modal').modal('hide');}, 1200);
+			//$('#modal').modal('hide');
+			manageTypes(id);
+		}, 1200);
 	});
 }
 
@@ -219,7 +221,9 @@ function removeSymbolFromTheTypeList(id, typeNumber){
 	ajaxRequest.always(function(){
 		document.getElementById('modalBody').innerHTML = message;
 		setTimeout(function(){
-			$('#modal').modal('hide');}, 1200);
+			//$('#modal').modal('hide');
+			manageTypes(id);
+		}, 1200);
 	});
 }
 

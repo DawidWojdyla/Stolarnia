@@ -1113,15 +1113,10 @@ function addBoardSymbolToSelect(){
 	
 	if(newSymbol != ""){
 		newSymbol = newSymbol.toUpperCase();
-		document.getElementById('updatingOrderDataModalBody').innerHTML = tempModalBody;
-		document.getElementById('boardSign').value = tempPosition['boardSignId'];
-		document.getElementById('boardThickness').value = tempPosition['boardThicknessId'];
+		closeAddingOtherSymbolForm();
+		document.getElementById('boardSymbol').value = '0';
 		tempPosition['boardSymbolId'] = '0';
 		tempPosition['otherBoardSymbol'] = newSymbol;
-		if(document.getElementById('amount') && document.getElementById('cuttingMetters')){
-			document.getElementById('amount').value = tempPosition['amount'];
-			document.getElementById('cuttingMetters').value = tempPosition['cuttingMetters'];
-		}
 		
 		if($("#boardSymbol option[value='0']").length == 0){
 			var option = document.createElement("option");
@@ -1136,13 +1131,7 @@ function addBoardSymbolToSelect(){
 	}else{
 		document.getElementById('updatingOrderDataModalBody').innerHTML = "Symbol płyty nie może być pusty";
 		setTimeout(function(){ 
-			document.getElementById('updatingOrderDataModalBody').innerHTML = tempModalBody;
-			document.getElementById('boardSign').value = tempPosition['boardSignId'];
-			document.getElementById('boardThickness').value = tempPosition['boardThicknessId'];
-			if(document.getElementById('amount') && document.getElementById('cuttingMetters')){
-				document.getElementById('amount').value = tempPosition['amount'];
-				document.getElementById('cuttingMetters').value = tempPosition['cuttingMetters'];
-			}
+			closeAddingOtherSymbolForm();
 		}, 1200);
 	}
 }
