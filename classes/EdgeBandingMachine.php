@@ -189,7 +189,7 @@ class EdgeBandingMachine
 			return FORM_DATA_MISSING;
 		}
 		
-		return $this->setMachineMetters($_POST['edgeBandingId'], $_POST['edgeBandingMachineMetters']);
+		return $this -> setMachineMetters($_POST['edgeBandingId'], $_POST['edgeBandingMachineMetters']);
 	}
 	
 	function setEdgeBanding(){

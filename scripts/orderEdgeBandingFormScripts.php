@@ -58,6 +58,20 @@ function setBackgroundColorAssignedToBoardEdgeBandingStatus(id){
 	}
 }
 
+function returnSumWhenPlusSignWasUsed(input){
+	var numbers = input.split("+");
+	if(numbers[0] == input){
+		return input;
+	}else{
+		var sum = 0;
+		for (var i = 0; i < numbers.length; i++){
+			sum += parseFloat(numbers[i]);
+		}
+		
+		return sum.toString();
+	}
+}
+
 function showAddingEdgeBandingForm(edgeBandingId){
 		document.getElementById('edgeBandingModalBody').innerHTML = "<form id='edgeBandingForm' method='post'><input type='hidden' name='edgeBandingId' value="+edgeBandingId+"><table class='table table-condensed edgeBandingModalTable'><tr><td colspan='2' style='border-top: none'><label for='newM"+edgeBandingId+"'>Maszyna [mb]:</label><input class='form-control text-center' type='number' min='0.01' max='10000' step='0.01' lang='en' id='newM"+edgeBandingId+"' name='edgeBandingMachineMetters' required/></td></tr><tr><td colspan='2'><label for='workers'>Pracownicy:</label><select class='form-control' id='workers' name='workers[]' multiple required><?PHP foreach ($workers as $worker): ?><option value='<?=$worker->id?>'><?=$worker->name?></option><?PHP endforeach; ?></select></td></tr><tr><td colspan='2'><label for='newC"+edgeBandingId+"'>Uwagi (opcjonalnie):</label><textarea id='newC"+edgeBandingId+"' class='form-control' name='edgeBandingComment' rows='3' cols='25' maxlength='250' form='edgeBandingForm'>"+document.getElementById('c'+edgeBandingId).innerHTML+"</textarea></div></td></tr><tr><td colspan='2'><div class='btn btn-default btn-block' onclick='sendEdgeBandingForm("+edgeBandingId+");'><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><button id='sendingButton' type='submit' style='display:none;'></button><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class='glyphicon glyphicon-remove'></span> Anuluj</div></td></tr></table></form>";
 }
@@ -78,7 +92,7 @@ function showResetEdgeBandingForm(id){
 }
 
 function updateMachineMetters(id){
-	document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Maszyna [mb]</h4><form id='updatingMachineMettersForm'><input type='hidden' name='edgeBandingId' value="+id+"><input type='number' class='text-center form-control' min='0.01' max='10000' step='0.01' id='newM"+id+"' name='edgeBandingMachineMetters' value='"+document.getElementById('m'+id).innerHTML+"' required/></form></br><div class='btn btn-default btn-block' onclick='sendEdgeBandingMachineMetters("+id+");'><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class='glyphicon glyphicon-remove'></span> Anuluj</div>";
+	document.getElementById('edgeBandingModalBody').innerHTML = "<h4>Maszyna [mb]</h4><form id='updatingMachineMettersForm'><input type='text' class='text-center form-control' id='newM"+id+"' name='edgeBandingMachineMetters' value='"+document.getElementById('m'+id).innerHTML+"' required/></form></br><div class='btn btn-default btn-block' onclick='sendEdgeBandingMachineMetters("+id+");'><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class='glyphicon glyphicon-remove'></span> Anuluj</div>";
 }
 
 function updateEdgeBandingComment(id){
@@ -139,19 +153,30 @@ function resetEdgeBanding(id){
 function sendEdgeBandingMachineMetters(id){
 	var message = "";
 	var machineMetters = document.getElementById('newM'+id).value;
+	machineMetters = returnSumWhenPlusSignWasUsed(machineMetters);
 	machineMetters = machineMetters.replace(",", ".");
+	
 	if(machineMetters == document.getElementById('m'+id).innerHTML){
 		message = "Ilość metrów pozostaje bez zmian";
 		showMessage(message);
 		setTimeout(function(){closeModal('edgeBandingModal');}, 1000);
 	}
-	else{
-		document.getElementById('newM'+id).value = machineMetters;
-		var values = $('#updatingMachineMettersForm').serialize();
+	else if(isNaN(machineMetters)){
+		message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Podana wartość nie jest prawidłowa";
+		showMessage(message);
+		setTimeout(function(){closeModal('edgeBandingModal');}, 1000);
+	}else if(parseFloat(machineMetters) <= 0){
+		message = "Musisz podać wartość większą od 0";
+		showMessage(message);
+		setTimeout(function(){closeModal('edgeBandingModal');}, 1000);
+	}else{
 		var ajaxRequest = $.ajax({
 			url: "index.php?action=updateEdgeBandingMachineMetters",
 			type: "post",
-			data: values
+			data: {
+				'edgeBandingId' : id,
+				'edgeBandingMachineMetters' : machineMetters
+			}
 		});
 		ajaxRequest.done(function (response){
 			switch(response){
@@ -233,14 +258,18 @@ function sendEdgeBandingComment(id){
 }
 
 function sendEdgeBandingForm(id){
-	if (document.getElementById('edgeBandingForm').elements["workers[]"].selectedIndex == -1 || document.getElementById('newM'+id).value == ''){
+	var machineMetters = document.getElementById('newM'+id).value;
+	if (document.getElementById('edgeBandingForm').elements["workers[]"].selectedIndex == -1 || document.getElementById('newM'+id).value == '' ){
 		document.getElementById('sendingButton').click();
 	}
-	else{	
+	else if(parseFloat(machineMetters) <= 0){
+		message = "Musisz podać wartość większą od 0";
+		showMessage(message);
+		setTimeout(function(){closeModal('edgeBandingModal');}, 1000);
+	}else{	
 		var message = "";
 		var edgeBandingComment = document.getElementById('newC'+id).value;
 		edgeBandingComment = edgeBandingComment.trim();
-		var machineMetters = document.getElementById('newM'+id).value;
 		machineMetters = machineMetters.replace(",", ".");
 		document.getElementById('newM'+id).value = machineMetters;
 		var values = $('#edgeBandingForm').serialize();

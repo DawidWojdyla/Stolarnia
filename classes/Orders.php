@@ -1061,7 +1061,7 @@ class Orders
 				$lastOrderCompletionDate = $query -> fetch(PDO::FETCH_NUM);
 			}
 		}	
-		return $lastOrderCompletionDate[0];
+		return $lastOrderCompletionDate[0] ?? '2020-01-01';
 	}
 	
 	function returnNumberOfOrders($completionDateFrom, $completionDateTo){

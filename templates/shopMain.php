@@ -6,7 +6,7 @@
 			<tr>
 				<td>Ostatnio zrealizowane zlecenie:</td>
 				<td>
-					<label><?=$lastMadeOrder -> customerName?> <?=$lastMadeOrder -> customerSurname?><?=$lastMadeOrder -> customerTempName?> (<?=$lastMadeOrder -> document_number?>)</label>
+					<label><?PHP if($lastMadeOrder):?><?=$lastMadeOrder -> customerName?> <?=$lastMadeOrder -> customerSurname?><?=$lastMadeOrder -> customerTempName?> (<?=$lastMadeOrder -> document_number?>)<?PHP else: ?>Nie zrealizowano jeszcze żadnego zlecenia<?PHP endif; ?></label>
 				</td>
 			</tr>
 			<tr>
