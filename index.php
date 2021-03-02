@@ -3,7 +3,7 @@ include 'constants.php';
 spl_autoload_register('classLoader');
 session_start();
 
-try{
+try {
 	$joinery = new Joinery("localhost", "root", "", "joinery");
 	$action = 'showLoginForm';
 	if (isset($_GET['action'])) {

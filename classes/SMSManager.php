@@ -22,7 +22,7 @@ class SMSManager
 		return $activeSMSId[0];
 	}
 	
-	function returnActiveSMSContent(){
+	function returnActiveSMSContent() {
 		if($result = $this -> dbo -> query("SELECT `message` FROM `messages`, `messages_active_one` WHERE `messages`.`id`=`messages_active_one`.`message_id` AND `messages_active_one`.`id`='1'" )){
 			$activeSMSContent = $result -> fetch(PDO::FETCH_NUM);
 		}

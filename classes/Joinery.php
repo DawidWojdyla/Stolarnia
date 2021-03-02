@@ -59,7 +59,7 @@ class Joinery extends MyDB
 		 
 		if (!isset($_POST["standId"]) || !isset($_POST["password"])) return FORM_DATA_MISSING;
 		
-		$standId = (intval)(filter_input(INPUT_POST, 'standId'));
+		$standId = filter_input(INPUT_POST, 'standId');
 		$password = filter_input(INPUT_POST, 'password');
 		
 		$passwordLength = mb_strlen($password, 'utf8');
