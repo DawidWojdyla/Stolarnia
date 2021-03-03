@@ -97,7 +97,7 @@ class Orders
 				}
 			}
 			
-			if ($edgeBandsAmount = count($position['edgeBandTypesId'])){
+			if (isset($position['edgeBandTypesId']) && $edgeBandsAmount = count($position['edgeBandTypesId'])){
 				
 				for($i = 0; $i < $edgeBandsAmount; $i++){
 					$query  = $this -> dbo -> prepare ("INSERT INTO `edge_banding` VALUES (NULL, @ordersBoardsId, :edgeBandStickerSymbolId, :edgeBandTypeId, :edgeBandingBoardSymbolId, :edgeBandingMettersWz, 0, NULL)");

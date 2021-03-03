@@ -1,10 +1,11 @@
 ﻿<?php
-include 'constants.php';
+include_once 'constants.php';
 spl_autoload_register('classLoader');
 session_start();
 
 try {
-	$joinery = new Joinery("localhost", "root", "", "joinery3");
+    $config = require_once ("config.php");
+	$joinery = new Joinery($config["db_host"], $config["db_user"], $config["db_password"], $config["db_name"]);
 	$action = 'showLoginForm';
 	if (isset($_GET['action'])) {
 		$action = $_GET['action'];
@@ -116,7 +117,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -134,7 +136,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -152,7 +155,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -173,7 +177,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -191,7 +196,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -209,7 +215,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -227,7 +234,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -245,7 +253,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -263,7 +272,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -281,7 +291,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -299,7 +310,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -317,7 +329,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -335,7 +348,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -356,7 +370,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -374,7 +389,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -392,7 +408,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -410,7 +427,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -428,7 +446,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -446,7 +465,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -470,7 +490,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -488,7 +509,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -506,7 +528,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -524,7 +547,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -542,7 +566,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -598,7 +623,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -616,7 +642,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -634,7 +661,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -652,7 +680,8 @@ try {
 					break;
 				case NO_PERMISSION:
 					print_r('NO_PERMISSION');
-				case SERVER_ERROR:
+                    break;
+                case SERVER_ERROR:
 				default:
 					print_r('SERVER_ERROR');
 			endswitch;
@@ -666,8 +695,8 @@ try {
 	}
 }
 catch(Exception $e){
-	echo 'Błąd: ' . $e->getMessage();
-	//exit('Portal chwilowo niedostępny');
+	//echo 'Błąd: ' . $e->getMessage();
+	exit('Portal chwilowo niedostępny');
 }
 
 function classLoader($name){
@@ -675,7 +704,7 @@ function classLoader($name){
 		require_once("classes/$name.php");
 	}
 	else{
-		throw new Exception("Brak pliku z definicją klasy.");
+		//throw new Exception("Brak pliku z definicją klasy.");
+        exit('Portal chwilowo niedostępny');
 	}
 }
-?>
