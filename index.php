@@ -4,7 +4,7 @@ spl_autoload_register('classLoader');
 session_start();
 
 try {
-	$joinery = new Joinery("localhost", "root", "", "joinery");
+	$joinery = new Joinery("localhost", "root", "", "joinery3");
 	$action = 'showLoginForm';
 	if (isset($_GET['action'])) {
 		$action = $_GET['action'];
@@ -666,8 +666,8 @@ try {
 	}
 }
 catch(Exception $e){
-	//echo 'Błąd: ' . $e->getMessage();
-	exit('Portal chwilowo niedostępny');
+	echo 'Błąd: ' . $e->getMessage();
+	//exit('Portal chwilowo niedostępny');
 }
 
 function classLoader($name){

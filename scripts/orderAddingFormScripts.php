@@ -88,51 +88,17 @@ function checkIfCustomerDataRequired(){
 	}
 }
 
-function setSymbolSelectOptionsAccordingToSignType(id, typeId){
+function setSymbolSelectOptionsAccordingToSignType(id, signId){
 	var symbolSelect = "";
 	symbolSelect += "<select class='form-control textCenterSelect smallerPadding' id='boardSymbol"+id+"' name='positions[position"+id+"][boardSymbolId]' onchange=\"addOtherBoardSymbolIfNeeded('"+id+"');\">";
+
+	symbolSelect += "<option value='1'> </option>";
+
 	<?PHP foreach($boardsSymbols as $boardSymbol): ?>
-	switch(typeId){
-		case '1':
-			if('<?=$boardSymbol -> melamine?>' != ''){
-				symbolSelect += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
-			}
-			break;
-		case '2':
-			if('<?=$boardSymbol -> worktops?>' != ''){
-				symbolSelect += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
-			}
-			break;
-		case '3':
-			if('<?=$boardSymbol -> mdf?>' != ''){
-				symbolSelect += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
-			}
-			break;
-		case '4':
-			if('<?=$boardSymbol -> hdf?>' != ''){
-				symbolSelect += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
-			}
-			break;
-		case '5':
-			if('<?=$boardSymbol -> veneer?>' != ''){
-				symbolSelect += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
-			}
-			break;
-		case '6':
-			if('<?=$boardSymbol -> acrylic?>' != ''){
-				symbolSelect += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
-			}
-			break;
-		case '7':
-			if('<?=$boardSymbol -> glossy?>' != ''){
-				symbolSelect += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
-			}
-			break;
-		default:
-			symbolSelect += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
-			break;
-	}
 	
+		if(signId == '<?=$boardSymbol -> signId?>') {
+			symbolSelect += "<option value='<?=$boardSymbol->id?>'><?=$boardSymbol->symbol?></option>";
+		}
 	<?PHP endforeach; ?>
 	symbolSelect += "<option value='-1'>+ inny</option></select>";
 	
@@ -148,7 +114,6 @@ function setBoardSelectDefaultOptions(id){
 	<?PHP foreach($boardsSigns as $sign): ?>
 		
 		if(signId == "<?=$sign -> id?>"){
-			signType = "<?=$sign -> type_id?>";
 			<?PHP if ($sign -> thicknessId): ?>
 				thicknessSelect.value =  "<?=$sign -> thicknessId?>";
 			<?PHP else: ?>
@@ -165,7 +130,7 @@ function setBoardSelectDefaultOptions(id){
 		
 	<?PHP endforeach; ?>
 	if(!symbolSelect.disabled){
-		setSymbolSelectOptionsAccordingToSignType(id, signType);
+		setSymbolSelectOptionsAccordingToSignType(id, signId);
 	}
 
 }
@@ -267,6 +232,6 @@ function addBoardInputs(){
 	
 	document.getElementById('boardsInputs').insertAdjacentHTML("beforebegin", "<tr id='position"+lastPositionId+"'><td style='border-color: transparent!important; padding:0px;' colspan='2'><div class='contentContainer' style='padding: 5px;!important'><div class='textShadow'><div style='float:left;'><label> Pozycja <span class='positions' id='p"+lastPositionId+"'>"+positionsAmount+"</span></label></div><div style='float: right;'><span class='glyphicon glyphicon-remove pointer' onclick=\"removePosition('"+lastPositionId+"');\"></span></div><div style='clear: both;'></div></div><div class='container-fluid'><div class='row text-center'><div class='col-sm-1'></div><div class='col-sm-2 smallerPadding'><label class='addingFormSmallLabel textShadow'>rodzaj</label><select class='form-control textCenterSelect' name='positions[position"+lastPositionId+"][boardSignId]' id='boardSign"+lastPositionId+"' onchange=\"setBoardSelectDefaultOptions('"+lastPositionId+"');\"><?PHP foreach($boardsSigns as $boardSign):?><option value='<?=$boardSign->id?>' <?PHP if($boardSign->sign == 'L'): ?>selected<?PHP endif; ?>><?=$boardSign->sign?></option><?PHP endforeach; ?></select></div><div class='col-sm-2 smallerPadding'><label class='addingFormSmallLabel textShadow'>grubość</label><select class='form-control textCenterSelect' id='boardThickness"+lastPositionId+"' name='positions[position"+lastPositionId+"][boardThicknessId]'><?PHP foreach($boardsThickness as $boardThickness):?><option value='<?=$boardThickness->id?>' <?PHP if($boardThickness -> thickness == '18.0'): ?>selected<?PHP endif; ?>><?=$boardThickness->thickness?></option><?PHP endforeach; ?></select></div><div class='col-sm-2 smallerPadding'><label class='addingFormSmallLabel textShadow'>symbol</label><div id='symbolSelect"+lastPositionId+"'></div><input type='hidden' id='otherBoardSymbol"+lastPositionId+"' name='positions[position"+lastPositionId+"][otherBoardSymbol]' value=''/></div><div class='col-sm-2 smallerPadding'><label class='addingFormSmallLabel textShadow'>ilość [szt.]</label><input name='positions[position"+lastPositionId+"][amount]' class='form-control text-center' type='number' min='0.5' max='1000' step='0.5' required/></div><div class='col-sm-2 smallerPadding'><label class='addingFormSmallLabel textShadow'>cięcie [mb]</label><input name='positions[position"+lastPositionId+"][cuttingMetters]' class='form-control text-center' type='number' min='0.5' max='1000' step='0.5' required/></div><div class='col-sm-1'></div></div><div style='margin-top: 10px;' class='row' id='addNewEdgeBandingButton"+lastPositionId+"'><div class='col-sm-2'></div><div class='col-sm-8 noPadding'><div class='btn btn-default btn-block' onclick=\"addEdgeBanding('"+lastPositionId+"');\"><span class='glyphicon glyphicon-plus'></span> Dodaj oklejanie</div></div><div class='col-sm-2'></div></div></div></div></td></tr>");
 	
-	setSymbolSelectOptionsAccordingToSignType(lastPositionId, "1");
+	setSymbolSelectOptionsAccordingToSignType(lastPositionId, "2");
 }
 </script>

@@ -9,7 +9,7 @@ class Positions
 	
 	function returnBoardsSigns(){
 		$boardsSigns = array();
-		if($result = $this -> dbo -> query("SELECT `id`, `sign`, `type_id`, `boards_signs_default_thickness`.`board_thickness_id` as thicknessId, `boards_signs_having_no_symbol`.`board_sign_id` as noSymbolSignId FROM `boards_signs` LEFT JOIN `boards_signs_having_no_symbol` ON `boards_signs_having_no_symbol`.`board_sign_id`= `boards_signs`.`id` LEFT JOIN `boards_signs_default_thickness` ON `boards_signs_default_thickness`.`board_sign_id`=`boards_signs`.`id` WHERE `id` NOT IN (SELECT `board_sign_id` FROM `boards_signs_hidden`) ORDER BY CASE WHEN `priority`<> '0' THEN CONCAT(`priority`,', ',`sign`) ELSE `sign` END")){
+		if($result = $this -> dbo -> query("SELECT `id`, `sign`, `boards_signs_default_thickness`.`board_thickness_id` as thicknessId, `boards_signs_having_no_symbol`.`board_sign_id` as noSymbolSignId FROM `boards_signs` LEFT JOIN `boards_signs_having_no_symbol` ON `boards_signs_having_no_symbol`.`board_sign_id`= `boards_signs`.`id` LEFT JOIN `boards_signs_default_thickness` ON `boards_signs_default_thickness`.`board_sign_id`=`boards_signs`.`id` WHERE `id` NOT IN (SELECT `board_sign_id` FROM `boards_signs_hidden`) ORDER BY CASE WHEN `priority`<> '0' THEN CONCAT(`priority`,', ',`sign`) ELSE `sign` END")){
 			$boardsSigns = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $boardsSigns;
@@ -33,19 +33,11 @@ class Positions
 	
 	function returnBoardsSymbols(){
 		$boardsSymbols = array();
-		if($result = $this -> dbo -> query ("SELECT `id`, `symbol`, `melamine_symbols`.`board_symbol_id` as melamine, `worktops_symbols`.`board_symbol_id` as worktops, `mdf_symbols`.`board_symbol_id` as mdf, `hdf_symbols`.`board_symbol_id` as hdf, `veneer_symbols`.`board_symbol_id` as veneer, `glossy_symbols`.`board_symbol_id` as glossy, `acrylic_symbols`.`board_symbol_id` as acrylic FROM boards_symbols LEFT JOIN `melamine_symbols` ON `melamine_symbols`.`board_symbol_id`=`id` LEFT JOIN `worktops_symbols` ON `worktops_symbols`.`board_symbol_id`=`id` LEFT JOIN `mdf_symbols` ON `mdf_symbols`.`board_symbol_id`=`id` LEFT JOIN `hdf_symbols` ON `hdf_symbols`.`board_symbol_id`=`id` LEFT JOIN `veneer_symbols` ON `veneer_symbols`.`board_symbol_id`=`id` LEFT JOIN `glossy_symbols` ON `glossy_symbols`.`board_symbol_id`=`id` LEFT JOIN `acrylic_symbols` ON `acrylic_symbols`.`board_symbol_id`=`id` WHERE `id` NOT IN (SELECT `board_symbol_id` FROM `boards_symbols_hidden`) ORDER BY `symbol` ASC")){
+		if($result = $this -> dbo -> query ("SELECT `id`, `symbol`, `boards_signs_symbols`.`board_sign_id` as signId FROM boards_symbols LEFT JOIN `boards_signs_symbols` ON `boards_signs_symbols`.`board_symbol_id`=`id` WHERE `id` <> 1 AND `id` NOT IN (SELECT `board_symbol_id` FROM `boards_symbols_hidden`) ORDER BY `symbol` ASC")) {
 			$boardsSymbols = $result -> fetchAll(PDO::FETCH_OBJ);
 		}
 		return $boardsSymbols;
 	}
-	
-	/*function returnBoardsSymbols2(){
-		$boardsSymbols = array();
-		if($result = $this -> dbo -> query ("SELECT `id`, `symbol` FROM boards_symbols WHERE `id` NOT IN (SELECT `board_symbol_id` FROM `boards_symbols_hidden`) ORDER BY `symbol` ASC")){
-			$boardsSymbols = $result -> fetchAll(PDO::FETCH_OBJ);
-		}
-		return $boardsSymbols;
-	}*/
 	
 	function returnBoardsSymbolsForUpdatingForm(){
 		$boardsSymbols = array();

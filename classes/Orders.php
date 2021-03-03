@@ -1211,6 +1211,7 @@ class Orders
 		
 		$boardsSigns = $positions -> returnBoardsSigns();
 		$boardsSymbols = $positions -> returnBoardsSymbols();
+		print_r($boardsSymbols);
 		$boardsThickness = $positions -> returnBoardsThickness();
 		
 		$edgeBandStickerSymbols = $positions -> returnEdgeBandStickerSymbols();
