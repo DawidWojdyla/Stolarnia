@@ -24,7 +24,89 @@ function showOptions(id){
 	$('#modal').modal('show');
 }
 
+function manageTypes(id) {
+	var modalBody ="";
+	var signs = document.getElementById('signs'+id).innerHTML;
+	var signsIds = signs.split(',');
+	var signsLength = signsIds.length;
 
+	modalBody += "<select class='form-control' style='height: 100%' size='<?=count($boardSigns)?>' id='signsSelect' multiple='multiple'>";
+
+	<?php foreach($boardSigns as $sign): ?>
+
+	modalBody += "<option value='<?=$sign->id?>'";
+	
+	for(i = 0; i < signsLength; i++) {
+		if (signsIds[i] == '<?=$sign->id?>') {
+			modalBody += " selected";
+		}
+	}
+	modalBody += "><?=$sign->sign?></option>";
+		
+	<?php endforeach;?>
+
+	modalBody += "</select>";
+	modalBody += "<div style='margin-top: 20px;' class='btn btn-default btn-block' onclick=\"updateSigns('"+id+"');\"><span class=\"glyphicon glyphicon-floppy-disk\"></span> Zapisz</div><div class='btn btn-default btn-block' data-dismiss='modal' type='button'><span class=\"glyphicon glyphicon-remove\"></span> Anuluj</div>";
+
+	document.getElementById('modalBody').innerHTML = modalBody;
+	$('#modal').modal('show');
+
+}
+
+function updateSigns(id) {
+	var selectedSigns = $('#signsSelect').val();
+	var signs = document.getElementById('signs'+id).innerHTML;
+	if(selectedSigns == signs) {
+		document.getElementById('modalBody').innerHTML = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
+		setTimeout(function(){
+			$('#modal').modal('hide');
+		}, 1200);
+	} else {
+		saveSigns(id, selectedSigns);
+	}
+}
+
+function saveSigns(id, selectedSigns) {
+	var ajaxRequest = $.ajax({
+		url: "index.php?action=updateSymbolSigns",
+		type: "post",
+		data: { 
+				'symbolId' : id,
+				'selectedSigns': selectedSigns
+			}
+	});
+	ajaxRequest.done(function (response){
+		switch(response){
+			case 'ACTION_OK': 
+				message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany"; 			
+				document.getElementById('signs'+id).innerHTML = selectedSigns.toString();
+				break;
+			case 'FORM_DATA_MISSING': 
+			case 'ACTION_FAILED': 
+				message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+				break;
+			case 'NO_PERMISSION': 
+				message = "Brak uprawnień";
+				break;
+			default:
+				message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Obecnie zapisanie zmian jest niemożliwe";
+				break;
+		}
+	});
+	
+	ajaxRequest.fail(function (){
+	  message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
+	 });
+	 
+	ajaxRequest.always(function(){
+		document.getElementById('modalBody').innerHTML = message;
+		setTimeout(function(){
+			$('#modal').modal('hide');
+		}, 1200);
+	});
+}
+
+/*
 function manageTypes(id){
 	var modalBody ="";
 	if(document.getElementById('melamine'+id).innerHTML == ""){
@@ -226,6 +308,7 @@ function removeSymbolFromTheTypeList(id, typeNumber){
 		}, 1200);
 	});
 }
+*/
 
 function addToNoEdgeBandSymbols(id){
 		var ajaxRequest = $.ajax({
@@ -455,7 +538,7 @@ function setNewSymbol(){
 			ajaxRequest.done(function (response){
 				if(response != 'ACTION_FAILED'){
 					message = "<span class=\"glyphicon glyphicon-floppy-saved\"></span> Zapisano zmiany";
-					document.getElementById('lastRow').insertAdjacentHTML("beforebegin", "<tr id='"+response+"' class='pointer' onclick=\"showOptions('"+response+"');\"><td><label><span class='symbols' id='symbol"+response+"'>"+newSymbol+"</span></label></td><td id='edgeBand"+response+"'></td><td id='melamine"+response+"'></td><td id='worktops"+response+"'></td><td id='hdf"+response+"'></td><td id='mdf"+response+"'></td><td id='acrylic"+response+"'></td><td id='glossy"+response+"'></td><td id='veneer"+response+"'></td><td id='hidden"+response+"'></td></tr>");
+					document.getElementById('lastRow').insertAdjacentHTML("beforebegin", "<tr id='"+response+"' class='pointer' onclick=\"showOptions('"+response+"');\"><td><label><span class='symbols' id='symbol"+response+"'>"+newSymbol+"</span></label></td><td id='edgeBand"+response+"'></td><td id='hidden"+response+"'></td><td style='display:none;' id='signs"+response+"'></td></tr>");
 				}else{
 					message = "<span class=\"glyphicon glyphicon-floppy-remove\"></span> Nie udało się zapisać zmian";
 				}

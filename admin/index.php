@@ -391,8 +391,8 @@ try{
 					print_r('SERVER_ERROR');
 			endswitch;
 			break;
-		case 'updateSignType':	
-			switch ($joineryAdmin -> updateSignType()):
+		case 'updateSymbolSigns':	
+			switch ($joineryAdmin -> updateSymbolSigns()):
 				case ACTION_OK:
 					print_r('ACTION_OK');
 					break;

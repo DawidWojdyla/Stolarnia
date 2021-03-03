@@ -332,11 +332,11 @@ class JoineryAdmin extends MyDB
 		return $positions -> updateSignName();
 	}
 	
-	function updateSignType(){
+	function updateSymbolSigns(){
 		if(!$this -> dbo){ return SERVER_ERROR; }
 		if (!$this -> loggedAdmin){ return NO_PERMISSION; }
 		$positions = new Positions ($this -> dbo);
-		return $positions -> updateSignType();
+		return $positions -> updateSymbolSigns();
 	}
 	
 	function removeDefaultThickness(){
